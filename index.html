@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PaiFinance - Smart Strategy Tool</title>
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         // Tailwind CSS configuration
@@ -37,8 +38,10 @@
             }
         }
     </script>
+    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Albert+Sans:wght@400;800&display=swap" rel="stylesheet">
+    <!-- Chart.js CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
     <style>
         /* Your original custom styles */
@@ -87,6 +90,7 @@
 </head>
 <body class="font-inter bg-white text-textdark min-h-screen flex flex-col">
 
+    <!-- Header Section -->
     <header class="bg-card shadow-sm h-[68px] pl-[27px] pr-6 md:pr-8 flex items-center justify-between z-10 sticky top-0">
         <div class="flex items-center">
             <img src="https://placehold.co/120x40/22C55E/FFFFFF?text=Pai" alt="Pai Logo" class="h-8 w-auto">
@@ -94,11 +98,14 @@
         </div>
     </header>
 
+    <!-- Main Content Area -->
     <main class="flex-1 grid grid-cols-1 lg:grid-cols-4 h-[calc(100vh-68px)]">
 
+        <!-- Left Side: Input & Calculation Section (3/4 width) -->
         <section class="lg:col-span-3 bg-card p-6 overflow-y-auto border-r border-gray-200">
             <h2 class="text-[21px] font-normal text-textdark font-albert_sans mb-6">Smart Loan & Investment Planner</h2>
 
+            <!-- Primary Inputs -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-5 mb-5 mt-1">
                 <div>
                     <div class="flex items-center justify-between w-[273px]">
@@ -120,6 +127,7 @@
                 </div>
             </div>
 
+            <!-- Main Interactive Box -->
             <div class="relative p-6 bg-[rgba(234,234,234,0.25)] shadow-lg rounded-lg w-full">
                 <h3 class="text-lg font-semibold text-center text-textdark mb-4">Select Your Goal</h3>
                 <div class="flex flex-wrap justify-center gap-4 mb-6">
@@ -129,6 +137,7 @@
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-5 mt-8">
+                    <!-- Parameters -->
                     <div>
                         <div class="flex items-center justify-between w-full">
                             <label for="loanInterestRateDisplay" class="block text-sm font-normal text-textlight font-albert_sans">Loan Interest Rate</label>
@@ -169,7 +178,8 @@
                         </div>
                         <input type="range" id="investmentTenureSlider" value="30" min="1" max="30" class="w-full mt-[18px]">
                     </div>
-                     <div class="flex items-center justify-between w-full pt-2">
+                     <!-- Moved Live Results Inside the Box -->
+                    <div class="flex items-center justify-between w-full pt-2">
                         <label class="block text-sm font-normal text-textlight mb-2">Monthly EMI</label>
                         <p id="emiResult" class="text-lg font-bold text-primary font-albert_sans">₹ 0</p>
                     </div>
@@ -181,17 +191,33 @@
             </div>
         </section>
 
-        <section class="lg:col-span-1 bg-background p-6 flex flex-col items-center justify-center overflow-y-auto">
-             <h3 class="text-lg font-semibold text-textdark mb-4 text-center">Monthly Budget Allocation</h3>
-            <div class="w-full max-w-[300px] h-auto relative">
-                <canvas id="monthlyBudgetChart"></canvas>
-                <div id="chartMessage" class="absolute inset-0 flex items-center justify-center text-center text-textlight p-4">
-                    Your budget breakdown will appear here after calculation.
+        <!-- Right Side: Results Section (1/4 width) -->
+        <section class="lg:col-span-1 bg-background p-6 flex flex-col items-center justify-start overflow-y-auto">
+             <h3 class="text-lg font-semibold text-textdark mb-4 text-center">Strategy Results</h3>
+             
+             <!-- *** THIS IS THE CORRECTED PART *** -->
+             <!-- This container will hold either the pie chart OR the final result cards -->
+             <div class="w-full max-w-[350px] space-y-4">
+                <div id="chartsContainer" class="w-full h-auto relative">
+                    <canvas id="monthlyBudgetChart"></canvas>
+                    <div id="chartMessage" class="absolute inset-0 flex items-center justify-center text-center text-textlight p-4">
+                        Your budget breakdown will appear here.
+                    </div>
                 </div>
-            </div>
+                <div id="mainResultsContainer" class="hidden w-full">
+                    <!-- Final result cards will be injected here by JavaScript -->
+                </div>
+             </div>
         </section>
     </main>
 
     <script src="script.js"></script>
 </body>
 </html>
+```
+
+---
+
+With this corrected HTML, the `script.js` file you already have will now work perfectly. It will find the `mainResultsContainer` and correctly display the final strategy.
+
+I am confident this will solve the issue. Let me know how it go
