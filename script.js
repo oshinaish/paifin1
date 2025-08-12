@@ -1,7 +1,7 @@
 /**
  * PaiFinance - Interactive Script
- * Version: 1.7 - Final Layout Logic
- * Last updated: August 13, 2025, 2:35 AM IST
+ * Version: 1.8 - THE FINAL FIX
+ * Last updated: August 13, 2025, 2:40 AM IST
  * Built by the Bros.
  */
 
@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const emiResultElement = document.getElementById('emiResult');
     const monthlyInvestmentResult = document.getElementById('monthlyInvestmentResult');
     
-    // New Result Containers
+    // Result Containers
     const finalResultsSection = document.getElementById('finalResultsSection');
     const mainResultsContainer = document.getElementById('mainResultsContainer');
 
@@ -55,8 +55,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- 3. GOAL-BASED CALCULATION STRATEGIES ---
     function runPlannerMode() {
-        finalResultsSection.classList.add('hidden'); // Hide bottom results
-        chartsContainer.classList.remove('hidden'); // Show pie chart
+        finalResultsSection.classList.add('hidden');
+        chartsContainer.classList.remove('hidden');
         updateLiveResults();
     }
 
@@ -94,9 +94,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function findMinimumTime() {
+        chartsContainer.classList.add('hidden');
         finalResultsSection.classList.remove('hidden');
         mainResultsContainer.innerHTML = `<div class="text-center p-4">The "Minimum Time" feature is the next one we'll build! Coming soon.</div>`;
-        chartsContainer.classList.add('hidden');
     }
 
     // --- 4. UI INTERACTIVITY & DISPLAY FUNCTIONS ---
@@ -124,14 +124,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function displayOptimalResults(scenario) {
-        // Update sliders to show the optimal tenure
         loanTenureInput.value = scenario.tenure;
         investmentTenureInput.value = scenario.tenure;
-        // Trigger a 'change' event to update the slider's visual state
-        loanTenureInput.dispatchEvent(new Event('input'));
-        investmentTenureInput.dispatchEvent(new Event('input'));
+        loanTenureInput.dispatchEvent(new Event('input', { bubbles:true }));
+        investmentTenureInput.dispatchEvent(new Event('input', { bubbles:true }));
 
-        // Build the HTML for the 4 result widgets
         mainResultsContainer.innerHTML = `
             <h2 class="text-2xl font-bold text-textdark font-albert_sans mb-4 text-center">Your Optimal Strategy Results</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -184,7 +181,7 @@ document.addEventListener('DOMContentLoaded', () => {
         sliderElement.addEventListener('input', () => { inputElement.value = sliderElement.value; updateSliderProgress(); handleInput(); });
         inputElement.addEventListener('input', () => {
             if (parseFloat(inputElement.value) >= parseFloat(sliderElement.min) && parseFloat(inputElement.value) <= parseFloat(sliderElement.max)) {
-                sliderElement.value = sliderElement.value;
+                sliderElement.value = inputElement.value;
                 updateSliderProgress();
                 handleInput();
             }
@@ -198,8 +195,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const goal = selectedButton.dataset.goal;
         const isPlannerMode = goal === 'planner';
         [loanTenureInput, loanTenureSlider, investmentTenureInput, investmentTenureSlider].forEach(field => { field.disabled = !isPlannerMode; });
+        
+        // *** THIS IS THE FIX ***
+        // The typo 'isPlannerMoxde' has been corrected to 'isPlannerMode'
         loanTenureContainer.style.opacity = isPlannerMode ? '1' : '0.5';
         investmentTenureContainer.style.opacity = isPlannerMode ? '1' : '0.5';
+        
         if (goal === 'planner') runPlannerMode();
         else if (goal === 'min-time') findMinimumTime();
         else if (goal === 'optimal-strategy') findOptimalStrategy();
