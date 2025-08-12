@@ -44,48 +44,17 @@
     <!-- Chart.js CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
     <style>
-        /* Your original custom styles */
+        /* Custom styles remain the same */
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #EDF0EF; border-radius: 10px; }
         ::-webkit-scrollbar-thumb { background: #888; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #555; cursor: pointer; }
         input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
         input[type="number"] { -moz-appearance: textfield; }
-        input[type="number"]:focus, select:focus {
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.3);
-            border-color: #4F46E5;
-        }
-        input[type="range"] {
-            -webkit-appearance: none; appearance: none;
-            height: 2px; background: #EDF0EF;
-            outline: none; border-radius: 5px;
-            transition: opacity .2s;
-            position: relative; display: block;
-        }
-        input[type="range"]::-webkit-slider-runnable-track {
-            width: 100%; height: 2px;
-            background: linear-gradient(to right, var(--tw-colors-input_text_color) var(--range-progress, 0%), var(--tw-colors-seekbar_track_right) var(--range-progress, 0%));
-            border-radius: 5px;
-        }
-        input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none; appearance: none;
-            width: 14px; height: 14px;
-            background: #f5f5fa; border-radius: 50%;
-            cursor: grab; box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-            margin-top: -6px;
-        }
-        input[type="range"]:active::-webkit-slider-thumb { cursor: grabbing; }
-        .goal-button {
-            background-color: rgba(234, 234, 234, 0.2);
-            color: #1F2937;
-        }
-        .goal-button:hover { opacity: 0.9; }
-        .goal-button.selected {
-            background-color: #22C55E;
-            color: #FFFFFF;
-            box-shadow: 0 0 0 2px #22C55E, 0 0 0 4px rgba(34, 197, 94, 0.4);
-        }
+        input[type="range"] { -webkit-appearance: none; appearance: none; height: 2px; background: #EDF0EF; outline: none; border-radius: 5px; }
+        input[type="range"]::-webkit-slider-runnable-track { width: 100%; height: 2px; background: linear-gradient(to right, var(--tw-colors-input_text_color) var(--range-progress, 0%), var(--tw-colors-seekbar_track_right) var(--range-progress, 0%)); border-radius: 5px; }
+        input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 14px; height: 14px; background: #f5f5fa; border-radius: 50%; cursor: grab; box-shadow: 0 1px 3px rgba(0,0,0,0.2); margin-top: -6px; }
+        .goal-button { background-color: rgba(234, 234, 234, 0.2); color: #1F2937; }
+        .goal-button.selected { background-color: #22C55E; color: #FFFFFF; box-shadow: 0 0 0 2px #22C55E, 0 0 0 4px rgba(34, 197, 94, 0.4); }
     </style>
 </head>
 <body class="font-inter bg-white text-textdark min-h-screen flex flex-col">
@@ -99,118 +68,340 @@
     </header>
 
     <!-- Main Content Area -->
-    <main class="flex-1 grid grid-cols-1 lg:grid-cols-4 h-[calc(100vh-68px)]">
-
-        <!-- Left Side: Input & Calculation Section (3/4 width) -->
-        <section class="lg:col-span-3 bg-card p-6 overflow-y-auto border-r border-gray-200">
-            <h2 class="text-[21px] font-normal text-textdark font-albert_sans mb-6">Smart Loan & Investment Planner</h2>
-
-            <!-- Primary Inputs -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-5 mb-5 mt-1">
-                <div>
-                    <div class="flex items-center justify-between w-[273px]">
-                        <label for="loanAmount" class="block text-sm font-normal text-textlight font-albert_sans">Loan Amount</label>
-                        <div class="w-[114px] h-[29px] p-2 rounded-[2px] text-base font-bold bg-input_box_fill bg-opacity-10 text-input_text_color text-right shadow-custom-input flex items-center justify-end font-albert_sans">
-                            <input type="number" id="loanAmount" value="5000000" min="100000" max="50000000" step="100000" class="w-full bg-transparent border-none focus:ring-0 text-input_text_color text-right p-0 m-0 font-albert_sans font-bold text-base">
-                        </div>
-                    </div>
-                    <input type="range" id="loanAmountSlider" value="5000000" min="100000" max="50000000" step="100000" class="w-[273px] mt-[18px]">
-                </div>
-                <div>
-                    <div class="flex items-center justify-between w-[273px]">
-                        <label for="monthlyBudget" class="block text-sm font-normal text-textlight font-albert_sans">Monthly Budget</label>
-                        <div class="w-[114px] h-[29px] p-2 rounded-[2px] text-base font-bold bg-input_box_fill bg-opacity-10 text-input_text_color text-right shadow-custom-input flex items-center justify-end font-albert_sans">
-                            <input type="number" id="monthlyBudget" value="70000" min="10000" max="1000000" step="1000" class="w-full bg-transparent border-none focus:ring-0 text-input_text_color text-right p-0 m-0 font-albert_sans font-bold text-base">
-                        </div>
-                    </div>
-                    <input type="range" id="monthlyBudgetSlider" value="70000" min="10000" max="1000000" step="1000" class="w-[273px] mt-[18px]">
-                </div>
-            </div>
-
-            <!-- Main Interactive Box -->
-            <div class="relative p-6 bg-[rgba(234,234,234,0.25)] shadow-lg rounded-lg w-full">
-                <h3 class="text-lg font-semibold text-center text-textdark mb-4">Select Your Goal</h3>
-                <div class="flex flex-wrap justify-center gap-4 mb-6">
-                    <button type="button" id="btnPlanner" data-goal="planner" class="goal-button selected flex flex-col items-center justify-center py-2 px-4 rounded-lg cursor-pointer transition-all duration-200 text-sm font-bold text-center shadow-md font-albert_sans">Manual<br>Planner</button>
-                    <button type="button" id="btnMinTime" data-goal="min-time" class="goal-button flex flex-col items-center justify-center py-2 px-4 rounded-lg cursor-pointer transition-all duration-200 text-sm font-bold text-center shadow-md font-albert_sans">Minimum Time<br>to Offset</button>
-                    <button type="button" id="btnOptimalStrategy" data-goal="optimal-strategy" class="goal-button flex flex-col items-center justify-center py-2 px-4 rounded-lg cursor-pointer transition-all duration-200 text-sm font-bold text-center shadow-md font-albert_sans">Find Optimal<br>Strategy</button>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-5 mt-8">
-                    <!-- Parameters -->
+    <main class="flex-1 flex flex-col">
+        <!-- Top Section: Inputs and Pie Chart -->
+        <div class="grid grid-cols-1 lg:grid-cols-4 border-b border-gray-200">
+            <!-- Left Side: Input & Calculation Section (3/4 width) -->
+            <section class="lg:col-span-3 bg-card p-6 border-r border-gray-200">
+                 <h2 class="text-[21px] font-normal text-textdark font-albert_sans mb-6">Smart Loan & Investment Planner</h2>
+                <!-- All input fields go here as before -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-5 mb-5 mt-1">
                     <div>
-                        <div class="flex items-center justify-between w-full">
-                            <label for="loanInterestRateDisplay" class="block text-sm font-normal text-textlight font-albert_sans">Loan Interest Rate</label>
-                            <div class="w-[70px] h-[29px] p-2 rounded-[2px] bg-input_box_fill bg-opacity-10 shadow-custom-input flex items-center">
-                                <input type="number" id="loanInterestRateDisplay" value="8.5" min="1" max="20" step="0.1" class="w-full bg-transparent border-none focus:ring-0 text-input_text_color text-right p-0 m-0 font-albert_sans font-bold text-base">
-                                <span class="font-normal text-input_text_color pl-1">%</span>
+                        <div class="flex items-center justify-between w-[273px]">
+                            <label for="loanAmount" class="block text-sm font-normal text-textlight font-albert_sans">Loan Amount</label>
+                            <div class="w-[114px] h-[29px] p-2 rounded-[2px] text-base font-bold bg-input_box_fill bg-opacity-10 text-input_text_color text-right shadow-custom-input flex items-center justify-end font-albert_sans">
+                                <input type="number" id="loanAmount" value="5000000" min="100000" max="50000000" step="100000" class="w-full bg-transparent border-none focus:ring-0 text-input_text_color text-right p-0 m-0 font-albert_sans font-bold text-base">
                             </div>
                         </div>
-                        <input type="range" id="loanInterestRateSlider" value="8.5" min="1" max="20" step="0.1" class="w-full mt-[18px]">
+                        <input type="range" id="loanAmountSlider" value="5000000" min="100000" max="50000000" step="100000" class="w-[273px] mt-[18px]">
                     </div>
-                     <div>
-                        <div class="flex items-center justify-between w-full">
-                            <label for="investmentRateDisplay" class="block text-sm font-normal text-textlight font-albert_sans">Investment Return Rate</label>
-                            <div class="w-[70px] h-[29px] p-2 rounded-[2px] bg-input_box_fill bg-opacity-10 shadow-custom-input flex items-center">
-                                <input type="number" id="investmentRateDisplay" value="12" min="1" max="30" step="0.1" class="w-full bg-transparent border-none focus:ring-0 text-input_text_color text-right p-0 m-0 font-albert_sans font-bold text-base">
-                                <span class="font-normal text-input_text_color pl-1">%</span>
+                    <div>
+                        <div class="flex items-center justify-between w-[273px]">
+                            <label for="monthlyBudget" class="block text-sm font-normal text-textlight font-albert_sans">Monthly Budget</label>
+                            <div class="w-[114px] h-[29px] p-2 rounded-[2px] text-base font-bold bg-input_box_fill bg-opacity-10 text-input_text_color text-right shadow-custom-input flex items-center justify-end font-albert_sans">
+                                <input type="number" id="monthlyBudget" value="70000" min="10000" max="1000000" step="1000" class="w-full bg-transparent border-none focus:ring-0 text-input_text_color text-right p-0 m-0 font-albert_sans font-bold text-base">
                             </div>
                         </div>
-                        <input type="range" id="riskAppetiteSlider" value="12" min="1" max="30" step="0.1" class="w-full mt-[18px]">
-                    </div>
-                    <div id="loanTenureContainer">
-                        <div class="flex items-center justify-between w-full">
-                            <label class="block text-sm font-normal text-textlight font-albert_sans">Loan Tenure</label>
-                            <div class="w-[70px] h-[29px] p-2 rounded-[2px] bg-input_box_fill bg-opacity-10 shadow-custom-input flex items-center">
-                                <input type="number" id="loanTenureDisplay" value="30" min="1" max="30" class="w-full bg-transparent border-none focus:ring-0 text-input_text_color text-right p-0 m-0 font-albert_sans font-bold text-base">
-                                <span class="font-normal text-input_text_color pl-1">Yr</span>
-                            </div>
-                        </div>
-                        <input type="range" id="loanTenureSlider" value="30" min="1" max="30" class="w-full mt-[18px]">
-                    </div>
-                    <div id="investmentTenureContainer">
-                        <div class="flex items-center justify-between w-full">
-                            <label for="investmentTenureDisplay" class="block text-sm font-normal text-textlight font-albert_sans">Investment Tenure</label>
-                            <div class="w-[70px] h-[29px] p-2 rounded-[2px] bg-input_box_fill bg-opacity-10 shadow-custom-input flex items-center">
-                                <input type="number" id="investmentTenureDisplay" value="30" min="1" max="30" class="w-full bg-transparent border-none focus:ring-0 text-input_text_color text-right p-0 m-0 font-albert_sans font-bold text-base">
-                                <span class="font-normal text-input_text_color pl-1">Yr</span>
-                            </div>
-                        </div>
-                        <input type="range" id="investmentTenureSlider" value="30" min="1" max="30" class="w-full mt-[18px]">
-                    </div>
-                     <!-- Moved Live Results Inside the Box -->
-                    <div class="flex items-center justify-between w-full pt-2">
-                        <label class="block text-sm font-normal text-textlight mb-2">Monthly EMI</label>
-                        <p id="emiResult" class="text-lg font-bold text-primary font-albert_sans">₹ 0</p>
-                    </div>
-                    <div class="flex items-center justify-between w-full pt-2">
-                        <label class="block text-sm font-normal text-textlight mb-2">Monthly Investment</label>
-                        <p id="monthlyInvestmentResult" class="text-lg font-bold text-success font-albert_sans">₹ 0</p>
+                        <input type="range" id="monthlyBudgetSlider" value="70000" min="10000" max="1000000" step="1000" class="w-[273px] mt-[18px]">
                     </div>
                 </div>
-            </div>
-        </section>
+                <div class="relative p-6 bg-[rgba(234,234,234,0.25)] shadow-lg rounded-lg w-full">
+                    <h3 class="text-lg font-semibold text-center text-textdark mb-4">Select Your Goal</h3>
+                    <div class="flex flex-wrap justify-center gap-4 mb-6">
+                        <button type="button" id="btnPlanner" data-goal="planner" class="goal-button selected flex flex-col items-center justify-center py-2 px-4 rounded-lg cursor-pointer transition-all duration-200 text-sm font-bold text-center shadow-md font-albert_sans">Manual<br>Planner</button>
+                        <button type="button" id="btnMinTime" data-goal="min-time" class="goal-button flex flex-col items-center justify-center py-2 px-4 rounded-lg cursor-pointer transition-all duration-200 text-sm font-bold text-center shadow-md font-albert_sans">Minimum Time<br>to Offset</button>
+                        <button type="button" id="btnOptimalStrategy" data-goal="optimal-strategy" class="goal-button flex flex-col items-center justify-center py-2 px-4 rounded-lg cursor-pointer transition-all duration-200 text-sm font-bold text-center shadow-md font-albert_sans">Find Optimal<br>Strategy</button>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-5 mt-8">
+                        <div>
+                            <div class="flex items-center justify-between w-full">
+                                <label for="loanInterestRateDisplay" class="block text-sm font-normal text-textlight font-albert_sans">Loan Interest Rate</label>
+                                <div class="w-[70px] h-[29px] p-2 rounded-[2px] bg-input_box_fill bg-opacity-10 shadow-custom-input flex items-center">
+                                    <input type="number" id="loanInterestRateDisplay" value="8.5" min="1" max="20" step="0.1" class="w-full bg-transparent border-none focus:ring-0 text-input_text_color text-right p-0 m-0 font-albert_sans font-bold text-base">
+                                    <span class="font-normal text-input_text_color pl-1">%</span>
+                                </div>
+                            </div>
+                            <input type="range" id="loanInterestRateSlider" value="8.5" min="1" max="20" step="0.1" class="w-full mt-[18px]">
+                        </div>
+                         <div>
+                            <div class="flex items-center justify-between w-full">
+                                <label for="investmentRateDisplay" class="block text-sm font-normal text-textlight font-albert_sans">Investment Return Rate</label>
+                                <div class="w-[70px] h-[29px] p-2 rounded-[2px] bg-input_box_fill bg-opacity-10 shadow-custom-input flex items-center">
+                                    <input type="number" id="investmentRateDisplay" value="12" min="1" max="30" step="0.1" class="w-full bg-transparent border-none focus:ring-0 text-input_text_color text-right p-0 m-0 font-albert_sans font-bold text-base">
+                                    <span class="font-normal text-input_text_color pl-1">%</span>
+                                </div>
+                            </div>
+                            <input type="range" id="riskAppetiteSlider" value="12" min="1" max="30" step="0.1" class="w-full mt-[18px]">
+                        </div>
+                        <div id="loanTenureContainer">
+                            <div class="flex items-center justify-between w-full">
+                                <label class="block text-sm font-normal text-textlight font-albert_sans">Loan Tenure</label>
+                                <div class="w-[70px] h-[29px] p-2 rounded-[2px] bg-input_box_fill bg-opacity-10 shadow-custom-input flex items-center">
+                                    <input type="number" id="loanTenureDisplay" value="30" min="1" max="30" class="w-full bg-transparent border-none focus:ring-0 text-input_text_color text-right p-0 m-0 font-albert_sans font-bold text-base">
+                                    <span class="font-normal text-input_text_color pl-1">Yr</span>
+                                </div>
+                            </div>
+                            <input type="range" id="loanTenureSlider" value="30" min="1" max="30" class="w-full mt-[18px]">
+                        </div>
+                        <div id="investmentTenureContainer">
+                            <div class="flex items-center justify-between w-full">
+                                <label for="investmentTenureDisplay" class="block text-sm font-normal text-textlight font-albert_sans">Investment Tenure</label>
+                                <div class="w-[70px] h-[29px] p-2 rounded-[2px] bg-input_box_fill bg-opacity-10 shadow-custom-input flex items-center">
+                                    <input type="number" id="investmentTenureDisplay" value="30" min="1" max="30" class="w-full bg-transparent border-none focus:ring-0 text-input_text_color text-right p-0 m-0 font-albert_sans font-bold text-base">
+                                    <span class="font-normal text-input_text_color pl-1">Yr</span>
+                                </div>
+                            </div>
+                            <input type="range" id="investmentTenureSlider" value="30" min="1" max="30" class="w-full mt-[18px]">
+                        </div>
+                        <div class="flex items-center justify-between w-full pt-2">
+                            <label class="block text-sm font-normal text-textlight mb-2">Monthly EMI</label>
+                            <p id="emiResult" class="text-lg font-bold text-primary font-albert_sans">₹ 0</p>
+                        </div>
+                        <div class="flex items-center justify-between w-full pt-2">
+                            <label class="block text-sm font-normal text-textlight mb-2">Monthly Investment</label>
+                            <p id="monthlyInvestmentResult" class="text-lg font-bold text-success font-albert_sans">₹ 0</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
 
-        <!-- Right Side: Results Section (1/4 width) -->
-        <section class="lg:col-span-1 bg-background p-6 flex flex-col items-center justify-start overflow-y-auto">
-             <h3 class="text-lg font-semibold text-textdark mb-4 text-center">Strategy Results</h3>
-             
-             <!-- *** THIS IS THE CORRECTED PART *** -->
-             <!-- This container will hold either the pie chart OR the final result cards -->
-             <div class="w-full max-w-[350px] space-y-4">
-                <div id="chartsContainer" class="w-full h-auto relative">
-                    <canvas id="monthlyBudgetChart"></canvas>
-                    <div id="chartMessage" class="absolute inset-0 flex items-center justify-center text-center text-textlight p-4">
-                        Your budget breakdown will appear here.
+            <!-- Right Side: Pie Chart Section (1/4 width) -->
+            <section class="lg:col-span-1 bg-card p-6 flex flex-col items-center justify-center">
+                 <div id="chartsContainer" class="w-full max-w-[350px]">
+                    <h3 class="text-lg font-semibold text-textdark mb-4 text-center">Monthly Budget Allocation</h3>
+                    <div class="w-full h-[250px] relative">
+                        <canvas id="monthlyBudgetChart"></canvas>
+                        <div id="chartMessage" class="absolute inset-0 flex items-center justify-center text-center text-textlight p-4">
+                            Your budget breakdown will appear here.
+                        </div>
                     </div>
-                </div>
-                <div id="mainResultsContainer" class="hidden w-full">
-                    <!-- Final result cards will be injected here by JavaScript -->
-                </div>
-             </div>
+                 </div>
+            </section>
+        </div>
+
+        <!-- Bottom Section: Full-Width Final Results -->
+        <section id="finalResultsSection" class="bg-background p-6 hidden">
+            <div id="mainResultsContainer" class="max-w-7xl mx-auto">
+                <!-- Result widgets will be injected here by JavaScript -->
+            </div>
         </section>
     </main>
 
     <script src="script.js"></script>
 </body>
 </html>
+```
+
+---
+### Updated `script.js` (with new display logic)
+
+This script now targets the new `finalResultsSection` at the bottom of the page.
+
+
+```javascript
+/**
+ * PaiFinance - Interactive Script
+ * Version: 1.7 - Final Layout Logic
+ * Last updated: August 13, 2025, 2:35 AM IST
+ * Built by the Bros.
+ */
+
+document.addEventListener('DOMContentLoaded', () => {
+
+    // --- 1. ELEMENT SELECTION ---
+    const loanAmountInput = document.getElementById('loanAmount');
+    const loanAmountSlider = document.getElementById('loanAmountSlider');
+    const monthlyBudgetInput = document.getElementById('monthlyBudget');
+    const monthlyBudgetSlider = document.getElementById('monthlyBudgetSlider');
+    const loanInterestRateInput = document.getElementById('loanInterestRateDisplay');
+    const loanInterestRateSlider = document.getElementById('loanInterestRateSlider');
+    const investmentRateInput = document.getElementById('investmentRateDisplay');
+    const investmentRateSlider = document.getElementById('riskAppetiteSlider');
+    const loanTenureContainer = document.getElementById('loanTenureContainer');
+    const loanTenureInput = document.getElementById('loanTenureDisplay');
+    const loanTenureSlider = document.getElementById('loanTenureSlider');
+    const investmentTenureContainer = document.getElementById('investmentTenureContainer');
+    const investmentTenureInput = document.getElementById('investmentTenureDisplay');
+    const investmentTenureSlider = document.getElementById('investmentTenureSlider');
+    const emiResultElement = document.getElementById('emiResult');
+    const monthlyInvestmentResult = document.getElementById('monthlyInvestmentResult');
+    
+    // New Result Containers
+    const finalResultsSection = document.getElementById('finalResultsSection');
+    const mainResultsContainer = document.getElementById('mainResultsContainer');
+
+    const chartsContainer = document.getElementById('chartsContainer');
+    const goalButtons = document.querySelectorAll('.goal-button');
+    const chartCanvas = document.getElementById('monthlyBudgetChart');
+    const chartMessage = document.getElementById('chartMessage');
+    let monthlyBudgetChart = null;
+
+    // --- 2. CORE FINANCIAL ENGINE ---
+    function calculateEMI(principal, annualRate, tenureYears) {
+        const monthlyRate = (annualRate / 100) / 12;
+        const tenureMonths = tenureYears * 12;
+        if (monthlyRate === 0) { return tenureMonths > 0 ? principal / tenureMonths : 0; }
+        if (tenureMonths <= 0) { return principal; }
+        const emi = principal * monthlyRate * Math.pow(1 + monthlyRate, tenureMonths) / (Math.pow(1 + monthlyRate, tenureMonths) - 1);
+        return Math.round(emi);
+    }
+
+    function calculateFutureValue(monthlyInvestment, annualRate, tenureYears) {
+        const monthlyRate = (annualRate / 100) / 12;
+        const tenureMonths = tenureYears * 12;
+        if (monthlyRate === 0) { return monthlyInvestment * tenureMonths; }
+        const fv = monthlyInvestment * ( (Math.pow(1 + monthlyRate, tenureMonths) - 1) / monthlyRate );
+        return Math.round(fv);
+    }
+
+    // --- 3. GOAL-BASED CALCULATION STRATEGIES ---
+    function runPlannerMode() {
+        finalResultsSection.classList.add('hidden'); // Hide bottom results
+        chartsContainer.classList.remove('hidden'); // Show pie chart
+        updateLiveResults();
+    }
+
+    function findOptimalStrategy() {
+        chartsContainer.classList.add('hidden');
+        finalResultsSection.classList.remove('hidden');
+        mainResultsContainer.innerHTML = `<div class="text-center p-4">Calculating your optimal strategy...</div>`;
+        
+        setTimeout(() => {
+            const principal = parseFloat(loanAmountInput.value);
+            const budget = parseFloat(monthlyBudgetInput.value);
+            const loanAnnualRate = parseFloat(loanInterestRateInput.value);
+            const investmentAnnualRate = parseFloat(investmentRateInput.value);
+            let bestScenario = null, maxNetWealth = -Infinity;
+
+            for (let tenure = 1; tenure <= 30; tenure++) {
+                const emi = calculateEMI(principal, loanAnnualRate, tenure);
+                if (emi > budget) continue;
+                const monthlyInvestment = budget - emi;
+                const totalInterestPaid = (emi * tenure * 12) - principal;
+                const futureValue = calculateFutureValue(monthlyInvestment, investmentAnnualRate, tenure);
+                const netWealth = futureValue - totalInterestPaid;
+                if (netWealth > maxNetWealth) {
+                    maxNetWealth = netWealth;
+                    bestScenario = { tenure, emi, monthlyInvestment, totalInterestPaid, futureValue, netWealth };
+                }
+            }
+
+            if (bestScenario) {
+                displayOptimalResults(bestScenario);
+            } else {
+                mainResultsContainer.innerHTML = `<div class="text-center p-4 text-danger">No viable strategy found. Try increasing your budget.</div>`;
+            }
+        }, 100);
+    }
+
+    function findMinimumTime() {
+        chartsContainer.classList.add('hidden');
+        finalResultsSection.classList.remove('hidden');
+        mainResultsContainer.innerHTML = `<div class="text-center p-4">The "Minimum Time" feature is the next one we'll build! Coming soon.</div>`;
+    }
+
+    // --- 4. UI INTERACTIVITY & DISPLAY FUNCTIONS ---
+    function updateLiveResults() {
+        const principal = parseFloat(loanAmountInput.value);
+        const annualRate = parseFloat(loanInterestRateInput.value);
+        const tenureYears = parseFloat(loanTenureInput.value);
+        const budget = parseFloat(monthlyBudgetInput.value);
+        if (principal > 0 && annualRate > 0 && tenureYears > 0) {
+            const emi = calculateEMI(principal, annualRate, tenureYears);
+            emiResultElement.textContent = `₹ ${emi.toLocaleString('en-IN')}`;
+            if (budget >= emi) {
+                const investment = budget - emi;
+                monthlyInvestmentResult.textContent = `₹ ${investment.toLocaleString('en-IN')}`;
+                updatePieChart(emi, investment);
+            } else {
+                monthlyInvestmentResult.textContent = 'Budget too low';
+                updatePieChart(budget, 0);
+            }
+        } else {
+            emiResultElement.textContent = '₹ 0';
+            monthlyInvestmentResult.textContent = `₹ ${budget.toLocaleString('en-IN')}`;
+            updatePieChart(0, budget);
+        }
+    }
+
+    function displayOptimalResults(scenario) {
+        // Update sliders to show the optimal tenure
+        loanTenureInput.value = scenario.tenure;
+        investmentTenureInput.value = scenario.tenure;
+        // Trigger a 'change' event to update the slider's visual state
+        loanTenureInput.dispatchEvent(new Event('input'));
+        investmentTenureInput.dispatchEvent(new Event('input'));
+
+        // Build the HTML for the 4 result widgets
+        mainResultsContainer.innerHTML = `
+            <h2 class="text-2xl font-bold text-textdark font-albert_sans mb-4 text-center">Your Optimal Strategy Results</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                ${createResultCard('Loan Details', `Optimal Tenure: ${scenario.tenure} Years<br>Monthly EMI: ₹${scenario.emi.toLocaleString('en-IN')}`, 'primary')}
+                ${createResultCard('Investment Details', `Monthly SIP: ₹${scenario.monthlyInvestment.toLocaleString('en-IN')}<br>Total Wealth Built: ₹${scenario.futureValue.toLocaleString('en-IN')}`, 'success')}
+                ${createResultCard('Net Money Input', `Total Paid: ₹${(scenario.emi * scenario.tenure * 12).toLocaleString('en-IN')}`, 'warning')}
+                ${createResultCard('Net Money Output', `Net Wealth Created: ₹${scenario.netWealth.toLocaleString('en-IN')}`, 'success')}
+            </div>
+        `;
+    }
+
+    function createResultCard(title, content, color) {
+        const colorClasses = {
+            primary: 'border-t-primary',
+            success: 'border-t-success',
+            warning: 'border-t-danger'
+        };
+        return `
+            <div class="bg-card p-4 rounded-lg shadow-default border-t-4 ${colorClasses[color]}">
+                <h3 class="text-md font-bold text-textdark mb-2">${title}</h3>
+                <p class="text-textlight leading-relaxed">${content}</p>
+            </div>
+        `;
+    }
+
+    function updatePieChart(emi, investment) {
+        chartMessage.style.display = 'none';
+        const data = { labels: ['EMI', 'Investment'], datasets: [{ data: [emi, investment], backgroundColor: ['#4F46E5', '#22C55E'], borderColor: '#F9FAFB', borderWidth: 2 }] };
+        if (monthlyBudgetChart) {
+            monthlyBudgetChart.data = data;
+            monthlyBudgetChart.update();
+        } else {
+            monthlyBudgetChart = new Chart(chartCanvas, { type: 'doughnut', data: data, options: { responsive: true, maintainAspectRatio: true, cutout: '60%', plugins: { legend: { display: true, position: 'bottom' } } } });
+        }
+    }
+
+    function syncAndStyle(inputElement, sliderElement) {
+        const updateSliderProgress = () => {
+            const min = parseFloat(sliderElement.min);
+            const max = parseFloat(sliderElement.max);
+            const value = parseFloat(sliderElement.value);
+            const progress = ((value - min) / (max - min)) * 100;
+            sliderElement.style.setProperty('--range-progress', `${progress}%`);
+        };
+        const handleInput = () => {
+            if (document.querySelector('.goal-button.selected').dataset.goal === 'planner') {
+                updateLiveResults();
+            }
+        };
+        sliderElement.addEventListener('input', () => { inputElement.value = sliderElement.value; updateSliderProgress(); handleInput(); });
+        inputElement.addEventListener('input', () => {
+            if (parseFloat(inputElement.value) >= parseFloat(sliderElement.min) && parseFloat(inputElement.value) <= parseFloat(sliderElement.max)) {
+                sliderElement.value = inputElement.value;
+                updateSliderProgress();
+                handleInput();
+            }
+        });
+        updateSliderProgress();
+    }
+
+    function handleGoalSelection(selectedButton) {
+        goalButtons.forEach(button => button.classList.remove('selected'));
+        selectedButton.classList.add('selected');
+        const goal = selectedButton.dataset.goal;
+        const isPlannerMode = goal === 'planner';
+        [loanTenureInput, loanTenureSlider, investmentTenureInput, investmentTenureSlider].forEach(field => { field.disabled = !isPlannerMode; });
+        loanTenureContainer.style.opacity = isPlannerMoxde ? '1' : '0.5';
+        investmentTenureContainer.style.opacity = isPlannerMode ? '1' : '0.5';
+        if (goal === 'planner') runPlannerMode();
+        else if (goal === 'min-time') findMinimumTime();
+        else if (goal === 'optimal-strategy') findOptimalStrategy();
+    }
+
+    // --- 5. INITIALIZATION ---
+    ['loanAmount', 'monthlyBudget', 'loanInterestRateDisplay', 'investmentRateDisplay', 'loanTenureDisplay', 'investmentTenureDisplay'].forEach(id => {
+        syncAndStyle(document.getElementById(id), document.getElementById(id.replace('Display', '') + 'Slider'));
+    });
+    goalButtons.forEach(button => { button.addEventListener('click', () => handleGoalSelection(button)); });
+    handleGoalSelection(document.querySelector('.goal-button.selected'));
+    updateLiveResults();
+    console.log("PaiFinance initialization complete.");
+});
