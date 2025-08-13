@@ -121,7 +121,8 @@
                                     <span class="font-normal text-input_text_color pl-1">%</span>
                                 </div>
                             </div>
-                            <input type="range" id="riskAppetiteSlider" value="12" min="1" max="30" step="0.1" class="w-full mt-[18px]">
+                            <!-- *** THIS IS THE FIX *** -->
+                            <input type="range" id="investmentRateSlider" value="12" min="1" max="30" step="0.1" class="w-full mt-[18px]">
                         </div>
                         <div id="loanTenureContainer">
                             <div class="flex items-center justify-between w-full">
@@ -180,3 +181,8 @@
     <script src="script.js"></script>
 </body>
 </html>
+```
+
+---
+
+That's it. With this corrected HTML, the existing `script.js` file will now work perfectly. I'm confident this finally squashes the bug. Let me know how it go
