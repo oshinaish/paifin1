@@ -1,7 +1,7 @@
 /**
  * PaiFinance - Interactive Script
- * Version: 1.8 - THE FINAL FIX
- * Last updated: August 13, 2025, 2:40 AM IST
+ * Version: 2.0 - Cleaner Initial UI
+ * Last updated: August 13, 2025, 10:18 AM IST
  * Built by the Bros.
  */
 
@@ -55,9 +55,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- 3. GOAL-BASED CALCULATION STRATEGIES ---
     function runPlannerMode() {
-        finalResultsSection.classList.add('hidden');
-        chartsContainer.classList.remove('hidden');
-        updateLiveResults();
+        finalResultsSection.classList.remove('hidden'); // Show bottom results
+        chartsContainer.classList.remove('hidden'); // Show pie chart
+        
+        // Calculate and display results for the manual plan
+        const principal = parseFloat(loanAmountInput.value);
+        const annualRate = parseFloat(loanInterestRateInput.value);
+        const tenureYears = parseFloat(loanTenureInput.value);
+        const budget = parseFloat(monthlyBudgetInput.value);
+        const investmentRate = parseFloat(investmentRateInput.value);
+
+        const emi = calculateEMI(principal, annualRate, tenureYears);
+        const investment = (budget >= emi) ? budget - emi : 0;
+        const totalInterestPaid = (emi * tenureYears * 12) - principal;
+        const futureValue = calculateFutureValue(investment, investmentRate, tenureYears);
+        const netWealth = futureValue - totalInterestPaid;
+        
+        const scenario = { tenure: tenureYears, emi, monthlyInvestment: investment, totalInterestPaid, futureValue, netWealth };
+        displayResults(scenario, 'Manual Plan');
     }
 
     function findOptimalStrategy() {
@@ -86,7 +101,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             if (bestScenario) {
-                displayOptimalResults(bestScenario);
+                displayResults(bestScenario, 'Optimal Strategy');
             } else {
                 mainResultsContainer.innerHTML = `<div class="text-center p-4 text-danger">No viable strategy found. Try increasing your budget.</div>`;
             }
@@ -105,17 +120,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const annualRate = parseFloat(loanInterestRateInput.value);
         const tenureYears = parseFloat(loanTenureInput.value);
         const budget = parseFloat(monthlyBudgetInput.value);
+
         if (principal > 0 && annualRate > 0 && tenureYears > 0) {
             const emi = calculateEMI(principal, annualRate, tenureYears);
             emiResultElement.textContent = `₹ ${emi.toLocaleString('en-IN')}`;
-            if (budget >= emi) {
-                const investment = budget - emi;
-                monthlyInvestmentResult.textContent = `₹ ${investment.toLocaleString('en-IN')}`;
-                updatePieChart(emi, investment);
-            } else {
-                monthlyInvestmentResult.textContent = 'Budget too low';
-                updatePieChart(budget, 0);
-            }
+            
+            const investment = (budget >= emi) ? budget - emi : 0;
+            monthlyInvestmentResult.textContent = `₹ ${investment.toLocaleString('en-IN')}`;
+            updatePieChart(emi, investment);
         } else {
             emiResultElement.textContent = '₹ 0';
             monthlyInvestmentResult.textContent = `₹ ${budget.toLocaleString('en-IN')}`;
@@ -123,16 +135,18 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function displayOptimalResults(scenario) {
-        loanTenureInput.value = scenario.tenure;
-        investmentTenureInput.value = scenario.tenure;
-        loanTenureInput.dispatchEvent(new Event('input', { bubbles:true }));
-        investmentTenureInput.dispatchEvent(new Event('input', { bubbles:true }));
+    function displayResults(scenario, title) {
+        if (title.includes('Optimal')) {
+            loanTenureInput.value = scenario.tenure;
+            investmentTenureInput.value = scenario.tenure;
+            loanTenureInput.dispatchEvent(new Event('input', { bubbles:true }));
+            investmentTenureInput.dispatchEvent(new Event('input', { bubbles:true }));
+        }
 
         mainResultsContainer.innerHTML = `
-            <h2 class="text-2xl font-bold text-textdark font-albert_sans mb-4 text-center">Your Optimal Strategy Results</h2>
+            <h2 class="text-2xl font-bold text-textdark font-albert_sans mb-4 text-center">${title} Results</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                ${createResultCard('Loan Details', `Optimal Tenure: ${scenario.tenure} Years<br>Monthly EMI: ₹${scenario.emi.toLocaleString('en-IN')}`, 'primary')}
+                ${createResultCard('Loan Details', `Tenure: ${scenario.tenure} Years<br>Monthly EMI: ₹${scenario.emi.toLocaleString('en-IN')}`, 'primary')}
                 ${createResultCard('Investment Details', `Monthly SIP: ₹${scenario.monthlyInvestment.toLocaleString('en-IN')}<br>Total Wealth Built: ₹${scenario.futureValue.toLocaleString('en-IN')}`, 'success')}
                 ${createResultCard('Net Money Input', `Total Paid: ₹${(scenario.emi * scenario.tenure * 12).toLocaleString('en-IN')}`, 'warning')}
                 ${createResultCard('Net Money Output', `Net Wealth Created: ₹${scenario.netWealth.toLocaleString('en-IN')}`, 'success')}
@@ -173,17 +187,22 @@ document.addEventListener('DOMContentLoaded', () => {
             const progress = ((value - min) / (max - min)) * 100;
             sliderElement.style.setProperty('--range-progress', `${progress}%`);
         };
-        const handleInput = () => {
+        
+        sliderElement.addEventListener('input', () => { 
+            inputElement.value = sliderElement.value; 
+            updateSliderProgress(); 
+            // Only update live results if in planner mode
             if (document.querySelector('.goal-button.selected').dataset.goal === 'planner') {
                 updateLiveResults();
             }
-        };
-        sliderElement.addEventListener('input', () => { inputElement.value = sliderElement.value; updateSliderProgress(); handleInput(); });
+        });
         inputElement.addEventListener('input', () => {
             if (parseFloat(inputElement.value) >= parseFloat(sliderElement.min) && parseFloat(inputElement.value) <= parseFloat(sliderElement.max)) {
                 sliderElement.value = inputElement.value;
                 updateSliderProgress();
-                handleInput();
+                if (document.querySelector('.goal-button.selected').dataset.goal === 'planner') {
+                    updateLiveResults();
+                }
             }
         });
         updateSliderProgress();
@@ -195,23 +214,28 @@ document.addEventListener('DOMContentLoaded', () => {
         const goal = selectedButton.dataset.goal;
         const isPlannerMode = goal === 'planner';
         [loanTenureInput, loanTenureSlider, investmentTenureInput, investmentTenureSlider].forEach(field => { field.disabled = !isPlannerMode; });
-        
-        // *** THIS IS THE FIX ***
-        // The typo 'isPlannerMoxde' has been corrected to 'isPlannerMode'
         loanTenureContainer.style.opacity = isPlannerMode ? '1' : '0.5';
         investmentTenureContainer.style.opacity = isPlannerMode ? '1' : '0.5';
         
+        // This is the key change: The results are now triggered by the button click
         if (goal === 'planner') runPlannerMode();
         else if (goal === 'min-time') findMinimumTime();
         else if (goal === 'optimal-strategy') findOptimalStrategy();
     }
 
     // --- 5. INITIALIZATION ---
-    ['loanAmount', 'monthlyBudget', 'loanInterestRateDisplay', 'investmentRateDisplay', 'loanTenureDisplay', 'investmentTenureDisplay'].forEach(id => {
-        syncAndStyle(document.getElementById(id), document.getElementById(id.replace('Display', '') + 'Slider'));
-    });
-    goalButtons.forEach(button => { button.addEventListener('click', () => handleGoalSelection(button)); });
-    handleGoalSelection(document.querySelector('.goal-button.selected'));
-    updateLiveResults();
-    console.log("PaiFinance initialization complete.");
+    function initializeApp() {
+        ['loanAmount', 'monthlyBudget', 'loanInterestRateDisplay', 'investmentRateDisplay', 'loanTenureDisplay', 'investmentTenureDisplay'].forEach(id => {
+            syncAndStyle(document.getElementById(id), document.getElementById(id.replace('Display', '') + 'Slider'));
+        });
+        goalButtons.forEach(button => { button.addEventListener('click', () => handleGoalSelection(button)); });
+        
+        // Set initial state WITHOUT showing bottom results
+        finalResultsSection.classList.add('hidden');
+        updateLiveResults();
+        
+        console.log("PaiFinance initialization complete.");
+    }
+
+    initializeApp();
 });
