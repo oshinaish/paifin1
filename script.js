@@ -1,7 +1,7 @@
 /**
  * PaiFinance - Interactive Script
- * Version: 2.0 - Cleaner Initial UI
- * Last updated: August 13, 2025, 10:18 AM IST
+ * Version: 2.1 - THE FINAL FIX
+ * Last updated: August 13, 2025, 10:37 AM IST
  * Built by the Bros.
  */
 
@@ -37,15 +37,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- 2. CORE FINANCIAL ENGINE ---
     function calculateEMI(principal, annualRate, tenureYears) {
+        if (principal <= 0 || annualRate <= 0 || tenureYears <= 0) return 0;
         const monthlyRate = (annualRate / 100) / 12;
         const tenureMonths = tenureYears * 12;
-        if (monthlyRate === 0) { return tenureMonths > 0 ? principal / tenureMonths : 0; }
-        if (tenureMonths <= 0) { return principal; }
+        if (monthlyRate === 0) { return principal / tenureMonths; }
         const emi = principal * monthlyRate * Math.pow(1 + monthlyRate, tenureMonths) / (Math.pow(1 + monthlyRate, tenureMonths) - 1);
         return Math.round(emi);
     }
 
     function calculateFutureValue(monthlyInvestment, annualRate, tenureYears) {
+        if (monthlyInvestment <= 0 || annualRate <= 0 || tenureYears <= 0) return 0;
         const monthlyRate = (annualRate / 100) / 12;
         const tenureMonths = tenureYears * 12;
         if (monthlyRate === 0) { return monthlyInvestment * tenureMonths; }
@@ -55,28 +56,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- 3. GOAL-BASED CALCULATION STRATEGIES ---
     function runPlannerMode() {
-        finalResultsSection.classList.remove('hidden'); // Show bottom results
-        chartsContainer.classList.remove('hidden'); // Show pie chart
-        
-        // Calculate and display results for the manual plan
-        const principal = parseFloat(loanAmountInput.value);
-        const annualRate = parseFloat(loanInterestRateInput.value);
-        const tenureYears = parseFloat(loanTenureInput.value);
-        const budget = parseFloat(monthlyBudgetInput.value);
-        const investmentRate = parseFloat(investmentRateInput.value);
-
-        const emi = calculateEMI(principal, annualRate, tenureYears);
-        const investment = (budget >= emi) ? budget - emi : 0;
-        const totalInterestPaid = (emi * tenureYears * 12) - principal;
-        const futureValue = calculateFutureValue(investment, investmentRate, tenureYears);
-        const netWealth = futureValue - totalInterestPaid;
-        
-        const scenario = { tenure: tenureYears, emi, monthlyInvestment: investment, totalInterestPaid, futureValue, netWealth };
-        displayResults(scenario, 'Manual Plan');
+        finalResultsSection.classList.remove('hidden');
+        updateLiveResults();
     }
 
     function findOptimalStrategy() {
-        chartsContainer.classList.add('hidden');
         finalResultsSection.classList.remove('hidden');
         mainResultsContainer.innerHTML = `<div class="text-center p-4">Calculating your optimal strategy...</div>`;
         
@@ -109,7 +93,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function findMinimumTime() {
-        chartsContainer.classList.add('hidden');
         finalResultsSection.classList.remove('hidden');
         mainResultsContainer.innerHTML = `<div class="text-center p-4">The "Minimum Time" feature is the next one we'll build! Coming soon.</div>`;
     }
@@ -120,18 +103,21 @@ document.addEventListener('DOMContentLoaded', () => {
         const annualRate = parseFloat(loanInterestRateInput.value);
         const tenureYears = parseFloat(loanTenureInput.value);
         const budget = parseFloat(monthlyBudgetInput.value);
+        const investmentRate = parseFloat(investmentRateInput.value);
 
-        if (principal > 0 && annualRate > 0 && tenureYears > 0) {
-            const emi = calculateEMI(principal, annualRate, tenureYears);
-            emiResultElement.textContent = `₹ ${emi.toLocaleString('en-IN')}`;
-            
-            const investment = (budget >= emi) ? budget - emi : 0;
-            monthlyInvestmentResult.textContent = `₹ ${investment.toLocaleString('en-IN')}`;
-            updatePieChart(emi, investment);
-        } else {
-            emiResultElement.textContent = '₹ 0';
-            monthlyInvestmentResult.textContent = `₹ ${budget.toLocaleString('en-IN')}`;
-            updatePieChart(0, budget);
+        const emi = calculateEMI(principal, annualRate, tenureYears);
+        emiResultElement.textContent = `₹ ${emi.toLocaleString('en-IN')}`;
+        
+        const investment = (budget >= emi) ? budget - emi : 0;
+        monthlyInvestmentResult.textContent = `₹ ${investment.toLocaleString('en-IN')}`;
+        updatePieChart(emi, investment);
+
+        if (document.querySelector('.goal-button.selected').dataset.goal === 'planner') {
+            const totalInterestPaid = (emi * tenureYears * 12) - principal;
+            const futureValue = calculateFutureValue(investment, investmentRate, tenureYears);
+            const netWealth = futureValue - totalInterestPaid;
+            const scenario = { tenure: tenureYears, emi, monthlyInvestment: investment, totalInterestPaid, futureValue, netWealth };
+            displayResults(scenario, 'Manual Plan');
         }
     }
 
@@ -188,21 +174,22 @@ document.addEventListener('DOMContentLoaded', () => {
             sliderElement.style.setProperty('--range-progress', `${progress}%`);
         };
         
-        sliderElement.addEventListener('input', () => { 
-            inputElement.value = sliderElement.value; 
-            updateSliderProgress(); 
-            // Only update live results if in planner mode
+        const handleInput = () => {
             if (document.querySelector('.goal-button.selected').dataset.goal === 'planner') {
                 updateLiveResults();
             }
+        };
+
+        sliderElement.addEventListener('input', () => { 
+            inputElement.value = sliderElement.value; 
+            updateSliderProgress(); 
+            handleInput();
         });
         inputElement.addEventListener('input', () => {
             if (parseFloat(inputElement.value) >= parseFloat(sliderElement.min) && parseFloat(inputElement.value) <= parseFloat(sliderElement.max)) {
                 sliderElement.value = inputElement.value;
                 updateSliderProgress();
-                if (document.querySelector('.goal-button.selected').dataset.goal === 'planner') {
-                    updateLiveResults();
-                }
+                handleInput();
             }
         });
         updateSliderProgress();
@@ -217,7 +204,6 @@ document.addEventListener('DOMContentLoaded', () => {
         loanTenureContainer.style.opacity = isPlannerMode ? '1' : '0.5';
         investmentTenureContainer.style.opacity = isPlannerMode ? '1' : '0.5';
         
-        // This is the key change: The results are now triggered by the button click
         if (goal === 'planner') runPlannerMode();
         else if (goal === 'min-time') findMinimumTime();
         else if (goal === 'optimal-strategy') findOptimalStrategy();
@@ -230,9 +216,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         goalButtons.forEach(button => { button.addEventListener('click', () => handleGoalSelection(button)); });
         
-        // Set initial state WITHOUT showing bottom results
-        finalResultsSection.classList.add('hidden');
-        updateLiveResults();
+        // *** THE FIX IS HERE ***
+        // This line correctly sets the initial state when the page loads.
+        handleGoalSelection(document.querySelector('.goal-button.selected'));
         
         console.log("PaiFinance initialization complete.");
     }
