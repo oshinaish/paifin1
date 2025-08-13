@@ -1,7 +1,7 @@
 /**
  * PaiFinance - Interactive Script
- * Version: 2.1 - THE FINAL FIX
- * Last updated: August 13, 2025, 10:37 AM IST
+ * Version: 2.2 - Minimum Time Engine COMPLETE
+ * Last updated: August 13, 2025, 10:45 AM IST
  * Built by the Bros.
  */
 
@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const loanInterestRateInput = document.getElementById('loanInterestRateDisplay');
     const loanInterestRateSlider = document.getElementById('loanInterestRateSlider');
     const investmentRateInput = document.getElementById('investmentRateDisplay');
-    const investmentRateSlider = document.getElementById('riskAppetiteSlider');
+    const investmentRateSlider = document.getElementById('investmentRateSlider');
     const loanTenureContainer = document.getElementById('loanTenureContainer');
     const loanTenureInput = document.getElementById('loanTenureDisplay');
     const loanTenureSlider = document.getElementById('loanTenureSlider');
@@ -94,7 +94,52 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function findMinimumTime() {
         finalResultsSection.classList.remove('hidden');
-        mainResultsContainer.innerHTML = `<div class="text-center p-4">The "Minimum Time" feature is the next one we'll build! Coming soon.</div>`;
+        mainResultsContainer.innerHTML = `<div class="text-center p-4">Calculating minimum time to offset interest...</div>`;
+
+        setTimeout(() => {
+            const principal = parseFloat(loanAmountInput.value);
+            const budget = parseFloat(monthlyBudgetInput.value);
+            const loanAnnualRate = parseFloat(loanInterestRateInput.value);
+            const investmentAnnualRate = parseFloat(investmentRateInput.value);
+            let foundScenario = null;
+
+            // Loop month by month for precision
+            for (let months = 1; months <= 360; months++) {
+                const tenureInYears = months / 12;
+                const emi = calculateEMI(principal, loanAnnualRate, tenureInYears);
+
+                if (emi > budget) continue;
+
+                const monthlyInvestment = budget - emi;
+                const totalInterestPaid = (emi * months) - principal;
+                const futureValue = calculateFutureValue(monthlyInvestment, investmentAnnualRate, tenureInYears);
+
+                // Check if the investment growth has caught up to the interest cost
+                if (futureValue >= totalInterestPaid) {
+                    const netWealth = futureValue - totalInterestPaid;
+                    foundScenario = {
+                        tenure: tenureInYears,
+                        emi,
+                        monthlyInvestment,
+                        totalInterestPaid,
+                        futureValue,
+                        netWealth
+                    };
+                    break; // Exit the loop as soon as we find the first match
+                }
+            }
+
+            if (foundScenario) {
+                // Convert tenure to years and months for display
+                const years = Math.floor(foundScenario.tenure);
+                const remainingMonths = Math.round((foundScenario.tenure - years) * 12);
+                const tenureString = `${years} Years, ${remainingMonths} Months`;
+                
+                displayResults(foundScenario, 'Minimum Time', tenureString);
+            } else {
+                mainResultsContainer.innerHTML = `<div class="text-center p-4 text-danger">It's not possible to offset interest within 30 years with this budget.</div>`;
+            }
+        }, 100);
     }
 
     // --- 4. UI INTERACTIVITY & DISPLAY FUNCTIONS ---
@@ -121,10 +166,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function displayResults(scenario, title) {
-        if (title.includes('Optimal')) {
-            loanTenureInput.value = scenario.tenure;
-            investmentTenureInput.value = scenario.tenure;
+    function displayResults(scenario, title, tenureString = null) {
+        const displayTenure = tenureString || `${scenario.tenure} Years`;
+
+        if (title.includes('Optimal') || title.includes('Minimum')) {
+            loanTenureInput.value = Math.round(scenario.tenure);
+            investmentTenureInput.value = Math.round(scenario.tenure);
             loanTenureInput.dispatchEvent(new Event('input', { bubbles:true }));
             investmentTenureInput.dispatchEvent(new Event('input', { bubbles:true }));
         }
@@ -132,9 +179,9 @@ document.addEventListener('DOMContentLoaded', () => {
         mainResultsContainer.innerHTML = `
             <h2 class="text-2xl font-bold text-textdark font-albert_sans mb-4 text-center">${title} Results</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                ${createResultCard('Loan Details', `Tenure: ${scenario.tenure} Years<br>Monthly EMI: ₹${scenario.emi.toLocaleString('en-IN')}`, 'primary')}
+                ${createResultCard('Loan Details', `Tenure: ${displayTenure}<br>Monthly EMI: ₹${scenario.emi.toLocaleString('en-IN')}`, 'primary')}
                 ${createResultCard('Investment Details', `Monthly SIP: ₹${scenario.monthlyInvestment.toLocaleString('en-IN')}<br>Total Wealth Built: ₹${scenario.futureValue.toLocaleString('en-IN')}`, 'success')}
-                ${createResultCard('Net Money Input', `Total Paid: ₹${(scenario.emi * scenario.tenure * 12).toLocaleString('en-IN')}`, 'warning')}
+                ${createResultCard('Net Money Input', `Total Paid: ₹${(scenario.emi * Math.round(scenario.tenure * 12)).toLocaleString('en-IN')}`, 'warning')}
                 ${createResultCard('Net Money Output', `Net Wealth Created: ₹${scenario.netWealth.toLocaleString('en-IN')}`, 'success')}
             </div>
         `;
@@ -216,8 +263,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         goalButtons.forEach(button => { button.addEventListener('click', () => handleGoalSelection(button)); });
         
-        // *** THE FIX IS HERE ***
-        // This line correctly sets the initial state when the page loads.
         handleGoalSelection(document.querySelector('.goal-button.selected'));
         
         console.log("PaiFinance initialization complete.");
