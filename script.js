@@ -1,7 +1,7 @@
 /**
  * PaiFinance - Interactive Script
- * Version: 6.0 - Final Widget Polish
- * Last updated: August 19, 2025, 1:45 AM IST
+ * Version: 6.1 - Final Widget Polish
+ * Last updated: August 19, 2025, 1:50 AM IST
  * Built by the Bros.
  */
 
@@ -166,15 +166,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const totalInvested = scenario.monthlyInvestment * Math.round(scenario.tenure * 12);
         const totalGains = scenario.futureValue - totalInvested;
         const totalPaid = scenario.principal + scenario.totalInterestPaid;
-        const moneyInput = totalPaid + totalInvested;
-        const moneyOutput = scenario.principal + totalGains;
-
+        
         mainResultsContainer.innerHTML = `
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 ${createWidgetCard('Loan Details', scenario, 'primary', displayTenure)}
                 ${createWidgetCard('Investment Details', scenario, 'success', displayTenure, totalInvested, totalGains)}
-                ${createResultCard('Net Money Input', `Total Outflow: ₹${moneyInput.toLocaleString('en-IN')}`, 'warning')}
-                ${createResultCard('Net Money Output', `Total Return: ₹${moneyOutput.toLocaleString('en-IN')}`, 'success')}
+                ${createResultCard('Net Money Input', scenario, 'warning', totalInvested, totalPaid)}
+                ${createResultCard('Net Money Output', scenario, 'success', totalGains)}
             </div>
         `;
 
@@ -185,8 +183,27 @@ document.addEventListener('DOMContentLoaded', () => {
         renderComparisonChart(chartData);
     }
 
-    function createResultCard(title, content, color) {
-        return `<div class="bg-card p-4 rounded-lg shadow-default"><h3 class="text-sm font-bold text-textdark mb-2">${title}</h3><p class="text-textlight leading-relaxed text-xs">${content}</p></div>`;
+    function createResultCard(title, scenario, color, totalInvested, totalPaid) {
+        let content;
+        if (title === 'Net Money Input') {
+            content = `
+                <table class="w-full text-xs">
+                    <tr><td class="text-left">Total EMIs</td><td class="text-right font-normal">₹${totalPaid.toLocaleString('en-IN')}</td></tr>
+                    <tr><td class="text-left">Total Investments</td><td class="text-right font-normal">₹${totalInvested.toLocaleString('en-IN')}</td></tr>
+                    <tr><td class="text-left font-bold">Total Outflow</td><td class="text-right font-bold">₹${(totalPaid + totalInvested).toLocaleString('en-IN')}</td></tr>
+                </table>
+            `;
+        } else {
+            const totalGains = scenario.futureValue - totalInvested;
+            content = `
+                <table class="w-full text-xs">
+                    <tr><td class="text-left">Principal Received</td><td class="text-right font-normal">₹${scenario.principal.toLocaleString('en-IN')}</td></tr>
+                    <tr><td class="text-left">Gains Made</td><td class="text-right font-normal">₹${totalGains.toLocaleString('en-IN')}</td></tr>
+                    <tr><td class="text-left font-bold">Total Return</td><td class="text-right font-bold">₹${(scenario.principal + totalGains).toLocaleString('en-IN')}</td></tr>
+                </table>
+            `;
+        }
+        return `<div class="bg-transparent"><h3 class="text-sm font-bold text-textdark mb-2 text-center">${title}</h3><div class="text-textlight leading-relaxed text-xs">${content}</div></div>`;
     }
     
     function createWidgetCard(title, scenario, color, displayTenure, totalInvested, totalGains) {
@@ -217,8 +234,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         return `
-            <div class="bg-card p-4 rounded-lg shadow-default">
-                <h3 class="text-sm font-bold text-textdark mb-2">${title}</h3>
+            <div class="bg-transparent">
+                <h3 class="text-sm font-bold text-textdark mb-2 text-center">${title}</h3>
                 <div class="flex items-center gap-4">
                     <div class="w-20 h-20 relative flex-shrink-0">
                         <canvas id="${canvasId}"></canvas>
@@ -396,3 +413,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
     initializeApp();
 });
+
