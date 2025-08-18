@@ -1,7 +1,7 @@
 /**
  * PaiFinance - Interactive Script
- * Version: 4.4 - Widget Pie Charts
- * Last updated: August 18, 2025, 7:30 PM IST
+ * Version: 5.0 - Final Widget Revamp
+ * Last updated: August 18, 2025, 11:10 PM IST
  * Built by the Bros.
  */
 
