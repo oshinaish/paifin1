@@ -1,7 +1,7 @@
 /**
  * PaiFinance - Interactive Script
- * Version: 6.1 - Final Widget Polish
- * Last updated: August 19, 2025, 1:50 AM IST
+ * Version: 6.2 - Final Widget Polish
+ * Last updated: August 19, 2025, 1:55 AM IST
  * Built by the Bros.
  */
 
@@ -198,12 +198,12 @@ document.addEventListener('DOMContentLoaded', () => {
             content = `
                 <table class="w-full text-xs">
                     <tr><td class="text-left">Principal Received</td><td class="text-right font-normal">₹${scenario.principal.toLocaleString('en-IN')}</td></tr>
-                    <tr><td class="text-left">Gains Made</td><td class="text-right font-normal">₹${totalGains.toLocaleString('en-IN')}</td></tr>
+                    <tr><td class="text-left">Gains Made</td><td class="text-right font-normal text-investment_green">₹${totalGains.toLocaleString('en-IN')}</td></tr>
                     <tr><td class="text-left font-bold">Total Return</td><td class="text-right font-bold">₹${(scenario.principal + totalGains).toLocaleString('en-IN')}</td></tr>
                 </table>
             `;
         }
-        return `<div class="bg-transparent"><h3 class="text-sm font-bold text-textdark mb-2 text-center">${title}</h3><div class="text-textlight leading-relaxed text-xs">${content}</div></div>`;
+        return `<div class="bg-card p-4 rounded-lg shadow-default"><h3 class="text-sm font-bold text-textdark mb-2 text-center">${title}</h3><div class="text-textlight leading-relaxed text-xs">${content}</div></div>`;
     }
     
     function createWidgetCard(title, scenario, color, displayTenure, totalInvested, totalGains) {
@@ -213,7 +213,7 @@ document.addEventListener('DOMContentLoaded', () => {
             content = `
                 <table class="w-full text-xs">
                     <tr><td class="flex items-center"><span class="w-2 h-2 rounded-full bg-emi_purple mr-2"></span>Principal</td><td class="text-right font-normal">₹${scenario.principal.toLocaleString('en-IN')}</td></tr>
-                    <tr><td class="flex items-center"><span class="w-2 h-2 rounded-full bg-gray-300 mr-2"></span>Interest</td><td class="text-right font-normal">₹${scenario.totalInterestPaid.toLocaleString('en-IN')}</td></tr>
+                    <tr><td class="flex items-center"><span class="w-2 h-2 rounded-full bg-gray-300 mr-2"></span>Interest</td><td class="text-right font-normal text-emi_purple">₹${scenario.totalInterestPaid.toLocaleString('en-IN')}</td></tr>
                     <tr><td class="text-left font-bold">Total Paid</td><td class="text-right font-bold">₹${(scenario.principal + scenario.totalInterestPaid).toLocaleString('en-IN')}</td></tr>
                 </table>
             `;
@@ -224,7 +224,7 @@ document.addEventListener('DOMContentLoaded', () => {
             content = `
                 <table class="w-full text-xs">
                     <tr><td class="flex items-center"><span class="w-2 h-2 rounded-full bg-investment_green mr-2"></span>Invested</td><td class="text-right font-normal">₹${totalInvested.toLocaleString('en-IN')}</td></tr>
-                    <tr><td class="flex items-center"><span class="w-2 h-2 rounded-full bg-gray-300 mr-2"></span>Gains</td><td class="text-right font-normal">₹${totalGains.toLocaleString('en-IN')}</td></tr>
+                    <tr><td class="flex items-center"><span class="w-2 h-2 rounded-full bg-gray-300 mr-2"></span>Gains</td><td class="text-right font-normal text-investment_green">₹${totalGains.toLocaleString('en-IN')}</td></tr>
                     <tr><td class="text-left font-bold">Total Wealth</td><td class="text-right font-bold">₹${scenario.futureValue.toLocaleString('en-IN')}</td></tr>
                 </table>
             `;
@@ -234,7 +234,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         return `
-            <div class="bg-transparent">
+            <div class="bg-card p-4 rounded-lg shadow-default">
                 <h3 class="text-sm font-bold text-textdark mb-2 text-center">${title}</h3>
                 <div class="flex items-center gap-4">
                     <div class="w-20 h-20 relative flex-shrink-0">
@@ -413,4 +413,3 @@ document.addEventListener('DOMContentLoaded', () => {
 
     initializeApp();
 });
-
