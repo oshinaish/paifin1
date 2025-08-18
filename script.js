@@ -1,7 +1,7 @@
 /**
  * PaiFinance - Interactive Script
- * Version: 5.2 - Final Widget Polish
- * Last updated: August 19, 2025, 12:55 AM IST
+ * Version: 5.3 - Final UI Polish
+ * Last updated: August 19, 2025, 1:00 AM IST
  * Built by the Bros.
  */
 
@@ -183,7 +183,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function createResultCard(title, content, color) {
-        return `<div class="bg-card p-4 rounded-lg shadow-default"><h3 class="text-md font-bold text-textdark mb-2">${title}</h3><p class="text-textlight leading-relaxed">${content}</p></div>`;
+        return `<div class="bg-card p-4 rounded-lg shadow-default"><h3 class="text-md font-bold text-textdark mb-2">${title}</h3><p class="text-textlight leading-relaxed text-xs">${content}</p></div>`;
     }
     
     function createWidgetCard(title, scenario, color, displayTenure, totalInvested, totalGains) {
@@ -191,7 +191,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (title === 'Loan Details') {
             content = `
-                <table class="w-full text-sm">
+                <table class="w-full text-xs">
                     <tr><td class="text-left">Principal</td><td class="text-right font-semibold">₹${scenario.principal.toLocaleString('en-IN')}</td></tr>
                     <tr><td class="text-left">Interest</td><td class="text-right font-semibold">₹${scenario.totalInterestPaid.toLocaleString('en-IN')}</td></tr>
                     <tr><td class="text-left font-bold">Total Paid</td><td class="text-right font-bold">₹${(scenario.principal + scenario.totalInterestPaid).toLocaleString('en-IN')}</td></tr>
@@ -202,7 +202,7 @@ document.addEventListener('DOMContentLoaded', () => {
             percentageColor = 'text-textdark';
         } else {
             content = `
-                <table class="w-full text-sm">
+                <table class="w-full text-xs">
                     <tr><td class="text-left">Invested</td><td class="text-right font-semibold">₹${totalInvested.toLocaleString('en-IN')}</td></tr>
                     <tr><td class="text-left">Gains</td><td class="text-right font-semibold">₹${totalGains.toLocaleString('en-IN')}</td></tr>
                     <tr><td class="text-left font-bold">Total Wealth</td><td class="text-right font-bold">₹${scenario.futureValue.toLocaleString('en-IN')}</td></tr>
@@ -219,11 +219,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="flex items-center gap-4">
                     <div class="w-20 h-20 relative flex-shrink-0">
                         <canvas id="${canvasId}"></canvas>
-                        <div class="absolute inset-0 flex items-center justify-center text-xl font-bold ${percentageColor}">
+                        <div class="absolute inset-0 flex items-center justify-center text-base font-bold ${percentageColor}">
                             <span>${percentage}%</span>
                         </div>
                     </div>
-                    <div class="text-textlight text-sm leading-relaxed w-full">
+                    <div class="text-textlight leading-relaxed w-full">
                         ${content}
                     </div>
                 </div>
@@ -267,7 +267,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function updatePieChart(emi, investment) {
         chartMessage.style.display = 'none';
-        const data = { labels: ['EMI', 'Investment'], datasets: [{ data: [emi, investment], backgroundColor: ['#9a85e1', '#1B9272'], borderColor: '#F9FAFB', borderWidth: 2 }] };
+        const data = { labels: ['EMI', 'Investment'], datasets: [{ data: [emi, investment], backgroundColor: ['rgba(154, 133, 225, 0.5)', 'rgba(27, 146, 114, 0.5)'], borderColor: '#F9FAFB', borderWidth: 2 }] };
         if (monthlyBudgetChart) {
             monthlyBudgetChart.data = data;
             monthlyBudgetChart.update();
