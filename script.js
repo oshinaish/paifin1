@@ -1,7 +1,7 @@
 /**
  * PaiFinance - Interactive Script
- * Version: 5.5 - Final Widget Polish
- * Last updated: August 19, 2025, 1:20 AM IST
+ * Version: 6.0 - Final Widget Polish
+ * Last updated: August 19, 2025, 1:45 AM IST
  * Built by the Bros.
  */
 
@@ -165,13 +165,16 @@ document.addEventListener('DOMContentLoaded', () => {
         
         const totalInvested = scenario.monthlyInvestment * Math.round(scenario.tenure * 12);
         const totalGains = scenario.futureValue - totalInvested;
+        const totalPaid = scenario.principal + scenario.totalInterestPaid;
+        const moneyInput = totalPaid + totalInvested;
+        const moneyOutput = scenario.principal + totalGains;
 
         mainResultsContainer.innerHTML = `
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 ${createWidgetCard('Loan Details', scenario, 'primary', displayTenure)}
                 ${createWidgetCard('Investment Details', scenario, 'success', displayTenure, totalInvested, totalGains)}
-                ${createResultCard('Net Money Input', `Total Paid: ₹${(scenario.emi * Math.round(scenario.tenure * 12)).toLocaleString('en-IN')}`, 'warning')}
-                ${createResultCard('Net Money Output', `Net Wealth Created: ₹${scenario.netWealth.toLocaleString('en-IN')}`, 'success')}
+                ${createResultCard('Net Money Input', `Total Outflow: ₹${moneyInput.toLocaleString('en-IN')}`, 'warning')}
+                ${createResultCard('Net Money Output', `Total Return: ₹${moneyOutput.toLocaleString('en-IN')}`, 'success')}
             </div>
         `;
 
@@ -183,7 +186,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function createResultCard(title, content, color) {
-        return `<div class="bg-card p-4 rounded-lg shadow-default"><h3 class="text-md font-bold text-textdark mb-2">${title}</h3><p class="text-textlight leading-relaxed text-sm">${content}</p></div>`;
+        return `<div class="bg-card p-4 rounded-lg shadow-default"><h3 class="text-sm font-bold text-textdark mb-2">${title}</h3><p class="text-textlight leading-relaxed text-xs">${content}</p></div>`;
     }
     
     function createWidgetCard(title, scenario, color, displayTenure, totalInvested, totalGains) {
@@ -191,9 +194,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (title === 'Loan Details') {
             content = `
-                <table class="w-full text-sm">
-                    <tr><td class="text-left">Principal</td><td class="text-right font-normal">₹${scenario.principal.toLocaleString('en-IN')}</td></tr>
-                    <tr><td class="text-left">Interest</td><td class="text-right font-normal">₹${scenario.totalInterestPaid.toLocaleString('en-IN')}</td></tr>
+                <table class="w-full text-xs">
+                    <tr><td class="flex items-center"><span class="w-2 h-2 rounded-full bg-emi_purple mr-2"></span>Principal</td><td class="text-right font-normal">₹${scenario.principal.toLocaleString('en-IN')}</td></tr>
+                    <tr><td class="flex items-center"><span class="w-2 h-2 rounded-full bg-gray-300 mr-2"></span>Interest</td><td class="text-right font-normal">₹${scenario.totalInterestPaid.toLocaleString('en-IN')}</td></tr>
                     <tr><td class="text-left font-bold">Total Paid</td><td class="text-right font-bold">₹${(scenario.principal + scenario.totalInterestPaid).toLocaleString('en-IN')}</td></tr>
                 </table>
             `;
@@ -202,9 +205,9 @@ document.addEventListener('DOMContentLoaded', () => {
             percentageColor = 'text-textdark';
         } else {
             content = `
-                <table class="w-full text-sm">
-                    <tr><td class="text-left">Invested</td><td class="text-right font-normal">₹${totalInvested.toLocaleString('en-IN')}</td></tr>
-                    <tr><td class="text-left">Gains</td><td class="text-right font-normal">₹${totalGains.toLocaleString('en-IN')}</td></tr>
+                <table class="w-full text-xs">
+                    <tr><td class="flex items-center"><span class="w-2 h-2 rounded-full bg-investment_green mr-2"></span>Invested</td><td class="text-right font-normal">₹${totalInvested.toLocaleString('en-IN')}</td></tr>
+                    <tr><td class="flex items-center"><span class="w-2 h-2 rounded-full bg-gray-300 mr-2"></span>Gains</td><td class="text-right font-normal">₹${totalGains.toLocaleString('en-IN')}</td></tr>
                     <tr><td class="text-left font-bold">Total Wealth</td><td class="text-right font-bold">₹${scenario.futureValue.toLocaleString('en-IN')}</td></tr>
                 </table>
             `;
@@ -215,11 +218,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         return `
             <div class="bg-card p-4 rounded-lg shadow-default">
-                <h3 class="text-md font-bold text-textdark mb-2">${title}</h3>
+                <h3 class="text-sm font-bold text-textdark mb-2">${title}</h3>
                 <div class="flex items-center gap-4">
                     <div class="w-20 h-20 relative flex-shrink-0">
                         <canvas id="${canvasId}"></canvas>
-                        <div class="absolute inset-0 flex items-center justify-center text-lg font-bold ${percentageColor}">
+                        <div class="absolute inset-0 flex items-center justify-center text-base font-bold ${percentageColor}">
                             <span>${percentage}%</span>
                         </div>
                     </div>
