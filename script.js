@@ -1,7 +1,7 @@
 /**
  * PaiFinance - Interactive Script
- * Version: 5.0 - Final Widget Revamp
- * Last updated: August 19, 2025, 12:20 AM IST
+ * Version: 5.1 - Final Widget Polish
+ * Last updated: August 19, 2025, 12:30 AM IST
  * Built by the Bros.
  */
 
@@ -207,7 +207,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="bg-card p-4 rounded-lg shadow-default border-t-4 ${colorClasses[color]}">
                 <h3 class="text-md font-bold text-textdark mb-2">${title}</h3>
                 <div class="flex items-center gap-4">
-                    <div class="w-24 h-24 relative flex-shrink-0">
+                    <div class="w-[85px] h-[85px] relative flex-shrink-0">
                         <canvas id="${canvasId}"></canvas>
                         <div class="absolute inset-0 flex items-center justify-center text-xl font-bold ${percentageColor}">
                             <span>${percentage}%</span>
@@ -231,7 +231,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 labels: ['Principal', 'Interest'],
                 datasets: [{
                     data: [scenario.principal, scenario.totalInterestPaid],
-                    backgroundColor: ['#4F46E5', '#EF4444'],
+                    backgroundColor: ['rgba(154, 133, 225, 0.5)', '#E5E7EB'],
                     borderWidth: 0,
                 }]
             },
@@ -247,7 +247,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 labels: ['Invested', 'Gains'],
                 datasets: [{
                     data: [totalInvested, totalGains],
-                    backgroundColor: ['#1B9272', '#22C55E'],
+                    backgroundColor: ['rgba(27, 146, 114, 0.5)', '#E5E7EB'],
                     borderWidth: 0,
                 }]
             },
