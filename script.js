@@ -1,7 +1,7 @@
 /**
  * PaiFinance - Interactive Script
- * Version: 5.1 - Final Widget Polish
- * Last updated: August 19, 2025, 12:30 AM IST
+ * Version: 5.2 - Final Widget Polish
+ * Last updated: August 19, 2025, 12:55 AM IST
  * Built by the Bros.
  */
 
@@ -183,37 +183,47 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function createResultCard(title, content, color) {
-        const colorClasses = { primary: 'border-t-primary', success: 'border-t-success', warning: 'border-t-danger' };
-        return `<div class="bg-card p-4 rounded-lg shadow-default border-t-4 ${colorClasses[color]}"><h3 class="text-md font-bold text-textdark mb-2">${title}</h3><p class="text-textlight leading-relaxed">${content}</p></div>`;
+        return `<div class="bg-card p-4 rounded-lg shadow-default"><h3 class="text-md font-bold text-textdark mb-2">${title}</h3><p class="text-textlight leading-relaxed">${content}</p></div>`;
     }
     
     function createWidgetCard(title, scenario, color, displayTenure, totalInvested, totalGains) {
-        const colorClasses = { primary: 'border-t-primary', success: 'border-t-success' };
         let content, canvasId, percentage, percentageColor;
 
         if (title === 'Loan Details') {
-            content = `Principal: ₹${scenario.principal.toLocaleString('en-IN')}<br>Interest: ₹${scenario.totalInterestPaid.toLocaleString('en-IN')}<br>Total Paid: ₹${(scenario.principal + scenario.totalInterestPaid).toLocaleString('en-IN')}`;
+            content = `
+                <table class="w-full text-sm">
+                    <tr><td class="text-left">Principal</td><td class="text-right font-semibold">₹${scenario.principal.toLocaleString('en-IN')}</td></tr>
+                    <tr><td class="text-left">Interest</td><td class="text-right font-semibold">₹${scenario.totalInterestPaid.toLocaleString('en-IN')}</td></tr>
+                    <tr><td class="text-left font-bold">Total Paid</td><td class="text-right font-bold">₹${(scenario.principal + scenario.totalInterestPaid).toLocaleString('en-IN')}</td></tr>
+                </table>
+            `;
             canvasId = 'loanWidgetChart';
             percentage = Math.round((scenario.totalInterestPaid / (scenario.principal + scenario.totalInterestPaid)) * 100);
-            percentageColor = 'text-danger';
+            percentageColor = 'text-textdark';
         } else {
-            content = `Invested: ₹${totalInvested.toLocaleString('en-IN')}<br>Gains: ₹${totalGains.toLocaleString('en-IN')}<br>Total Wealth: ₹${scenario.futureValue.toLocaleString('en-IN')}`;
+            content = `
+                <table class="w-full text-sm">
+                    <tr><td class="text-left">Invested</td><td class="text-right font-semibold">₹${totalInvested.toLocaleString('en-IN')}</td></tr>
+                    <tr><td class="text-left">Gains</td><td class="text-right font-semibold">₹${totalGains.toLocaleString('en-IN')}</td></tr>
+                    <tr><td class="text-left font-bold">Total Wealth</td><td class="text-right font-bold">₹${scenario.futureValue.toLocaleString('en-IN')}</td></tr>
+                </table>
+            `;
             canvasId = 'investmentWidgetChart';
             percentage = Math.round((totalGains / scenario.futureValue) * 100);
-            percentageColor = 'text-success';
+            percentageColor = 'text-textdark';
         }
 
         return `
-            <div class="bg-card p-4 rounded-lg shadow-default border-t-4 ${colorClasses[color]}">
+            <div class="bg-card p-4 rounded-lg shadow-default">
                 <h3 class="text-md font-bold text-textdark mb-2">${title}</h3>
                 <div class="flex items-center gap-4">
-                    <div class="w-[85px] h-[85px] relative flex-shrink-0">
+                    <div class="w-20 h-20 relative flex-shrink-0">
                         <canvas id="${canvasId}"></canvas>
                         <div class="absolute inset-0 flex items-center justify-center text-xl font-bold ${percentageColor}">
                             <span>${percentage}%</span>
                         </div>
                     </div>
-                    <div class="text-textlight text-sm leading-relaxed">
+                    <div class="text-textlight text-sm leading-relaxed w-full">
                         ${content}
                     </div>
                 </div>
