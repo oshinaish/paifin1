@@ -1,7 +1,7 @@
 /**
  * PaiFinance - Interactive Script
  * Version: 5.0 - Final Widget Revamp
- * Last updated: August 18, 2025, 11:10 PM IST
+ * Last updated: August 19, 2025, 12:20 AM IST
  * Built by the Bros.
  */
 
@@ -192,12 +192,12 @@ document.addEventListener('DOMContentLoaded', () => {
         let content, canvasId, percentage, percentageColor;
 
         if (title === 'Loan Details') {
-            content = `Tenure: ${displayTenure}<br>Monthly EMI: ₹${scenario.emi.toLocaleString('en-IN')}`;
+            content = `Principal: ₹${scenario.principal.toLocaleString('en-IN')}<br>Interest: ₹${scenario.totalInterestPaid.toLocaleString('en-IN')}<br>Total Paid: ₹${(scenario.principal + scenario.totalInterestPaid).toLocaleString('en-IN')}`;
             canvasId = 'loanWidgetChart';
             percentage = Math.round((scenario.totalInterestPaid / (scenario.principal + scenario.totalInterestPaid)) * 100);
             percentageColor = 'text-danger';
         } else {
-            content = `Monthly SIP: ₹${scenario.monthlyInvestment.toLocaleString('en-IN')}<br>Total Wealth: ₹${scenario.futureValue.toLocaleString('en-IN')}`;
+            content = `Invested: ₹${totalInvested.toLocaleString('en-IN')}<br>Gains: ₹${totalGains.toLocaleString('en-IN')}<br>Total Wealth: ₹${scenario.futureValue.toLocaleString('en-IN')}`;
             canvasId = 'investmentWidgetChart';
             percentage = Math.round((totalGains / scenario.futureValue) * 100);
             percentageColor = 'text-success';
