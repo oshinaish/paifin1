@@ -1,7 +1,7 @@
 /**
  * PaiFinance - Interactive Script
- * Version: 6.5 - Final Bug Fix
- * Last updated: August 21, 2025, 8:35 AM IST
+ * Version: 6.6 - Final Bug Fix
+ * Last updated: August 21, 2025, 8:40 AM IST
  * Built by the Bros.
  */
 
@@ -138,16 +138,31 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- 4. UI INTERACTIVITY & DISPLAY FUNCTIONS ---
     function updatePlannerResults() {
         const principal = parseFloat(loanAmountInput.value);
-        const annualRate = parseFloat(loanInterestRateInput.value);
-        const tenureYears = parseFloat(loanTenureInput.value);
+        const loanAnnualRate = parseFloat(loanInterestRateInput.value);
+        const loanTenureYears = parseFloat(loanTenureInput.value);
         const budget = parseFloat(monthlyBudgetInput.value);
         const investmentRate = parseFloat(investmentRateInput.value);
-        const emi = calculateEMI(principal, annualRate, tenureYears);
+        const investmentTenureYears = parseFloat(investmentTenureInput.value); // *** FIX: Read investment tenure
+
+        const emi = calculateEMI(principal, loanAnnualRate, loanTenureYears);
         const investment = (budget >= emi) ? budget - emi : 0;
-        const totalInterestPaid = (emi * tenureYears * 12) - principal;
-        const futureValue = calculateFutureValue(investment, investmentRate, tenureYears);
+        
+        const totalInterestPaid = (emi * loanTenureYears * 12) - principal;
+        const futureValue = calculateFutureValue(investment, investmentRate, investmentTenureYears); // *** FIX: Use investment tenure for FV
         const netWealth = futureValue - totalInterestPaid;
-        const scenario = { tenure: tenureYears, emi, monthlyInvestment: investment, totalInterestPaid, futureValue, netWealth, principal, loanAnnualRate: annualRate, investmentAnnualRate: investmentRate };
+        
+        const scenario = { 
+            tenure: loanTenureYears, 
+            investmentTenure: investmentTenureYears, // Pass down for accurate calculations
+            emi, 
+            monthlyInvestment: investment, 
+            totalInterestPaid, 
+            futureValue, 
+            netWealth, 
+            principal, 
+            loanAnnualRate, 
+            investmentAnnualRate: investmentRate 
+        };
         displayResults(scenario, 'Manual Plan');
     }
 
@@ -163,7 +178,8 @@ document.addEventListener('DOMContentLoaded', () => {
             investmentTenureInput.dispatchEvent(new Event('input', { bubbles:true }));
         }
         
-        const totalInvested = scenario.monthlyInvestment * Math.round(scenario.tenure * 12);
+        const investmentTenureForCalc = scenario.investmentTenure || scenario.tenure; // *** FIX: Use correct tenure
+        const totalInvested = scenario.monthlyInvestment * Math.round(investmentTenureForCalc * 12);
         const totalGains = scenario.futureValue - totalInvested;
         const totalPaid = scenario.principal + scenario.totalInterestPaid;
         
@@ -176,9 +192,7 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
         `;
 
-        // Now that the canvases are in the DOM, render the charts
         renderWidgetCharts(scenario, totalInvested, totalGains);
-
         const chartData = generateComparisonData(scenario);
         renderComparisonChart(chartData);
     }
