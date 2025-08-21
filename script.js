@@ -1,7 +1,7 @@
 /**
  * PaiFinance - Interactive Script
- * Version: 6.7 - Final UI Polish
- * Last updated: August 21, 2025, 8:50 AM IST
+ * Version: 6.8 - Final Heading Polish
+ * Last updated: August 21, 2025, 9:00 AM IST
  * Built by the Bros.
  */
 
@@ -93,7 +93,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
             if (bestScenario) {
-                displayResults(bestScenario, 'Optimal Strategy');
+                displayResults(bestScenario, 'Winning the Financial Race');
             } else {
                 mainResultsContainer.innerHTML = `<div class="text-center p-4 text-danger">No viable strategy found.</div>`;
             }
@@ -129,7 +129,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const years = Math.floor(foundScenario.tenure);
                 const remainingMonths = Math.round((foundScenario.tenure - years) * 12);
                 const tenureString = `${years} Years, ${remainingMonths} Months`;
-                displayResults(foundScenario, 'Minimum Time', tenureString);
+                displayResults(foundScenario, 'The Race to Zero Debt', tenureString);
             } else {
                 mainResultsContainer.innerHTML = `<div class="text-center p-4 text-danger">Cannot offset interest within 30 years.</div>`;
             }
@@ -150,7 +150,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const futureValue = calculateFutureValue(investment, investmentRate, investmentTenureYears);
         const netWealth = futureValue - totalInterestPaid;
         const scenario = { tenure: tenureYears, investmentTenure: investmentTenureYears, emi, monthlyInvestment: investment, totalInterestPaid, futureValue, netWealth, principal, loanAnnualRate: annualRate, investmentAnnualRate: investmentRate };
-        displayResults(scenario, 'Manual Plan');
+        displayResults(scenario, 'Your Strategy Visualised');
     }
 
     function displayResults(scenario, title, tenureString = null) {
@@ -171,6 +171,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const totalPaid = scenario.principal + scenario.totalInterestPaid;
         
         mainResultsContainer.innerHTML = `
+            <h2 class="text-2xl font-bold text-textdark font-albert_sans mb-4 text-center">${title}</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 ${createWidgetCard('Loan Details', scenario, 'primary', displayTenure)}
                 ${createWidgetCard('Investment Details', scenario, 'success', displayTenure, totalInvested, totalGains)}
@@ -183,7 +184,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const chartData = generateComparisonData(scenario);
         renderComparisonChart(chartData);
 
-        // *** NEW: Update the chart explanation ***
         chartExplanation.innerHTML = `
             <h4 class="font-bold text-textdark mb-2">The Story Behind the Numbers</h4>
             <p>This chart visualizes the power of your strategy over time. The <span class="font-semibold text-emi_purple">purple line</span> shows your loan balance decreasing, while the <span class="font-semibold text-investment_green">green line</span> shows your investment value growing.</p>
