@@ -1,7 +1,7 @@
 /**
  * PaiFinance - Interactive Script
- * Version: 12.0 - FINAL POLISH & CORE LOGIC FIX
- * Last updated: August 21, 2025, 11:45 AM IST
+ * Version: 13.1 - Final Content Polish
+ * Last updated: August 21, 2025, 11:58 PM IST
  * Built by the Bros.
  */
 
@@ -200,7 +200,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const chartData = generateComparisonData(scenario);
         renderComparisonChart(chartData);
 
-        const crossoverYearText = chartData.crossoverYear ? `Your investment value is projected to surpass your loan balance in <strong>Year ${chartData.crossoverYear}</strong>.` : '';
+        const crossoverYearText = chartData.crossoverYear ? `The key moment is in <strong>Year ${chartData.crossoverYear}</strong>, where your investment value is projected to surpass your outstanding loan balance. This means that if you were to liquidate your investment at this point to pay off the remaining loan, you could potentially become completely debt-free in just ${chartData.crossoverYear} years, significantly ahead of schedule.` : '';
 
         chartExplanation.innerHTML = `
             <h4 class="text-lg font-bold text-textdark mb-2 pt-4">${title}</h4>
@@ -213,6 +213,7 @@ document.addEventListener('DOMContentLoaded', () => {
         amortizationExplanation.innerHTML = `
             <h4 class="text-lg font-bold text-textdark mb-2 pt-4">Loan Amortization Schedule</h4>
             <p>An amortization schedule shows how your loan payments are broken down over time. You can see how much of your annual payments go towards the principal versus the interest, and how your loan balance decreases each year until it reaches zero.</p>
+            <p class="mt-2">Please note that this schedule is based on your regular EMI payments. If you make any part payments towards your loan, the schedule will change, and you will pay off your loan even faster.</p>
         `;
 
         if (title !== 'Your Strategy Visualised') {
@@ -220,8 +221,8 @@ document.addEventListener('DOMContentLoaded', () => {
             renderPaiVsTraditionalChart(paiVsTraditionalData);
             paiVsTraditionalExplanation.innerHTML = `
                 <h4 class="text-lg font-bold text-textdark mb-2 pt-4">PaiFinance vs. Traditional Loans</h4>
-                <p>This chart shows the power of the PaiFinance approach. The <span class="font-semibold text-danger">red line</span> shows how your net financial position gets worse over time with a traditional loan, ending at <strong class="text-danger">-₹${scenario.totalInterestPaid.toLocaleString('en-IN')}</strong>. The <span class="font-semibold text-investment_green">green line</span> shows how the PaiFinance strategy helps you build positive net wealth.</p>
-                <p class="mt-2">By the end of the term, the PaiFinance approach creates a financial advantage of <strong class="text-investment_green">₹${(scenario.netWealth - (-scenario.totalInterestPaid)).toLocaleString('en-IN')}</strong>.</p>
+                <p>This chart shows the power of the PaiFinance approach. The same monthly budget, when properly allocated across the right investing channels, can produce a more fruitful result. The <span class="font-semibold text-danger">red line</span> shows how your net financial position gets worse over time with a traditional loan, ending at <strong class="text-danger">-₹${scenario.totalInterestPaid.toLocaleString('en-IN')}</strong>.</p>
+                <p class="mt-2">The <span class="font-semibold text-investment_green">green line</span> shows how the PaiFinance strategy helps you build positive net wealth. By using PaiFinance, you can stay ahead of the curve and be in the top 1% of loan takers who are actually building wealth, investing smartly, and taking care of their financial health.</p>
             `;
         }
     }
