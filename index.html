@@ -71,8 +71,6 @@
         }
         .goal-button { background-color: rgba(234, 234, 234, 0.2); color: #1F2937; }
         .goal-button.selected { background-color: #1B9272; color: #FFFFFF; box-shadow: 0 0 0 2px #1B9272, 0 0 0 4px rgba(27, 146, 114, 0.4); }
-        .faq-answer { display: none; }
-        .faq-question.open .chevron { transform: rotate(180deg); }
     </style>
 </head>
 <body class="font-albert_sans bg-white text-textdark min-h-screen flex flex-col">
@@ -200,15 +198,18 @@
                 </div>
             </section>
 
-            <!-- Right Side: Pie Chart Section (1/4 width) -->
-            <section class="lg:col-span-1 bg-card p-6 flex flex-col items-center justify-center">
+            <!-- Right Side: Pie Chart & Summary Section (1/4 width) -->
+            <section class="lg:col-span-1 bg-card p-6 flex flex-col items-center justify-center space-y-6">
                  <div id="chartsContainer" class="w-full max-w-[350px]">
-                    <div class="w-full h-[250px] relative">
+                    <div class="w-full h-[200px] relative">
                         <canvas id="monthlyBudgetChart"></canvas>
                         <div id="chartMessage" class="absolute inset-0 flex items-center justify-center text-center text-textlight p-4">
                             Your budget breakdown will appear here.
                         </div>
                     </div>
+                 </div>
+                 <div id="summaryResultsContainer" class="w-full max-w-[350px] bg-background p-4 rounded-lg shadow-inner hidden">
+                    <!-- Summary results will be injected here -->
                  </div>
             </section>
         </div>
