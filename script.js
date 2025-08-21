@@ -1,7 +1,7 @@
 /**
  * PaiFinance - Interactive Script
- * Version: 8.0 - Final Polish & Bug Fixes
- * Last updated: August 21, 2025, 10:30 AM IST
+ * Version: 7.0 - CORE FUNCTIONALITY FIX
+ * Last updated: August 21, 2025, 9:30 AM IST
  * Built by the Bros.
  */
 
@@ -33,16 +33,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const amortizationContainer = document.getElementById('amortizationContainer');
     const amortizationExplanation = document.getElementById('amortizationExplanation');
     const amortizationTableContainer = document.getElementById('amortizationTableContainer');
+    const paiVsTraditionalContainer = document.getElementById('paiVsTraditionalContainer');
+    const paiVsTraditionalExplanation = document.getElementById('paiVsTraditionalExplanation');
 
     const chartsContainer = document.getElementById('chartsContainer');
     const goalButtons = document.querySelectorAll('.goal-button');
     const chartCanvas = document.getElementById('monthlyBudgetChart');
     const chartMessage = document.getElementById('chartMessage');
     const comparisonChartCanvas = document.getElementById('comparisonChart');
+    const paiVsTraditionalChartCanvas = document.getElementById('paiVsTraditionalChart');
     let monthlyBudgetChart = null;
     let comparisonChart = null;
     let loanWidgetChart = null;
     let investmentWidgetChart = null;
+    let paiVsTraditionalChart = null;
     let calculationTimeout;
 
     // --- 2. CORE FINANCIAL ENGINE ---
@@ -69,6 +73,7 @@ document.addEventListener('DOMContentLoaded', () => {
         finalResultsSection.classList.remove('hidden');
         comparisonChartContainer.classList.remove('hidden');
         amortizationContainer.classList.remove('hidden');
+        paiVsTraditionalContainer.classList.add('hidden');
         updatePlannerResults();
     }
 
@@ -76,6 +81,7 @@ document.addEventListener('DOMContentLoaded', () => {
         finalResultsSection.classList.remove('hidden');
         comparisonChartContainer.classList.remove('hidden');
         amortizationContainer.classList.remove('hidden');
+        paiVsTraditionalContainer.classList.remove('hidden');
         mainResultsContainer.innerHTML = `<div class="text-center p-4">Calculating...</div>`;
         
         clearTimeout(calculationTimeout);
@@ -109,6 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
         finalResultsSection.classList.remove('hidden');
         comparisonChartContainer.classList.remove('hidden');
         amortizationContainer.classList.remove('hidden');
+        paiVsTraditionalContainer.classList.remove('hidden');
         mainResultsContainer.innerHTML = `<div class="text-center p-4">Calculating...</div>`;
 
         clearTimeout(calculationTimeout);
@@ -205,6 +212,16 @@ document.addEventListener('DOMContentLoaded', () => {
             <h4 class="text-lg font-bold text-textdark mb-2 pt-4">Loan Amortization Schedule</h4>
             <p>An amortization schedule shows how your loan payments are broken down over time. You can see how much of your annual payments go towards the principal versus the interest, and how your loan balance decreases each year until it reaches zero.</p>
         `;
+
+        if (title !== 'Your Strategy Visualised') {
+            const traditionalNetWealth = -scenario.totalInterestPaid;
+            renderPaiVsTraditionalChart(scenario.netWealth, traditionalNetWealth);
+            paiVsTraditionalExplanation.innerHTML = `
+                <h4 class="text-lg font-bold text-textdark mb-2 pt-4">PaiFinance vs. Traditional Loans</h4>
+                <p>This chart shows the power of the PaiFinance approach. With a traditional loan, your net financial position at the end of the term is negative, equal to the total interest paid.</p>
+                <p class="mt-2">By simultaneously investing, the PaiFinance strategy helps you build a positive net wealth of <strong class="text-investment_green">₹${scenario.netWealth.toLocaleString('en-IN')}</strong>, creating a significant financial advantage.</p>
+            `;
+        }
     }
 
     function createResultCard(title, scenario, color, totalInvested, totalPaidOrGains) {
@@ -358,6 +375,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (selectedGoal === 'planner') {
             runPlannerMode();
         } else {
+            // For smart goals, we only update the live displays instantly.
+            // The full calculation is only triggered by the button click.
             updateLiveDisplays();
         }
     }
@@ -513,6 +532,41 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         tableHTML += `</tbody></table>`;
         amortizationTableContainer.innerHTML = tableHTML;
+    }
+    
+    function renderPaiVsTraditionalChart(paiNetWealth, traditionalNetWealth) {
+        if (paiVsTraditionalChart) {
+            paiVsTraditionalChart.destroy();
+        }
+        paiVsTraditionalChart = new Chart(paiVsTraditionalChartCanvas, {
+            type: 'bar',
+            data: {
+                labels: ['Traditional Loan', 'PaiFinance Strategy'],
+                datasets: [{
+                    label: 'Net Wealth',
+                    data: [traditionalNetWealth, paiNetWealth],
+                    backgroundColor: ['#EF4444', '#22C55E'],
+                    borderRadius: 4,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                indexAxis: 'y',
+                scales: {
+                    x: {
+                        ticks: {
+                            callback: function(value) { return `₹${(value / 100000).toFixed(0)}L`; }
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
     }
 
     // --- 5. INITIALIZATION ---
