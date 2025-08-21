@@ -1,7 +1,7 @@
 /**
  * PaiFinance - Interactive Script
- * Version: 13.1 - Final Content Polish
- * Last updated: August 21, 2025, 11:58 PM IST
+ * Version: 13.0 - FINAL POLISH
+ * Last updated: August 21, 2025, 11:55 PM IST
  * Built by the Bros.
  */
 
@@ -222,7 +222,7 @@ document.addEventListener('DOMContentLoaded', () => {
             paiVsTraditionalExplanation.innerHTML = `
                 <h4 class="text-lg font-bold text-textdark mb-2 pt-4">PaiFinance vs. Traditional Loans</h4>
                 <p>This chart shows the power of the PaiFinance approach. The same monthly budget, when properly allocated across the right investing channels, can produce a more fruitful result. The <span class="font-semibold text-danger">red line</span> shows how your net financial position gets worse over time with a traditional loan, ending at <strong class="text-danger">-₹${scenario.totalInterestPaid.toLocaleString('en-IN')}</strong>.</p>
-                <p class="mt-2">The <span class="font-semibold text-investment_green">green line</span> shows how the PaiFinance strategy helps you build positive net wealth. By using PaiFinance, you can stay ahead of the curve and be in the top 1% of loan takers who are actually building wealth, investing smartly, and taking care of their financial health.</p>
+                <p class="mt-2">The <span class="font-semibold text-investment_green">green line</span> shows how the PaiFinance strategy helps you build positive net wealth, ending at <strong class="text-investment_green">₹${scenario.netWealth.toLocaleString('en-IN')}</strong>. This is the financial advantage of using PaiFinance.</p>
             `;
         }
     }
