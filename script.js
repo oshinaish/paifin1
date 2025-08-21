@@ -159,12 +159,10 @@ document.addEventListener('DOMContentLoaded', () => {
         monthlyInvestmentResult.textContent = `₹ ${scenario.monthlyInvestment.toLocaleString('en-IN')}`;
         updatePieChart(scenario.emi, scenario.monthlyInvestment);
         
-        // *** BUG FIX: This logic was flawed. It now correctly updates the sliders ***
         if (title.includes('Optimal') || title.includes('Minimum')) {
             const tenureValue = Math.ceil(scenario.tenure);
             loanTenureInput.value = tenureValue;
             investmentTenureInput.value = tenureValue;
-            // Manually trigger the slider update visuals
             updateSliderProgress(loanTenureSlider, tenureValue);
             updateSliderProgress(investmentTenureSlider, tenureValue);
         }
@@ -310,7 +308,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
     
-    // *** REFACTORED FUNCTION ***
     function syncAndStyle(inputElement, sliderElement) {
         const updateSlider = () => {
             const min = parseFloat(sliderElement.min);
@@ -335,14 +332,11 @@ document.addEventListener('DOMContentLoaded', () => {
         updateSlider();
     }
     
-    // *** NEW MASTER CALCULATION TRIGGER ***
     function triggerCalculation() {
         const selectedGoal = document.querySelector('.goal-button.selected').dataset.goal;
         if (selectedGoal === 'planner') {
             runPlannerMode();
         } else {
-            // For smart goals, we only update the live displays instantly.
-            // The full calculation is only triggered by the button click.
             updateLiveDisplays();
         }
     }
@@ -359,7 +353,6 @@ document.addEventListener('DOMContentLoaded', () => {
         updatePieChart(emi, investment);
     }
     
-    // Helper function to update a slider's visual state
     function updateSliderProgress(slider, value) {
         const min = parseFloat(slider.min);
         const max = parseFloat(slider.max);
