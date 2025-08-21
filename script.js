@@ -1,7 +1,7 @@
 /**
  * PaiFinance - Interactive Script
- * Version: 8.0 - CORE FUNCTIONALITY FIX
- * Last updated: August 21, 2025, 10:30 AM IST
+ * Version: 9.0 - Final Chart Revamp & Core Logic Fix
+ * Last updated: August 21, 2025, 11:00 AM IST
  * Built by the Bros.
  */
 
@@ -73,7 +73,7 @@ document.addEventListener('DOMContentLoaded', () => {
         finalResultsSection.classList.remove('hidden');
         comparisonChartContainer.classList.remove('hidden');
         amortizationContainer.classList.remove('hidden');
-        paiVsTraditionalContainer.classList.add('hidden'); // Hide this chart in manual mode
+        paiVsTraditionalContainer.classList.add('hidden');
         updatePlannerResults();
     }
 
@@ -214,12 +214,12 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
 
         if (title !== 'Your Strategy Visualised') {
-            const traditionalNetWealth = -scenario.totalInterestPaid;
-            renderPaiVsTraditionalChart(scenario.netWealth, traditionalNetWealth);
+            const paiVsTraditionalData = generatePaiVsTraditionalData(scenario);
+            renderPaiVsTraditionalChart(paiVsTraditionalData);
             paiVsTraditionalExplanation.innerHTML = `
                 <h4 class="text-lg font-bold text-textdark mb-2 pt-4">PaiFinance vs. Traditional Loans</h4>
-                <p>This chart shows the power of the PaiFinance approach. With a traditional loan, your net financial position at the end of the term is negative, equal to the total interest paid.</p>
-                <p class="mt-2">By simultaneously investing, the PaiFinance strategy helps you build a positive net wealth of <strong class="text-investment_green">₹${scenario.netWealth.toLocaleString('en-IN')}</strong>, creating a significant financial advantage.</p>
+                <p>This chart shows the power of the PaiFinance approach. The <span class="font-semibold text-danger">red line</span> shows how your net financial position gets worse over time with a traditional loan. The <span class="font-semibold text-investment_green">green line</span> shows how the PaiFinance strategy helps you build positive net wealth.</p>
+                <p class="mt-2">By the end of the term, the PaiFinance approach creates a financial advantage of <strong class="text-investment_green">₹${(scenario.netWealth - (-scenario.totalInterestPaid)).toLocaleString('en-IN')}</strong>.</p>
             `;
         }
     }
@@ -397,7 +397,6 @@ document.addEventListener('DOMContentLoaded', () => {
         loanTenureContainer.style.opacity = isPlannerMode ? '1' : '0.5';
         investmentTenureContainer.style.opacity = isPlannerMode ? '1' : '0.5';
         
-        // Trigger the calculation for the newly selected goal
         triggerCalculation();
     }
 
@@ -569,4 +568,3 @@ document.addEventListener('DOMContentLoaded', () => {
 
     initializeApp();
 });
-
