@@ -1,7 +1,7 @@
 /**
  * PaiFinance - Interactive Script
- * Version: 9.0 - Final Chart Revamp & Core Logic Fix
- * Last updated: August 21, 2025, 11:00 AM IST
+ * Version: 7.0 - CORE FUNCTIONALITY FIX
+ * Last updated: August 21, 2025, 9:30 AM IST
  * Built by the Bros.
  */
 
@@ -374,10 +374,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const selectedGoal = document.querySelector('.goal-button.selected').dataset.goal;
         if (selectedGoal === 'planner') {
             runPlannerMode();
-        } else if (selectedGoal === 'min-time') {
-            findMinimumTime();
-        } else if (selectedGoal === 'optimal-strategy') {
-            findOptimalStrategy();
+        } else {
+            // For smart goals, we re-run the full calculation on every input change
+            if (selectedGoal === 'min-time') {
+                findMinimumTime();
+            } else if (selectedGoal === 'optimal-strategy') {
+                findOptimalStrategy();
+            }
         }
     }
     
