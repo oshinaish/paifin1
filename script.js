@@ -1,7 +1,7 @@
 /**
  * PaiFinance - Interactive Script
- * Version: 11.0 - FINAL POLISH & CORE LOGIC FIX
- * Last updated: August 21, 2025, 11:30 AM IST
+ * Version: 12.0 - FINAL POLISH & CORE LOGIC FIX
+ * Last updated: August 21, 2025, 11:45 AM IST
  * Built by the Bros.
  */
 
@@ -176,6 +176,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const tenureValue = Math.ceil(scenario.tenure);
             loanTenureInput.value = tenureValue;
             investmentTenureInput.value = tenureValue;
+            loanTenureSlider.value = tenureValue;
+            investmentTenureSlider.value = tenureValue;
             updateSliderProgress(loanTenureSlider, tenureValue);
             updateSliderProgress(investmentTenureSlider, tenureValue);
         }
@@ -218,8 +220,8 @@ document.addEventListener('DOMContentLoaded', () => {
             renderPaiVsTraditionalChart(paiVsTraditionalData);
             paiVsTraditionalExplanation.innerHTML = `
                 <h4 class="text-lg font-bold text-textdark mb-2 pt-4">PaiFinance vs. Traditional Loans</h4>
-                <p>This chart shows the power of the PaiFinance approach. The <span class="font-semibold text-danger">red line</span> shows how your net financial position gets worse over time with a traditional loan, ending at <strong class="text-danger">-₹${scenario.totalInterestPaid.toLocaleString('en-IN')}</strong>.</p>
-                <p class="mt-2">The <span class="font-semibold text-investment_green">green line</span> shows how the PaiFinance strategy helps you build positive net wealth, ending at <strong class="text-investment_green">₹${scenario.netWealth.toLocaleString('en-IN')}</strong>.</p>
+                <p>This chart shows the power of the PaiFinance approach. The <span class="font-semibold text-danger">red line</span> shows how your net financial position gets worse over time with a traditional loan, ending at <strong class="text-danger">-₹${scenario.totalInterestPaid.toLocaleString('en-IN')}</strong>. The <span class="font-semibold text-investment_green">green line</span> shows how the PaiFinance strategy helps you build positive net wealth.</p>
+                <p class="mt-2">By the end of the term, the PaiFinance approach creates a financial advantage of <strong class="text-investment_green">₹${(scenario.netWealth - (-scenario.totalInterestPaid)).toLocaleString('en-IN')}</strong>.</p>
             `;
         }
     }
@@ -259,9 +261,9 @@ document.addEventListener('DOMContentLoaded', () => {
             content = `
                 <table class="w-full text-xs">
                     <tbody>
-                        <tr><td class="flex items-center py-1"><span class="w-2 h-2 rounded-full bg-emi_purple mr-2"></span>Principal</td><td class="text-right font-normal">₹${scenario.principal.toLocaleString('en-IN')}</td></tr>
-                        <tr><td class="flex items-center py-1"><span class="w-2 h-2 rounded-full bg-gray-300 mr-2"></span>Interest</td><td class="text-right font-normal">₹${scenario.totalInterestPaid.toLocaleString('en-IN')}</td></tr>
-                        <tr><td class="text-left font-bold py-1">Total Paid</td><td class="text-right font-bold">₹${(scenario.principal + scenario.totalInterestPaid).toLocaleString('en-IN')}</td></tr>
+                        <tr><td class="flex items-center py-1"><span class="w-2 h-2 rounded-full bg-emi_purple mr-2"></span>Principal</td><td class="text-right font-normal text-textdark">₹${scenario.principal.toLocaleString('en-IN')}</td></tr>
+                        <tr><td class="flex items-center py-1"><span class="w-2 h-2 rounded-full bg-gray-300 mr-2"></span>Interest</td><td class="text-right font-normal text-emi_purple">₹${scenario.totalInterestPaid.toLocaleString('en-IN')}</td></tr>
+                        <tr><td class="text-left font-bold py-1">Total Paid</td><td class="text-right font-bold text-textdark">₹${(scenario.principal + scenario.totalInterestPaid).toLocaleString('en-IN')}</td></tr>
                     </tbody>
                 </table>
             `;
@@ -272,9 +274,9 @@ document.addEventListener('DOMContentLoaded', () => {
             content = `
                 <table class="w-full text-xs">
                     <tbody>
-                        <tr><td class="flex items-center py-1"><span class="w-2 h-2 rounded-full bg-investment_green mr-2"></span>Invested</td><td class="text-right font-normal">₹${totalInvested.toLocaleString('en-IN')}</td></tr>
-                        <tr><td class="flex items-center py-1"><span class="w-2 h-2 rounded-full bg-gray-300 mr-2"></span>Gains</td><td class="text-right font-normal">₹${totalGains.toLocaleString('en-IN')}</td></tr>
-                        <tr><td class="text-left font-bold py-1">Total Wealth</td><td class="text-right font-bold">₹${scenario.futureValue.toLocaleString('en-IN')}</td></tr>
+                        <tr><td class="flex items-center py-1"><span class="w-2 h-2 rounded-full bg-investment_green mr-2"></span>Invested</td><td class="text-right font-normal text-textdark">₹${totalInvested.toLocaleString('en-IN')}</td></tr>
+                        <tr><td class="flex items-center py-1"><span class="w-2 h-2 rounded-full bg-gray-300 mr-2"></span>Gains</td><td class="text-right font-normal text-investment_green">₹${totalGains.toLocaleString('en-IN')}</td></tr>
+                        <tr><td class="text-left font-bold py-1">Total Wealth</td><td class="text-right font-bold text-textdark">₹${scenario.futureValue.toLocaleString('en-IN')}</td></tr>
                     </tbody>
                 </table>
             `;
@@ -561,8 +563,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     {
                         label: 'PaiFinance Net Wealth',
                         data: data.paiData,
-                        borderColor: '#22C55E',
-                        backgroundColor: 'rgba(34, 197, 94, 0.1)',
+                        borderColor: '#1B9272',
+                        backgroundColor: 'rgba(27, 146, 114, 0.1)',
                         fill: true,
                         tension: 0.3,
                     },
