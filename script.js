@@ -1,7 +1,7 @@
 /**
  * PaiFinance - Interactive Script
- * Version: 7.0 - CORE FUNCTIONALITY FIX
- * Last updated: August 21, 2025, 9:30 AM IST
+ * Version: 8.0 - Final Polish & Sticky Header
+ * Last updated: August 21, 2025, 10:30 AM IST
  * Built by the Bros.
  */
 
@@ -73,7 +73,7 @@ document.addEventListener('DOMContentLoaded', () => {
         finalResultsSection.classList.remove('hidden');
         comparisonChartContainer.classList.remove('hidden');
         amortizationContainer.classList.remove('hidden');
-        paiVsTraditionalContainer.classList.add('hidden');
+        paiVsTraditionalContainer.classList.add('hidden'); // Hide this chart in manual mode
         updatePlannerResults();
     }
 
@@ -375,8 +375,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (selectedGoal === 'planner') {
             runPlannerMode();
         } else {
-            // For smart goals, we only update the live displays instantly.
-            // The full calculation is only triggered by the button click.
             updateLiveDisplays();
         }
     }
