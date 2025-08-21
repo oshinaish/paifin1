@@ -1,6 +1,6 @@
 /**
  * PaiFinance - Interactive Script
- * Version: 8.0 - Final Polish & Sticky Header
+ * Version: 8.0 - CORE FUNCTIONALITY FIX
  * Last updated: August 21, 2025, 10:30 AM IST
  * Built by the Bros.
  */
@@ -370,25 +370,16 @@ document.addEventListener('DOMContentLoaded', () => {
         updateSlider();
     }
     
+    // *** THIS IS THE FIX: This function now correctly re-runs the full calculation for the selected goal ***
     function triggerCalculation() {
         const selectedGoal = document.querySelector('.goal-button.selected').dataset.goal;
         if (selectedGoal === 'planner') {
             runPlannerMode();
-        } else {
-            updateLiveDisplays();
+        } else if (selectedGoal === 'min-time') {
+            findMinimumTime();
+        } else if (selectedGoal === 'optimal-strategy') {
+            findOptimalStrategy();
         }
-    }
-
-    function updateLiveDisplays() {
-        const principal = parseFloat(loanAmountInput.value);
-        const annualRate = parseFloat(loanInterestRateInput.value);
-        const tenureYears = parseFloat(loanTenureInput.value);
-        const budget = parseFloat(monthlyBudgetInput.value);
-        const emi = calculateEMI(principal, annualRate, tenureYears);
-        const investment = (budget >= emi) ? budget - emi : 0;
-        emiResultElement.textContent = `₹ ${emi.toLocaleString('en-IN')}`;
-        monthlyInvestmentResult.textContent = `₹ ${investment.toLocaleString('en-IN')}`;
-        updatePieChart(emi, investment);
     }
     
     function updateSliderProgress(slider, value) {
@@ -406,9 +397,9 @@ document.addEventListener('DOMContentLoaded', () => {
         [loanTenureInput, loanTenureSlider, investmentTenureInput, investmentTenureSlider].forEach(field => { field.disabled = !isPlannerMode; });
         loanTenureContainer.style.opacity = isPlannerMode ? '1' : '0.5';
         investmentTenureContainer.style.opacity = isPlannerMode ? '1' : '0.5';
-        if (goal === 'planner') runPlannerMode();
-        else if (goal === 'min-time') findMinimumTime();
-        else if (goal === 'optimal-strategy') findOptimalStrategy();
+        
+        // Trigger the calculation for the newly selected goal
+        triggerCalculation();
     }
 
     function generateComparisonData(scenario) {
