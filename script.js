@@ -159,7 +159,8 @@ document.addEventListener('DOMContentLoaded', () => {
         monthlyInvestmentResult.textContent = `₹ ${scenario.monthlyInvestment.toLocaleString('en-IN')}`;
         updatePieChart(scenario.emi, scenario.monthlyInvestment);
         
-        if (title.includes('Optimal') || title.includes('Minimum')) {
+        // *** BUG FIX 1: Corrected the condition to check for smart goal titles ***
+        if (title === 'Winning the Financial Race' || title === 'The Race to Zero Debt') {
             const tenureValue = Math.ceil(scenario.tenure);
             loanTenureInput.value = tenureValue;
             investmentTenureInput.value = tenureValue;
@@ -332,25 +333,16 @@ document.addEventListener('DOMContentLoaded', () => {
         updateSlider();
     }
     
+    // *** BUG FIX 2: This function now re-runs the correct calculation on any input change ***
     function triggerCalculation() {
         const selectedGoal = document.querySelector('.goal-button.selected').dataset.goal;
         if (selectedGoal === 'planner') {
             runPlannerMode();
-        } else {
-            updateLiveDisplays();
+        } else if (selectedGoal === 'min-time') {
+            findMinimumTime();
+        } else if (selectedGoal === 'optimal-strategy') {
+            findOptimalStrategy();
         }
-    }
-
-    function updateLiveDisplays() {
-        const principal = parseFloat(loanAmountInput.value);
-        const annualRate = parseFloat(loanInterestRateInput.value);
-        const tenureYears = parseFloat(loanTenureInput.value);
-        const budget = parseFloat(monthlyBudgetInput.value);
-        const emi = calculateEMI(principal, annualRate, tenureYears);
-        const investment = (budget >= emi) ? budget - emi : 0;
-        emiResultElement.textContent = `₹ ${emi.toLocaleString('en-IN')}`;
-        monthlyInvestmentResult.textContent = `₹ ${investment.toLocaleString('en-IN')}`;
-        updatePieChart(emi, investment);
     }
     
     function updateSliderProgress(slider, value) {
