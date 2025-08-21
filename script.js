@@ -1,7 +1,7 @@
 /**
  * PaiFinance - Interactive Script
- * Version: 7.0 - CORE FUNCTIONALITY FIX
- * Last updated: August 21, 2025, 9:30 AM IST
+ * Version: 10.0 - FINAL CORE LOGIC FIX
+ * Last updated: August 21, 2025, 11:15 AM IST
  * Built by the Bros.
  */
 
@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let paiVsTraditionalChart = null;
     let calculationTimeout;
 
-    // --- 2. CORE FINANCIAL ENGINE ---
+    // --- 2. CORE FINANCIAL ENGINE (Sealed and Final) ---
     function calculateEMI(principal, annualRate, tenureYears) {
         if (principal <= 0 || annualRate <= 0 || tenureYears <= 0) return 0;
         const monthlyRate = (annualRate / 100) / 12;
@@ -374,13 +374,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const selectedGoal = document.querySelector('.goal-button.selected').dataset.goal;
         if (selectedGoal === 'planner') {
             runPlannerMode();
-        } else {
-            // For smart goals, we re-run the full calculation on every input change
-            if (selectedGoal === 'min-time') {
-                findMinimumTime();
-            } else if (selectedGoal === 'optimal-strategy') {
-                findOptimalStrategy();
-            }
+        } else if (selectedGoal === 'min-time') {
+            findMinimumTime();
+        } else if (selectedGoal === 'optimal-strategy') {
+            findOptimalStrategy();
         }
     }
     
@@ -524,35 +521,69 @@ document.addEventListener('DOMContentLoaded', () => {
         amortizationTableContainer.innerHTML = tableHTML;
     }
     
-    function renderPaiVsTraditionalChart(paiNetWealth, traditionalNetWealth) {
+    function generatePaiVsTraditionalData(scenario) {
+        const labels = [];
+        const paiData = [];
+        const traditionalData = [];
+        let investmentValue = 0;
+        let cumulativeInterest = 0;
+        const monthlyInvestmentRate = scenario.investmentAnnualRate / 100 / 12;
+        const monthlyLoanRate = scenario.loanAnnualRate / 100 / 12;
+        let remainingLoan = scenario.principal;
+
+        for (let year = 0; year <= Math.ceil(scenario.tenure); year++) {
+            labels.push(`Year ${year}`);
+            paiData.push(investmentValue - cumulativeInterest);
+            traditionalData.push(-cumulativeInterest);
+
+            for (let month = 1; month <= 12; month++) {
+                if (remainingLoan > 0) {
+                    const interest = remainingLoan * monthlyLoanRate;
+                    cumulativeInterest += interest;
+                    const principalPaid = scenario.emi - interest;
+                    remainingLoan -= principalPaid;
+                }
+                investmentValue = (investmentValue + scenario.monthlyInvestment) * (1 + monthlyInvestmentRate);
+            }
+        }
+        return { labels, paiData, traditionalData };
+    }
+
+    function renderPaiVsTraditionalChart(data) {
         if (paiVsTraditionalChart) {
             paiVsTraditionalChart.destroy();
         }
         paiVsTraditionalChart = new Chart(paiVsTraditionalChartCanvas, {
-            type: 'bar',
+            type: 'line',
             data: {
-                labels: ['Traditional Loan', 'PaiFinance Strategy'],
-                datasets: [{
-                    label: 'Net Wealth',
-                    data: [traditionalNetWealth, paiNetWealth],
-                    backgroundColor: ['#EF4444', '#22C55E'],
-                    borderRadius: 4,
-                }]
+                labels: data.labels,
+                datasets: [
+                    {
+                        label: 'PaiFinance Net Wealth',
+                        data: data.paiData,
+                        borderColor: '#22C55E',
+                        backgroundColor: 'rgba(34, 197, 94, 0.1)',
+                        fill: true,
+                        tension: 0.3,
+                    },
+                    {
+                        label: 'Traditional Net Wealth',
+                        data: data.traditionalData,
+                        borderColor: '#EF4444',
+                        backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                        fill: true,
+                        tension: 0.3,
+                    }
+                ]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                indexAxis: 'y',
                 scales: {
-                    x: {
+                    y: {
                         ticks: {
                             callback: function(value) { return `₹${(value / 100000).toFixed(0)}L`; }
                         }
-                    }
-                },
-                plugins: {
-                    legend: {
-                        display: false
                     }
                 }
             }
