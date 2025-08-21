@@ -1,7 +1,7 @@
 /**
  * PaiFinance - Interactive Script
- * Version: 6.6 - Final Bug Fix
- * Last updated: August 21, 2025, 8:40 AM IST
+ * Version: 6.7 - Final UI Polish
+ * Last updated: August 21, 2025, 8:50 AM IST
  * Built by the Bros.
  */
 
@@ -29,6 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const finalResultsSection = document.getElementById('finalResultsSection');
     const mainResultsContainer = document.getElementById('mainResultsContainer');
     const comparisonChartContainer = document.getElementById('comparisonChartContainer');
+    const chartExplanation = document.getElementById('chartExplanation');
 
     const chartsContainer = document.getElementById('chartsContainer');
     const goalButtons = document.querySelectorAll('.goal-button');
@@ -138,31 +139,17 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- 4. UI INTERACTIVITY & DISPLAY FUNCTIONS ---
     function updatePlannerResults() {
         const principal = parseFloat(loanAmountInput.value);
-        const loanAnnualRate = parseFloat(loanInterestRateInput.value);
-        const loanTenureYears = parseFloat(loanTenureInput.value);
+        const annualRate = parseFloat(loanInterestRateInput.value);
+        const tenureYears = parseFloat(loanTenureInput.value);
         const budget = parseFloat(monthlyBudgetInput.value);
         const investmentRate = parseFloat(investmentRateInput.value);
-        const investmentTenureYears = parseFloat(investmentTenureInput.value); // *** FIX: Read investment tenure
-
-        const emi = calculateEMI(principal, loanAnnualRate, loanTenureYears);
+        const investmentTenureYears = parseFloat(investmentTenureInput.value);
+        const emi = calculateEMI(principal, annualRate, tenureYears);
         const investment = (budget >= emi) ? budget - emi : 0;
-        
-        const totalInterestPaid = (emi * loanTenureYears * 12) - principal;
-        const futureValue = calculateFutureValue(investment, investmentRate, investmentTenureYears); // *** FIX: Use investment tenure for FV
+        const totalInterestPaid = (emi * tenureYears * 12) - principal;
+        const futureValue = calculateFutureValue(investment, investmentRate, investmentTenureYears);
         const netWealth = futureValue - totalInterestPaid;
-        
-        const scenario = { 
-            tenure: loanTenureYears, 
-            investmentTenure: investmentTenureYears, // Pass down for accurate calculations
-            emi, 
-            monthlyInvestment: investment, 
-            totalInterestPaid, 
-            futureValue, 
-            netWealth, 
-            principal, 
-            loanAnnualRate, 
-            investmentAnnualRate: investmentRate 
-        };
+        const scenario = { tenure: tenureYears, investmentTenure: investmentTenureYears, emi, monthlyInvestment: investment, totalInterestPaid, futureValue, netWealth, principal, loanAnnualRate: annualRate, investmentAnnualRate: investmentRate };
         displayResults(scenario, 'Manual Plan');
     }
 
@@ -178,7 +165,7 @@ document.addEventListener('DOMContentLoaded', () => {
             investmentTenureInput.dispatchEvent(new Event('input', { bubbles:true }));
         }
         
-        const investmentTenureForCalc = scenario.investmentTenure || scenario.tenure; // *** FIX: Use correct tenure
+        const investmentTenureForCalc = scenario.investmentTenure || scenario.tenure;
         const totalInvested = scenario.monthlyInvestment * Math.round(investmentTenureForCalc * 12);
         const totalGains = scenario.futureValue - totalInvested;
         const totalPaid = scenario.principal + scenario.totalInterestPaid;
@@ -195,6 +182,13 @@ document.addEventListener('DOMContentLoaded', () => {
         renderWidgetCharts(scenario, totalInvested, totalGains);
         const chartData = generateComparisonData(scenario);
         renderComparisonChart(chartData);
+
+        // *** NEW: Update the chart explanation ***
+        chartExplanation.innerHTML = `
+            <h4 class="font-bold text-textdark mb-2">The Story Behind the Numbers</h4>
+            <p>This chart visualizes the power of your strategy over time. The <span class="font-semibold text-emi_purple">purple line</span> shows your loan balance decreasing, while the <span class="font-semibold text-investment_green">green line</span> shows your investment value growing.</p>
+            <p class="mt-2">Your plan is successful because your investment is projected to grow at <span class="font-semibold">${scenario.investmentAnnualRate}%</span>, which is faster than the <span class="font-semibold">${scenario.loanAnnualRate}%</span> interest on your loan.</p>
+        `;
     }
 
     function createResultCard(title, scenario, color, totalInvested, totalPaidOrGains) {
