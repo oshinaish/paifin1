@@ -1,7 +1,7 @@
 /**
  * PaiFinance - Interactive Script
- * Version: 7.1 - Final Content Polish
- * Last updated: August 21, 2025, 9:45 AM IST
+ * Version: 7.2 - Final Content Polish
+ * Last updated: August 21, 2025, 10:17 AM IST
  * Built by the Bros.
  */
 
@@ -202,8 +202,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const amortizationData = generateAmortizationSchedule(scenario);
         renderAmortizationTable(amortizationData);
         amortizationExplanation.innerHTML = `
-            <h4 class="text-lg font-bold text-textdark mb-2 pt-4">Your Loan Breakdown</h4>
-            <p>This table shows a year-by-year breakdown of your loan payments. You can see how much of your annual payments go towards the principal versus the interest, and how your loan balance decreases over time.</p>
+            <h4 class="text-lg font-bold text-textdark mb-2 pt-4">Loan Amortization Schedule</h4>
+            <p>An amortization schedule shows how your loan payments are broken down over time. You can see how much of your annual payments go towards the principal versus the interest, and how your loan balance decreases each year until it reaches zero.</p>
         `;
     }
 
