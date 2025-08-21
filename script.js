@@ -1,7 +1,7 @@
 /**
  * PaiFinance - Interactive Script
- * Version: 7.2 - Final Content Polish
- * Last updated: August 21, 2025, 10:17 AM IST
+ * Version: 8.0 - Final Polish & Bug Fixes
+ * Last updated: August 21, 2025, 10:30 AM IST
  * Built by the Bros.
  */
 
@@ -213,18 +213,22 @@ document.addEventListener('DOMContentLoaded', () => {
             const totalPaid = totalPaidOrGains;
             content = `
                 <table class="w-full text-xs">
-                    <tr><td class="text-left py-1">Total EMIs</td><td class="text-right font-normal">₹${totalPaid.toLocaleString('en-IN')}</td></tr>
-                    <tr><td class="text-left py-1">Total Investments</td><td class="text-right font-normal">₹${totalInvested.toLocaleString('en-IN')}</td></tr>
-                    <tr class="bg-gray-100 rounded"><td class="text-left font-bold p-1">Total Outflow</td><td class="text-right font-bold p-1">₹${(totalPaid + totalInvested).toLocaleString('en-IN')}</td></tr>
+                    <tbody>
+                        <tr><td class="text-left py-1">Total EMIs</td><td class="text-right font-normal">₹${totalPaid.toLocaleString('en-IN')}</td></tr>
+                        <tr><td class="text-left py-1">Total Investments</td><td class="text-right font-normal">₹${totalInvested.toLocaleString('en-IN')}</td></tr>
+                        <tr class="bg-gray-100 rounded"><td class="text-left font-bold p-1">Total Outflow</td><td class="text-right font-bold p-1">₹${(totalPaid + totalInvested).toLocaleString('en-IN')}</td></tr>
+                    </tbody>
                 </table>
             `;
         } else {
             const totalGains = totalPaidOrGains;
             content = `
                 <table class="w-full text-xs">
-                    <tr><td class="text-left py-1">Principal Received</td><td class="text-right font-normal">₹${scenario.principal.toLocaleString('en-IN')}</td></tr>
-                    <tr><td class="text-left py-1">Gains Made</td><td class="text-right font-normal">₹${totalGains.toLocaleString('en-IN')}</td></tr>
-                    <tr class="bg-gray-100 rounded"><td class="text-left font-bold p-1">Total Return</td><td class="text-right font-bold p-1">₹${(scenario.principal + totalGains).toLocaleString('en-IN')}</td></tr>
+                    <tbody>
+                        <tr><td class="text-left py-1">Principal Received</td><td class="text-right font-normal">₹${scenario.principal.toLocaleString('en-IN')}</td></tr>
+                        <tr><td class="text-left py-1">Gains Made</td><td class="text-right font-normal">₹${totalGains.toLocaleString('en-IN')}</td></tr>
+                        <tr class="bg-gray-100 rounded"><td class="text-left font-bold p-1">Total Return</td><td class="text-right font-bold p-1">₹${(scenario.principal + totalGains).toLocaleString('en-IN')}</td></tr>
+                    </tbody>
                 </table>
             `;
         }
@@ -237,9 +241,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (title === 'Loan Details') {
             content = `
                 <table class="w-full text-xs">
-                    <tr><td class="flex items-center py-1"><span class="w-2 h-2 rounded-full bg-emi_purple mr-2"></span>Principal</td><td class="text-right font-normal">₹${scenario.principal.toLocaleString('en-IN')}</td></tr>
-                    <tr><td class="flex items-center py-1"><span class="w-2 h-2 rounded-full bg-gray-300 mr-2"></span>Interest</td><td class="text-right font-normal text-emi_purple">₹${scenario.totalInterestPaid.toLocaleString('en-IN')}</td></tr>
-                    <tr><td class="text-left font-bold py-1">Total Paid</td><td class="text-right font-bold">₹${(scenario.principal + scenario.totalInterestPaid).toLocaleString('en-IN')}</td></tr>
+                    <tbody>
+                        <tr><td class="flex items-center py-1"><span class="w-2 h-2 rounded-full bg-emi_purple mr-2"></span>Principal</td><td class="text-right font-normal">₹${scenario.principal.toLocaleString('en-IN')}</td></tr>
+                        <tr><td class="flex items-center py-1"><span class="w-2 h-2 rounded-full bg-gray-300 mr-2"></span>Interest</td><td class="text-right font-normal text-emi_purple">₹${scenario.totalInterestPaid.toLocaleString('en-IN')}</td></tr>
+                        <tr><td class="text-left font-bold py-1">Total Paid</td><td class="text-right font-bold">₹${(scenario.principal + scenario.totalInterestPaid).toLocaleString('en-IN')}</td></tr>
+                    </tbody>
                 </table>
             `;
             canvasId = 'loanWidgetChart';
@@ -248,9 +254,11 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             content = `
                 <table class="w-full text-xs">
-                    <tr><td class="flex items-center py-1"><span class="w-2 h-2 rounded-full bg-investment_green mr-2"></span>Invested</td><td class="text-right font-normal">₹${totalInvested.toLocaleString('en-IN')}</td></tr>
-                    <tr><td class="flex items-center py-1"><span class="w-2 h-2 rounded-full bg-gray-300 mr-2"></span>Gains</td><td class="text-right font-normal text-investment_green">₹${totalGains.toLocaleString('en-IN')}</td></tr>
-                    <tr><td class="text-left font-bold py-1">Total Wealth</td><td class="text-right font-bold">₹${scenario.futureValue.toLocaleString('en-IN')}</td></tr>
+                    <tbody>
+                        <tr><td class="flex items-center py-1"><span class="w-2 h-2 rounded-full bg-investment_green mr-2"></span>Invested</td><td class="text-right font-normal">₹${totalInvested.toLocaleString('en-IN')}</td></tr>
+                        <tr><td class="flex items-center py-1"><span class="w-2 h-2 rounded-full bg-gray-300 mr-2"></span>Gains</td><td class="text-right font-normal text-investment_green">₹${totalGains.toLocaleString('en-IN')}</td></tr>
+                        <tr><td class="text-left font-bold py-1">Total Wealth</td><td class="text-right font-bold">₹${scenario.futureValue.toLocaleString('en-IN')}</td></tr>
+                    </tbody>
                 </table>
             `;
             canvasId = 'investmentWidgetChart';
@@ -349,11 +357,21 @@ document.addEventListener('DOMContentLoaded', () => {
         const selectedGoal = document.querySelector('.goal-button.selected').dataset.goal;
         if (selectedGoal === 'planner') {
             runPlannerMode();
-        } else if (selectedGoal === 'min-time') {
-            findMinimumTime();
-        } else if (selectedGoal === 'optimal-strategy') {
-            findOptimalStrategy();
+        } else {
+            updateLiveDisplays();
         }
+    }
+
+    function updateLiveDisplays() {
+        const principal = parseFloat(loanAmountInput.value);
+        const annualRate = parseFloat(loanInterestRateInput.value);
+        const tenureYears = parseFloat(loanTenureInput.value);
+        const budget = parseFloat(monthlyBudgetInput.value);
+        const emi = calculateEMI(principal, annualRate, tenureYears);
+        const investment = (budget >= emi) ? budget - emi : 0;
+        emiResultElement.textContent = `₹ ${emi.toLocaleString('en-IN')}`;
+        monthlyInvestmentResult.textContent = `₹ ${investment.toLocaleString('en-IN')}`;
+        updatePieChart(emi, investment);
     }
     
     function updateSliderProgress(slider, value) {
@@ -473,7 +491,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderAmortizationTable(data) {
         let tableHTML = `
             <table class="w-full text-sm text-left">
-                <thead class="text-xs text-textdark uppercase bg-gray-50">
+                <thead class="text-xs text-textdark uppercase bg-gray-50 sticky top-0">
                     <tr>
                         <th scope="col" class="px-6 py-3">Year</th>
                         <th scope="col" class="px-6 py-3">Principal Paid</th>
