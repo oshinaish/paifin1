@@ -227,7 +227,7 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
         }
         
-        updateSummaryBox(scenario, title, displayTenure);
+        updateSummaryBox(scenario, title, displayTenure, chartData.crossoverYear);
     }
 
     function createResultCard(title, scenario, color, totalInvested, totalPaidOrGains) {
@@ -595,26 +595,27 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
-
-    function updateSummaryBox(scenario, title, displayTenure) {
+    
+    function updateSummaryBox(scenario, title, displayTenure, crossoverYear) {
         summaryResultsContainer.classList.remove('hidden');
         let summaryHTML = '';
 
         if (title === 'Your Strategy Visualised') {
             summaryHTML = `
-                <h4 class="text-sm font-bold text-center mb-2">Manual Plan Summary</h4>
+                <h4 class="text-sm font-bold text-center mb-2">Result Summary</h4>
                 <p class="text-xs text-center">Net Wealth after ${displayTenure}: <strong class="text-investment_green">₹${scenario.netWealth.toLocaleString('en-IN')}</strong></p>
             `;
         } else if (title === 'The Race to Zero Debt') {
             summaryHTML = `
-                <h4 class="text-sm font-bold text-center mb-2">Minimum Time to Offset</h4>
+                <h4 class="text-sm font-bold text-center mb-2">Result Summary</h4>
                 <p class="text-xs text-center">You can offset your loan interest in just <strong class="text-investment_green">${displayTenure}</strong>.</p>
+                <p class="text-xs text-center mt-1">You can become debt-free in <strong>Year ${crossoverYear}</strong>.</p>
             `;
         } else if (title === 'Winning the Financial Race') {
             const traditionalNetWealth = -scenario.totalInterestPaid;
             const advantage = scenario.netWealth - traditionalNetWealth;
             summaryHTML = `
-                <h4 class="text-sm font-bold text-center mb-2">Optimal Strategy Summary</h4>
+                <h4 class="text-sm font-bold text-center mb-2">Result Summary</h4>
                 <p class="text-xs text-center">Net Wealth: <strong class="text-investment_green">₹${scenario.netWealth.toLocaleString('en-IN')}</strong></p>
                 <p class="text-xs text-center mt-1">Advantage vs. Traditional: <strong class="text-success">₹${advantage.toLocaleString('en-IN')}</strong></p>
             `;
