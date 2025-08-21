@@ -1,7 +1,7 @@
 /**
  * PaiFinance - Interactive Script
- * Version: 14.0 - FINAL POLISH & CORE LOGIC FIX
- * Last updated: August 22, 2025, 12:05 AM IST
+ * Version: 15.0 - FINAL SUMMARY BOX FIX
+ * Last updated: August 22, 2025, 12:30 AM IST
  * Built by the Bros.
  */
 
@@ -35,6 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const amortizationTableContainer = document.getElementById('amortizationTableContainer');
     const paiVsTraditionalContainer = document.getElementById('paiVsTraditionalContainer');
     const paiVsTraditionalExplanation = document.getElementById('paiVsTraditionalExplanation');
+    const summaryResultsContainer = document.getElementById('summaryResultsContainer');
 
     const chartsContainer = document.getElementById('chartsContainer');
     const goalButtons = document.querySelectorAll('.goal-button');
@@ -225,6 +226,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 <p class="mt-2">The <span class="font-semibold text-investment_green">green line</span> shows how the PaiFinance strategy helps you build positive net wealth, ending at <strong class="text-investment_green">₹${scenario.netWealth.toLocaleString('en-IN')}</strong>. This is the financial advantage of using PaiFinance.</p>
             `;
         }
+        
+        updateSummaryBox(scenario, title, displayTenure);
     }
 
     function createResultCard(title, scenario, color, totalInvested, totalPaidOrGains) {
@@ -591,6 +594,32 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
         });
+    }
+
+    function updateSummaryBox(scenario, title, displayTenure) {
+        summaryResultsContainer.classList.remove('hidden');
+        let summaryHTML = '';
+
+        if (title === 'Your Strategy Visualised') {
+            summaryHTML = `
+                <h4 class="text-sm font-bold text-center mb-2">Manual Plan Summary</h4>
+                <p class="text-xs text-center">Net Wealth after ${displayTenure}: <strong class="text-investment_green">₹${scenario.netWealth.toLocaleString('en-IN')}</strong></p>
+            `;
+        } else if (title === 'The Race to Zero Debt') {
+            summaryHTML = `
+                <h4 class="text-sm font-bold text-center mb-2">Minimum Time to Offset</h4>
+                <p class="text-xs text-center">You can offset your loan interest in just <strong class="text-investment_green">${displayTenure}</strong>.</p>
+            `;
+        } else if (title === 'Winning the Financial Race') {
+            const traditionalNetWealth = -scenario.totalInterestPaid;
+            const advantage = scenario.netWealth - traditionalNetWealth;
+            summaryHTML = `
+                <h4 class="text-sm font-bold text-center mb-2">Optimal Strategy Summary</h4>
+                <p class="text-xs text-center">Net Wealth: <strong class="text-investment_green">₹${scenario.netWealth.toLocaleString('en-IN')}</strong></p>
+                <p class="text-xs text-center mt-1">Advantage vs. Traditional: <strong class="text-success">₹${advantage.toLocaleString('en-IN')}</strong></p>
+            `;
+        }
+        summaryResultsContainer.innerHTML = summaryHTML;
     }
 
     // --- 5. INITIALIZATION ---
