@@ -44,6 +44,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Albert+Sans:wght@400;800&display=swap" rel="stylesheet">
     <!-- Chart.js CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
     <style>
         /* Custom styles */
         ::-webkit-scrollbar { width: 8px; }
@@ -71,6 +72,17 @@
         }
         .goal-button { background-color: rgba(234, 234, 234, 0.2); color: #1F2937; }
         .goal-button.selected { background-color: #1B9272; color: #FFFFFF; box-shadow: 0 0 0 2px #1B9272, 0 0 0 4px rgba(27, 146, 114, 0.4); }
+        .faq-answer { display: none; }
+        .faq-question.open .chevron { transform: rotate(180deg); }
+        @keyframes gradient-border {
+            0% { border-color: #1B9272; }
+            50% { border-color: #59e6ce; }
+            100% { border-color: #1B9272; }
+        }
+        .animated-border {
+            border: 2px solid;
+            animation: gradient-border 3s linear infinite;
+        }
     </style>
 </head>
 <body class="font-albert_sans bg-white text-textdark min-h-screen flex flex-col">
