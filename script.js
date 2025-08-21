@@ -1,7 +1,7 @@
 /**
  * PaiFinance - Interactive Script
- * Version: 7.0 - CORE FUNCTIONALITY FIX
- * Last updated: August 21, 2025, 9:30 AM IST
+ * Version: 7.1 - Final Content Polish
+ * Last updated: August 21, 2025, 9:45 AM IST
  * Built by the Bros.
  */
 
@@ -30,6 +30,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const mainResultsContainer = document.getElementById('mainResultsContainer');
     const comparisonChartContainer = document.getElementById('comparisonChartContainer');
     const chartExplanation = document.getElementById('chartExplanation');
+    const amortizationContainer = document.getElementById('amortizationContainer');
+    const amortizationExplanation = document.getElementById('amortizationExplanation');
+    const amortizationTableContainer = document.getElementById('amortizationTableContainer');
 
     const chartsContainer = document.getElementById('chartsContainer');
     const goalButtons = document.querySelectorAll('.goal-button');
@@ -65,12 +68,14 @@ document.addEventListener('DOMContentLoaded', () => {
     function runPlannerMode() {
         finalResultsSection.classList.remove('hidden');
         comparisonChartContainer.classList.remove('hidden');
+        amortizationContainer.classList.remove('hidden');
         updatePlannerResults();
     }
 
     function findOptimalStrategy() {
         finalResultsSection.classList.remove('hidden');
         comparisonChartContainer.classList.remove('hidden');
+        amortizationContainer.classList.remove('hidden');
         mainResultsContainer.innerHTML = `<div class="text-center p-4">Calculating...</div>`;
         
         clearTimeout(calculationTimeout);
@@ -103,6 +108,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function findMinimumTime() {
         finalResultsSection.classList.remove('hidden');
         comparisonChartContainer.classList.remove('hidden');
+        amortizationContainer.classList.remove('hidden');
         mainResultsContainer.innerHTML = `<div class="text-center p-4">Calculating...</div>`;
 
         clearTimeout(calculationTimeout);
@@ -159,7 +165,6 @@ document.addEventListener('DOMContentLoaded', () => {
         monthlyInvestmentResult.textContent = `₹ ${scenario.monthlyInvestment.toLocaleString('en-IN')}`;
         updatePieChart(scenario.emi, scenario.monthlyInvestment);
         
-        // *** BUG FIX 1: Corrected the condition to check for smart goal titles ***
         if (title === 'Winning the Financial Race' || title === 'The Race to Zero Debt') {
             const tenureValue = Math.ceil(scenario.tenure);
             loanTenureInput.value = tenureValue;
@@ -192,6 +197,13 @@ document.addEventListener('DOMContentLoaded', () => {
             <h4 class="text-lg font-bold text-textdark mb-2 pt-4">${title}</h4>
             <p>This chart visualizes the power of your strategy. At the end of the term, your loan balance will be <strong>₹0</strong>, while your investment is projected to grow to <strong>₹${scenario.futureValue.toLocaleString('en-IN')}</strong>.</p>
             <p class="mt-2">${crossoverYearText}</p>
+        `;
+
+        const amortizationData = generateAmortizationSchedule(scenario);
+        renderAmortizationTable(amortizationData);
+        amortizationExplanation.innerHTML = `
+            <h4 class="text-lg font-bold text-textdark mb-2 pt-4">Your Loan Breakdown</h4>
+            <p>This table shows a year-by-year breakdown of your loan payments. You can see how much of your annual payments go towards the principal versus the interest, and how your loan balance decreases over time.</p>
         `;
     }
 
@@ -333,7 +345,6 @@ document.addEventListener('DOMContentLoaded', () => {
         updateSlider();
     }
     
-    // *** BUG FIX 2: This function now re-runs the correct calculation on any input change ***
     function triggerCalculation() {
         const selectedGoal = document.querySelector('.goal-button.selected').dataset.goal;
         if (selectedGoal === 'planner') {
@@ -430,6 +441,60 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
         });
+    }
+
+    function generateAmortizationSchedule(scenario) {
+        const schedule = [];
+        let remainingLoan = scenario.principal;
+        const monthlyLoanRate = scenario.loanAnnualRate / 100 / 12;
+
+        for (let year = 1; year <= Math.ceil(scenario.tenure); year++) {
+            let yearlyInterest = 0;
+            let yearlyPrincipal = 0;
+            for (let month = 1; month <= 12; month++) {
+                if (remainingLoan > 0) {
+                    const interest = remainingLoan * monthlyLoanRate;
+                    const principalPaid = scenario.emi - interest;
+                    yearlyInterest += interest;
+                    yearlyPrincipal += principalPaid;
+                    remainingLoan -= principalPaid;
+                }
+            }
+            schedule.push({
+                year,
+                principal: Math.round(yearlyPrincipal),
+                interest: Math.round(yearlyInterest),
+                balance: Math.round(remainingLoan > 0 ? remainingLoan : 0)
+            });
+        }
+        return schedule;
+    }
+
+    function renderAmortizationTable(data) {
+        let tableHTML = `
+            <table class="w-full text-sm text-left">
+                <thead class="text-xs text-textdark uppercase bg-gray-50">
+                    <tr>
+                        <th scope="col" class="px-6 py-3">Year</th>
+                        <th scope="col" class="px-6 py-3">Principal Paid</th>
+                        <th scope="col" class="px-6 py-3">Interest Paid</th>
+                        <th scope="col" class="px-6 py-3">Ending Balance</th>
+                    </tr>
+                </thead>
+                <tbody>
+        `;
+        data.forEach(row => {
+            tableHTML += `
+                <tr class="bg-white border-b">
+                    <td class="px-6 py-4 font-medium">${row.year}</td>
+                    <td class="px-6 py-4">₹${row.principal.toLocaleString('en-IN')}</td>
+                    <td class="px-6 py-4">₹${row.interest.toLocaleString('en-IN')}</td>
+                    <td class="px-6 py-4">₹${row.balance.toLocaleString('en-IN')}</td>
+                </tr>
+            `;
+        });
+        tableHTML += `</tbody></table>`;
+        amortizationTableContainer.innerHTML = tableHTML;
     }
 
     // --- 5. INITIALIZATION ---
