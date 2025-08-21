@@ -1,7 +1,7 @@
 /**
  * PaiFinance - Interactive Script
- * Version: 6.9 - Final Polish
- * Last updated: August 21, 2025, 9:15 AM IST
+ * Version: 7.0 - CORE FUNCTIONALITY FIX
+ * Last updated: August 21, 2025, 9:30 AM IST
  * Built by the Bros.
  */
 
@@ -158,11 +158,15 @@ document.addEventListener('DOMContentLoaded', () => {
         emiResultElement.textContent = `₹ ${scenario.emi.toLocaleString('en-IN')}`;
         monthlyInvestmentResult.textContent = `₹ ${scenario.monthlyInvestment.toLocaleString('en-IN')}`;
         updatePieChart(scenario.emi, scenario.monthlyInvestment);
+        
+        // *** BUG FIX: This logic was flawed. It now correctly updates the sliders ***
         if (title.includes('Optimal') || title.includes('Minimum')) {
-            loanTenureInput.value = Math.ceil(scenario.tenure);
-            investmentTenureInput.value = Math.ceil(scenario.tenure);
-            loanTenureInput.dispatchEvent(new Event('input', { bubbles:true }));
-            investmentTenureInput.dispatchEvent(new Event('input', { bubbles:true }));
+            const tenureValue = Math.ceil(scenario.tenure);
+            loanTenureInput.value = tenureValue;
+            investmentTenureInput.value = tenureValue;
+            // Manually trigger the slider update visuals
+            updateSliderProgress(loanTenureSlider, tenureValue);
+            updateSliderProgress(investmentTenureSlider, tenureValue);
         }
         
         const investmentTenureForCalc = scenario.investmentTenure || scenario.tenure;
@@ -183,10 +187,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const chartData = generateComparisonData(scenario);
         renderComparisonChart(chartData);
 
+        const crossoverYearText = chartData.crossoverYear ? `Your investment value is projected to surpass your loan balance in <strong>Year ${chartData.crossoverYear}</strong>.` : '';
+
         chartExplanation.innerHTML = `
-            <h4 class="text-lg font-bold text-textdark mb-2">${title}</h4>
-            <p>This chart visualizes the power of your strategy over time. The <span class="font-semibold text-emi_purple">purple line</span> shows your loan balance decreasing, while the <span class="font-semibold text-investment_green">green line</span> shows your investment value growing.</p>
-            <p class="mt-2">Your plan is successful because your investment is projected to grow at <span class="font-semibold">${scenario.investmentAnnualRate}%</span>, which is faster than the <span class="font-semibold">${scenario.loanAnnualRate}%</span> interest on your loan.</p>
+            <h4 class="text-lg font-bold text-textdark mb-2 pt-4">${title}</h4>
+            <p>This chart visualizes the power of your strategy. At the end of the term, your loan balance will be <strong>₹0</strong>, while your investment is projected to grow to <strong>₹${scenario.futureValue.toLocaleString('en-IN')}</strong>.</p>
+            <p class="mt-2">${crossoverYearText}</p>
         `;
     }
 
@@ -304,35 +310,61 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
     
+    // *** REFACTORED FUNCTION ***
     function syncAndStyle(inputElement, sliderElement) {
-        const updateSliderProgress = () => {
+        const updateSlider = () => {
             const min = parseFloat(sliderElement.min);
             const max = parseFloat(sliderElement.max);
             const value = parseFloat(sliderElement.value);
             const progress = ((value - min) / (max - min)) * 100;
             sliderElement.style.setProperty('--range-progress', `${progress}%`);
         };
-        const handleInput = () => {
-            const selectedGoal = document.querySelector('.goal-button.selected').dataset.goal;
-            if (selectedGoal === 'planner') {
-                runPlannerMode();
-            } else {
-                const principal = parseFloat(loanAmountInput.value);
-                const budget = parseFloat(monthlyBudgetInput.value);
-                const emi = calculateEMI(principal, parseFloat(loanInterestRateInput.value), parseFloat(loanTenureInput.value));
-                const investment = (budget >= emi) ? budget - emi : 0;
-                updatePieChart(emi, investment);
-            }
-        };
-        sliderElement.addEventListener('input', () => { inputElement.value = sliderElement.value; updateSliderProgress(); handleInput(); });
+        
+        sliderElement.addEventListener('input', () => { 
+            inputElement.value = sliderElement.value; 
+            updateSlider(); 
+            triggerCalculation();
+        });
         inputElement.addEventListener('input', () => {
             if (parseFloat(inputElement.value) >= parseFloat(sliderElement.min) && parseFloat(inputElement.value) <= parseFloat(sliderElement.max)) {
                 sliderElement.value = inputElement.value;
-                updateSliderProgress();
-                handleInput();
+                updateSlider();
+                triggerCalculation();
             }
         });
-        updateSliderProgress();
+        updateSlider();
+    }
+    
+    // *** NEW MASTER CALCULATION TRIGGER ***
+    function triggerCalculation() {
+        const selectedGoal = document.querySelector('.goal-button.selected').dataset.goal;
+        if (selectedGoal === 'planner') {
+            runPlannerMode();
+        } else {
+            // For smart goals, we only update the live displays instantly.
+            // The full calculation is only triggered by the button click.
+            updateLiveDisplays();
+        }
+    }
+
+    function updateLiveDisplays() {
+        const principal = parseFloat(loanAmountInput.value);
+        const annualRate = parseFloat(loanInterestRateInput.value);
+        const tenureYears = parseFloat(loanTenureInput.value);
+        const budget = parseFloat(monthlyBudgetInput.value);
+        const emi = calculateEMI(principal, annualRate, tenureYears);
+        const investment = (budget >= emi) ? budget - emi : 0;
+        emiResultElement.textContent = `₹ ${emi.toLocaleString('en-IN')}`;
+        monthlyInvestmentResult.textContent = `₹ ${investment.toLocaleString('en-IN')}`;
+        updatePieChart(emi, investment);
+    }
+    
+    // Helper function to update a slider's visual state
+    function updateSliderProgress(slider, value) {
+        const min = parseFloat(slider.min);
+        const max = parseFloat(slider.max);
+        const progress = ((value - min) / (max - min)) * 100;
+        slider.style.setProperty('--range-progress', `${progress}%`);
     }
 
     function handleGoalSelection(selectedButton) {
@@ -354,12 +386,18 @@ document.addEventListener('DOMContentLoaded', () => {
         const investmentData = [];
         let remainingLoan = scenario.principal;
         let investmentValue = 0;
+        let crossoverYear = null;
         const monthlyLoanRate = scenario.loanAnnualRate / 100 / 12;
         const monthlyInvestmentRate = scenario.investmentAnnualRate / 100 / 12;
         for (let year = 0; year <= Math.ceil(scenario.tenure); year++) {
             labels.push(`Year ${year}`);
             loanData.push(remainingLoan > 0 ? remainingLoan : 0);
             investmentData.push(investmentValue);
+
+            if (investmentValue > remainingLoan && crossoverYear === null) {
+                crossoverYear = year;
+            }
+
             for (let month = 1; month <= 12; month++) {
                 if (remainingLoan > 0) {
                     const interest = remainingLoan * monthlyLoanRate;
@@ -369,7 +407,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 investmentValue = (investmentValue + scenario.monthlyInvestment) * (1 + monthlyInvestmentRate);
             }
         }
-        return { labels, loanData, investmentData };
+        return { labels, loanData, investmentData, crossoverYear };
     }
 
     function renderComparisonChart(data) {
