@@ -217,9 +217,12 @@
                 <!-- Result widgets will be injected here by JavaScript -->
             </div>
             
-            <div id="comparisonChartContainer" class="max-w-7xl mx-auto mt-8 bg-card p-4 rounded-lg shadow-default hidden">
-                <h3 class="text-lg font-semibold text-textdark mb-4 text-center">Loan Balance vs. Investment Growth</h3>
-                <div class="h-[400px]">
+            <!-- *** NEW LAYOUT FOR COMPARISON CHART *** -->
+            <div id="comparisonChartContainer" class="max-w-7xl mx-auto mt-8 bg-card p-4 rounded-lg shadow-default hidden grid grid-cols-1 lg:grid-cols-3 gap-6 items-center">
+                <div id="chartExplanation" class="lg:col-span-1 text-sm text-textlight leading-relaxed">
+                    <!-- Dynamic explanation will go here -->
+                </div>
+                <div class="lg:col-span-2 h-[400px]">
                     <canvas id="comparisonChart"></canvas>
                 </div>
             </div>
