@@ -1,7 +1,7 @@
 /**
  * PaiFinance - Interactive Script
- * Version: 14.0 - Final Font Polish
- * Last updated: August 22, 2025, 12:05 AM IST
+ * Version: 14.0 - Final Polish
+ * Last updated: August 22, 2025, 12:15 AM IST
  * Built by the Bros.
  */
 
@@ -413,7 +413,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const monthlyLoanRate = scenario.loanAnnualRate / 100 / 12;
         const monthlyInvestmentRate = scenario.investmentAnnualRate / 100 / 12;
         for (let year = 0; year <= Math.ceil(scenario.tenure); year++) {
-            labels.push(`Year ${year}`);
+            labels.push(`Yr ${year}`);
             loanData.push(remainingLoan > 0 ? remainingLoan : 0);
             investmentData.push(investmentValue);
 
@@ -513,10 +513,10 @@ document.addEventListener('DOMContentLoaded', () => {
         data.forEach(row => {
             tableHTML += `
                 <tr class="bg-white border-b">
-                    <td class="px-6 py-4 font-medium">${row.year}</td>
-                    <td class="px-6 py-4">₹${row.principal.toLocaleString('en-IN')}</td>
-                    <td class="px-6 py-4">₹${row.interest.toLocaleString('en-IN')}</td>
-                    <td class="px-6 py-4">₹${row.balance.toLocaleString('en-IN')}</td>
+                    <td class="px-6 py-4 font-semibold">${row.year}</td>
+                    <td class="px-6 py-4 font-semibold">₹${row.principal.toLocaleString('en-IN')}</td>
+                    <td class="px-6 py-4 font-semibold">₹${row.interest.toLocaleString('en-IN')}</td>
+                    <td class="px-6 py-4 font-semibold">₹${row.balance.toLocaleString('en-IN')}</td>
                 </tr>
             `;
         });
@@ -535,7 +535,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let remainingLoan = scenario.principal;
 
         for (let year = 0; year <= Math.ceil(scenario.tenure); year++) {
-            labels.push(`Year ${year}`);
+            labels.push(`Yr ${year}`);
             paiData.push(investmentValue - cumulativeInterest);
             traditionalData.push(-cumulativeInterest);
 
