@@ -1,7 +1,7 @@
 /**
  * PaiFinance - Interactive Script
- * Version: 14.0 - Final Font Polish
- * Last updated: August 22, 2025, 12:05 AM IST
+ * Version: 6.3 - Final Widget Polish
+ * Last updated: August 19, 2025, 2:00 AM IST
  * Built by the Bros.
  */
 
@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let paiVsTraditionalChart = null;
     let calculationTimeout;
 
-    // --- 2. CORE FINANCIAL ENGINE (Sealed and Final) ---
+    // --- 2. CORE FINANCIAL ENGINE ---
     function calculateEMI(principal, annualRate, tenureYears) {
         if (principal <= 0 || annualRate <= 0 || tenureYears <= 0) return 0;
         const monthlyRate = (annualRate / 100) / 12;
