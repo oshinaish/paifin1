@@ -370,7 +370,6 @@ document.addEventListener('DOMContentLoaded', () => {
         updateSlider();
     }
     
-    // *** THIS IS THE FIX: This function now correctly re-runs the full calculation for the selected goal ***
     function triggerCalculation() {
         const selectedGoal = document.querySelector('.goal-button.selected').dataset.goal;
         if (selectedGoal === 'planner') {
@@ -570,3 +569,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
     initializeApp();
 });
+
