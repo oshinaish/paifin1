@@ -71,6 +71,8 @@
         }
         .goal-button { background-color: rgba(234, 234, 234, 0.2); color: #1F2937; }
         .goal-button.selected { background-color: #1B9272; color: #FFFFFF; box-shadow: 0 0 0 2px #1B9272, 0 0 0 4px rgba(27, 146, 114, 0.4); }
+        .faq-answer { display: none; }
+        .faq-question.open .chevron { transform: rotate(180deg); }
     </style>
 </head>
 <body class="font-albert_sans bg-white text-textdark min-h-screen flex flex-col">
@@ -262,7 +264,20 @@
 
                 <div>
                     <h2 class="text-[21px] font-normal text-textdark font-albert_sans mb-4">Formula to Determine Lending and Investment</h2>
-                    <p class="text-textlight">Our calculator uses industry-standard financial formulas to provide you with accurate projections. The <strong>Equated Monthly Installment (EMI)</strong> is calculated using the formula: E = P * r * (1+r)^n / ((1+r)^n - 1), where P is the principal, r is the monthly interest rate, and n is the number of months. Your investment growth is calculated using the standard <strong>future value of a Systematic Investment Plan (SIP)</strong> formula.</p>
+                    <p class="text-textlight mb-4">Our calculator uses industry-standard financial formulas to provide you with accurate projections. The <strong>Equated Monthly Installment (EMI)</strong> is calculated using the following formula:</p>
+                    <div class="flex items-center justify-center my-6">
+                        <span class="text-2xl font-semibold mr-4">EMI =</span>
+                        <div class="inline-block text-center text-xl">
+                            <div class="px-4 pb-2">
+                                P &times; R &times; (1 + R)<sup>N</sup>
+                            </div>
+                            <hr class="border-t-2 border-textdark">
+                            <div class="px-4 pt-2">
+                                (1 + R)<sup>N</sup> - 1
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-textlight">Where P is the Principal Loan Amount, R is the monthly interest rate, and N is the number of months. Your investment growth is calculated using the standard <strong>future value of a Systematic Investment Plan (SIP)</strong> formula.</p>
                 </div>
 
                 <div>
@@ -274,19 +289,19 @@
                     <h2 class="text-[21px] font-normal text-textdark font-albert_sans mb-4">Types Of EMI Calculators Offered by Pai Finance</h2>
                     <div class="space-y-4 text-textlight">
                         <p>At Pai Finance, we believe that effective loan repayment should be complemented by smart investment planning. Our EMI calculators not only estimate your monthly installments but also help you discover how disciplined parallel investing can reduce your overall interest burden and grow your wealth. Whether you're planning to buy a home, a car, a bike, fund education, or leverage your property, Pai Finance offers tailored EMI calculators for every need.</p>
-                        <h3 class="font-semibold text-textdark">Home Loan EMI Calculator</h3>
+                        <h3 class="font-semibold text-investment_green">Home Loan EMI Calculator</h3>
                         <p>Home loans involve high principal amounts and long repayment periods. The Home Loan EMI Calculator helps you instantly calculate your EMI based on loan amount, tenure, and interest rate. Unlike basic calculators, Pai Finance also guides you on how much you can invest each month to gradually offset your loan interest—making your home loan work smarter for you.</p>
-                        <h3 class="font-semibold text-textdark">Car Loan EMI Calculator</h3>
+                        <h3 class="font-semibold text-investment_green">Car Loan EMI Calculator</h3>
                         <p>Car loans are a popular financing option for a major lifestyle purchase. The Car Loan EMI Calculator allows you to assess your repayment capability with clarity. More importantly, Pai Finance suggests how you can invest a portion of your remaining monthly budget to recover the interest paid over time, making your car an asset, not a liability.</p>
-                        <h3 class="font-semibold text-textdark">Bike Loan EMI Calculator</h3>
+                        <h3 class="font-semibold text-investment_green">Bike Loan EMI Calculator</h3>
                         <p>Two-wheelers are one of the most common forms of transport in India, and bike loans are often short-tenured with moderate interest rates. The Bike Loan EMI Calculator helps you calculate the monthly outflow based on the loan amount, interest rate, and tenure. Pai Finance takes it a step further by helping you plan micro-investments alongside your EMIs, ensuring you stay financially efficient while paying off your bike loan.</p>
-                        <h3 class="font-semibold text-textdark">Personal Loan EMI Calculator</h3>
+                        <h3 class="font-semibold text-investment_green">Personal Loan EMI Calculator</h3>
                         <p>Personal loans are often taken for weddings, medical needs, or unplanned expenses. The Personal Loan EMI Calculator quickly estimates your monthly repayment while allowing you to explore how parallel investments—even over a short period—can ease your overall financial burden and reduce effective interest costs.</p>
-                        <h3 class="font-semibold text-textdark">Education Loan EMI Calculator</h3>
+                        <h3 class="font-semibold text-investment_green">Education Loan EMI Calculator</h3>
                         <p>Education loans help families finance domestic and international studies. With the Education Loan EMI Calculator, you can plan repayments starting after the moratorium period. Pai Finance helps you take control early by starting investments even before repayment begins—setting you up for a smoother financial transition once the EMIs start.</p>
-                        <h3 class="font-semibold text-textdark">Loan Against Property EMI Calculator</h3>
+                        <h3 class="font-semibold text-investment_green">Loan Against Property EMI Calculator</h3>
                         <p>Loans against residential, commercial, or land property require precise planning. The Loan Against Property EMI Calculator provides an accurate estimate of your repayment. In addition, Pai Finance shows how to allocate part of your budget to investments that grow over time—ensuring liquidity and stability during repayment.</p>
-                        <h3 class="font-semibold text-textdark">Why Choose Pai Finance EMI Calculators?</h3>
+                        <h3 class="font-semibold text-investment_green">Why Choose Pai Finance EMI Calculators?</h3>
                         <p>Most EMI calculators show only what you owe. Pai Finance goes further by helping you plan investments that run in parallel with your repayments. This dual approach empowers you to take loans with confidence—knowing that you're also building wealth alongside.</p>
                         <p>Whether you're financing a home, car, bike, education, or personal need, Pai Finance provides clarity, control, and a smarter path toward financial freedom.</p>
                     </div>
@@ -305,13 +320,47 @@
                 <div>
                     <h2 class="text-[21px] font-normal text-textdark font-albert_sans mb-4">FAQs</h2>
                     <div class="space-y-4">
-                        <div>
-                            <h3 class="font-semibold text-textdark">Is this calculator free to use?</h3>
-                            <p class="text-textlight">Yes, the PaiFinance calculator is 100% free to use.</p>
+                        <div class="faq-item">
+                            <div class="faq-question cursor-pointer flex justify-between items-center">
+                                <h3 class="font-semibold text-textdark">What sort of loans can I use the EMI calculator for?</h3>
+                                <svg class="chevron w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                            </div>
+                            <div class="faq-answer mt-2 text-textlight">
+                                <p>You can use the PaiFinance calculator for a variety of loans, including home loans, car loans, personal loans, education loans, and loans against property. The tool is flexible enough to handle any type of loan that has a fixed interest rate and tenure.</p>
+                            </div>
                         </div>
-                        <div>
-                            <h3 class="font-semibold text-textdark">Are the investment returns guaranteed?</h3>
-                            <p class="text-textlight">No. Investment returns are subject to market risks and are not guaranteed. The projections are based on the expected rate of return you provide.</p>
+                        <div class="faq-item">
+                            <div class="faq-question cursor-pointer flex justify-between items-center">
+                                <h3 class="font-semibold text-textdark">How does the debt-to-income ratio affect my chances of availing of a loan?</h3>
+                                <div class="chevron w-4 h-4 transition-transform">
+                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                </div>
+                            </div>
+                            <div class="faq-answer mt-2 text-textlight">
+                                <p>Your debt-to-income (DTI) ratio is a key factor that lenders use to assess your ability to repay a loan. A lower DTI ratio indicates that you have a good balance between your debt and income, which can improve your chances of getting approved for a loan with favorable terms.</p>
+                            </div>
+                        </div>
+                        <div class="faq-item">
+                            <div class="faq-question cursor-pointer flex justify-between items-center">
+                                <h3 class="font-semibold text-textdark">What does an EMI consist of?</h3>
+                                <div class="chevron w-4 h-4 transition-transform">
+                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                </div>
+                            </div>
+                            <div class="faq-answer mt-2 text-textlight">
+                                <p>An Equated Monthly Installment (EMI) consists of two main components: the principal amount and the interest. In the initial years of your loan, a larger portion of your EMI goes towards paying off the interest. As the loan matures, a larger portion goes towards paying down the principal.</p>
+                            </div>
+                        </div>
+                        <div class="faq-item">
+                            <div class="faq-question cursor-pointer flex justify-between items-center">
+                                <h3 class="font-semibold text-textdark">What happens if I fail to pay my EMIs?</h3>
+                                <div class="chevron w-4 h-4 transition-transform">
+                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                </div>
+                            </div>
+                            <div class="faq-answer mt-2 text-textlight">
+                                <p>Failing to pay your EMIs on time can have serious consequences. It can negatively impact your credit score, making it difficult to get loans in the future. Lenders may also charge penalties and, in the case of secured loans like a car or home loan, they can repossess the asset.</p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -320,6 +369,19 @@
         </section>
     </main>
 
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const faqItems = document.querySelectorAll('.faq-item');
+            faqItems.forEach(item => {
+                const question = item.querySelector('.faq-question');
+                const answer = item.querySelector('.faq-answer');
+                question.addEventListener('click', () => {
+                    answer.style.display = answer.style.display === 'block' ? 'none' : 'block';
+                    question.classList.toggle('open');
+                });
+            });
+        });
+    </script>
     <script src="script.js"></script>
 </body>
 </html>
