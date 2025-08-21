@@ -1,7 +1,7 @@
 /**
  * PaiFinance - Interactive Script
- * Version: 6.8 - Final Heading Polish
- * Last updated: August 21, 2025, 9:00 AM IST
+ * Version: 6.9 - Final Polish
+ * Last updated: August 21, 2025, 9:15 AM IST
  * Built by the Bros.
  */
 
@@ -171,7 +171,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const totalPaid = scenario.principal + scenario.totalInterestPaid;
         
         mainResultsContainer.innerHTML = `
-            <h2 class="text-2xl font-bold text-textdark font-albert_sans mb-4 text-center">${title}</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 ${createWidgetCard('Loan Details', scenario, 'primary', displayTenure)}
                 ${createWidgetCard('Investment Details', scenario, 'success', displayTenure, totalInvested, totalGains)}
@@ -185,7 +184,7 @@ document.addEventListener('DOMContentLoaded', () => {
         renderComparisonChart(chartData);
 
         chartExplanation.innerHTML = `
-            <h4 class="font-bold text-textdark mb-2">The Story Behind the Numbers</h4>
+            <h4 class="text-lg font-bold text-textdark mb-2">${title}</h4>
             <p>This chart visualizes the power of your strategy over time. The <span class="font-semibold text-emi_purple">purple line</span> shows your loan balance decreasing, while the <span class="font-semibold text-investment_green">green line</span> shows your investment value growing.</p>
             <p class="mt-2">Your plan is successful because your investment is projected to grow at <span class="font-semibold">${scenario.investmentAnnualRate}%</span>, which is faster than the <span class="font-semibold">${scenario.loanAnnualRate}%</span> interest on your loan.</p>
         `;
@@ -301,7 +300,7 @@ document.addEventListener('DOMContentLoaded', () => {
             monthlyBudgetChart.data = data;
             monthlyBudgetChart.update();
         } else {
-            monthlyBudgetChart = new Chart(chartCanvas, { type: 'doughnut', data: data, options: { responsive: true, maintainAspectRatio: true, cutout: '60%', plugins: { title: { display: true, text: 'Monthly Budget Allocation', align: 'center', font: { size: 18, weight: '600' }, color: '#1F2937', padding: { bottom: 16 } }, legend: { position: 'bottom', labels: { usePointStyle: true, pointStyle: 'rectRounded' } } } } });
+            monthlyBudgetChart = new Chart(chartCanvas, { type: 'doughnut', data: data, options: { responsive: true, maintainAspectRatio: true, cutout: '60%', plugins: { title: { display: true, text: 'Monthly Budget Allocation', align: 'center', font: { size: 18, weight: 'normal' }, color: '#1F2937', padding: { bottom: 16 } }, legend: { position: 'bottom', labels: { usePointStyle: true, pointStyle: 'rectRounded' } } } } });
         }
     }
     
