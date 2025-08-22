@@ -617,8 +617,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const advantage = scenario.netWealth - traditionalNetWealth;
             summaryHTML = `
                 <h4 class="text-sm font-bold text-center mb-2">Result Summary</h4>
-                <p class="text-xs text-center">Net Wealth: <strong class="text-investment_green">₹${scenario.netWealth.toLocaleString('en-IN')}</strong> vs. <strong class="text-danger">-₹${scenario.totalInterestPaid.toLocaleString('en-IN')}</strong></p>
-                <p class="text-xs text-center mt-1">Advantage vs. Traditional: <strong class="text-success">₹${advantage.toLocaleString('en-IN')}</strong></p>
+                <p class="text-xs text-center">By using the PaiFinance strategy, you can generate a net wealth of <strong class="text-investment_green">₹${scenario.netWealth.toLocaleString('en-IN')}</strong>, as opposed to a net negative of <strong class="text-danger">-₹${scenario.totalInterestPaid.toLocaleString('en-IN')}</strong> with a traditional loan.</p>
             `;
         }
         summaryResultsContainer.innerHTML = summaryHTML;
