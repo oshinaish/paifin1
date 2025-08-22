@@ -1,7 +1,7 @@
 /**
  * PaiFinance - Interactive Script
- * Version: 15.0 - FINAL SUMMARY BOX FIX
- * Last updated: August 22, 2025, 12:30 AM IST
+ * Version: 15.0 - FINAL COMPLETE VERSION
+ * Last updated: August 22, 2025, 6:30 PM IST
  * Built by the Bros.
  */
 
@@ -595,7 +595,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
-
+    
     function updateSummaryBox(scenario, title, displayTenure, crossoverYear) {
         summaryResultsContainer.classList.remove('hidden');
         let summaryHTML = '';
