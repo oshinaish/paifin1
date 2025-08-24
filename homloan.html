@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home Loan EMI Calculator - PaiFinance</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        // Tailwind CSS configuration
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        albert_sans: ['"Albert Sans"', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#4F46E5',
+                        background: '#F9FAFB',
+                        card: '#FFFFFF',
+                        textdark: '#1F2937',
+                        textlight: '#4B5563',
+                        danger: '#EF4444',
+                        success: '#22C55E',
+                        warning: '#F59E0B',
+                        emi_purple: '#9a85e1',
+                        investment_green: '#1B9272',
+                        input_text_color: '#1B9272', 
+                        seekbar_track_right: '#E5E7EB',
+                        input_box_fill: '#53db9e',
+                    },
+                    boxShadow: {
+                        'custom-input': '0px 0px 4px rgba(0, 0, 0, 0.04)',
+                        'default': '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Albert+Sans:wght@400;700;800&display=swap" rel="stylesheet">
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+    <style>
+        /* Custom styles */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #EDF0EF; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: #888; border-radius: 10px; }
+        input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+        input[type="number"] { -moz-appearance: textfield; }
+        input[type="range"] { -webkit-appearance: none; appearance: none; height: 2px; background: #E5E7EB; outline: none; border-radius: 5px; }
+        input[type="range"]::-webkit-slider-runnable-track { 
+            width: 100%; 
+            height: 2px; 
+            background: linear-gradient(to right, rgba(27, 146, 114, 0.75) var(--range-progress, 0%), #E5E7EB var(--range-progress, 0%)); 
+            border-radius: 5px; 
+        }
+        input[type="range"]::-webkit-slider-thumb { 
+            -webkit-appearance: none; 
+            appearance: none; 
+            width: 14px; 
+            height: 14px; 
+            background: #f5f5fa; 
+            border-radius: 50%; 
+            cursor: grab; 
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2); 
+            margin-top: -6px; 
+        }
+        .goal-button { background-color: rgba(234, 234, 234, 0.2); color: #1F2937; }
+        .goal-button.selected { background-color: #1B9272; color: #FFFFFF; box-shadow: 0 0 0 2px #1B9272, 0 0 0 4px rgba(27, 146, 114, 0.4); }
+        .faq-answer { display: none; }
+        .faq-question.open .chevron { transform: rotate(180deg); }
+        @keyframes gradient-border {
+            0% { border-color: #1B9272; }
+            50% { border-color: #59e6ce; }
+            100% { border-color: #1B9272; }
+        }
+        .animated-border {
+            border: 2px solid;
+            animation: gradient-border 3s linear infinite;
+        }
+    </style>
+</head>
+<body class="font-albert_sans bg-white text-textdark min-h-screen flex flex-col">
+
+    <!-- Header Section -->
+    <header class="bg-card shadow-sm h-[68px] pl-[27px] pr-6 md:pr-8 flex items-center justify-between z-10 sticky top-0">
+        <div class="flex items-center">
+            <a href="./index.html">
+                <img src="https://placehold.co/120x40/1B9272/FFFFFF?text=Pai" alt="Pai Logo" class="h-8 w-auto">
+            </a>
+            <h1 class="text-xl font-extrabold text-textdark font-albert_sans ml-[22px]">Pai</h1>
+        </div>
+        <nav class="flex items-center gap-6">
+            <a href="./index.html" class="text-sm font-semibold text-textlight hover:text-investment_green transition-colors">Calculator</a>
+            <a href="./about.html" class="text-sm font-semibold text-textlight hover:text-investment_green transition-colors">About Us</a>
+        </nav>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 flex flex-col">
+        <!-- Top Section: Inputs and Pie Chart -->
+        <div class="grid grid-cols-1 lg:grid-cols-4">
+            <!-- Left Side: Input & Calculation Section (3/4 width) -->
+            <section class="lg:col-span-3 bg-card p-6">
+                 <h2 class="text-[21px] font-normal text-textdark font-albert_sans mb-6">Home Loan EMI Calculator</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12">
+                    <!-- Column 1: Loan Details -->
+                    <div class="space-y-5">
+                        <div>
+                            <div class="flex items-center justify-between w-full max-w-[330px]">
+                                <label for="loanAmount" class="block text-sm font-normal text-textlight font-albert_sans">Loan Amount</label>
+                                <div class="w-[114px] h-[29px] p-2 rounded-[2px] bg-input_box_fill bg-opacity-10 shadow-custom-input flex items-center">
+                                    <span class="font-normal text-input_text_color pl-1">₹</span>
+                                    <input type="number" id="loanAmount" value="5000000" min="100000" max="50000000" step="100000" class="w-full bg-transparent border-none focus:ring-0 text-input_text_color text-right p-0 m-0 font-albert_sans font-normal text-base">
+                                </div>
+                            </div>
+                            <input type="range" id="loanAmountSlider" value="5000000" min="100000" max="50000000" step="100000" class="w-full max-w-[330px] mt-[18px]">
+                        </div>
+                    </div>
+                    <!-- Column 2: Budget Details -->
+                     <div class="space-y-5">
+                         <div>
+                            <div class="flex items-center justify-between w-full max-w-[330px]">
+                                <label for="monthlyBudget" class="block text-sm font-normal text-textlight font-albert_sans">Monthly Budget</label>
+                                <div class="w-[114px] h-[29px] p-2 rounded-[2px] bg-input_box_fill bg-opacity-10 shadow-custom-input flex items-center">
+                                    <span class="font-normal text-input_text_color pl-1">₹</span>
+                                    <input type="number" id="monthlyBudget" value="70000" min="10000" max="1000000" step="1000" class="w-full bg-transparent border-none focus:ring-0 text-input_text_color text-right p-0 m-0 font-albert_sans font-normal text-base">
+                                </div>
+                            </div>
+                            <input type="range" id="monthlyBudgetSlider" value="70000" min="10000" max="1000000" step="1000" class="w-full max-w-[330px] mt-[18px]">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Strategy Box -->
+                <div class="relative mt-12">
+                    <!-- Goal Buttons Positioned on Top Edge -->
+                    <div class="absolute -top-5 left-1/2 transform -translate-x-1/2 z-10">
+                        <div class="flex flex-nowrap justify-center gap-4 bg-card p-2 rounded-[30px] shadow-md">
+                            <button type="button" id="btnPlanner" data-goal="planner" class="goal-button selected flex flex-col items-center justify-center py-2 px-4 rounded-[25px] cursor-pointer transition-all duration-200 text-sm font-bold text-center shadow-sm font-albert_sans uppercase">Manual<br>Planner</button>
+                            <button type="button" id="btnMinTime" data-goal="min-time" class="goal-button flex flex-col items-center justify-center py-2 px-4 rounded-[25px] cursor-pointer transition-all duration-200 text-sm font-bold text-center shadow-sm font-albert_sans uppercase">Minimum Time<br>to Offset</button>
+                            <button type="button" id="btnOptimalStrategy" data-goal="optimal-strategy" class="goal-button flex flex-col items-center justify-center py-2 px-4 rounded-[25px] cursor-pointer transition-all duration-200 text-sm font-bold text-center shadow-sm font-albert_sans uppercase">Find Optimal<br>Strategy</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Main Strategy Box Content -->
+                    <div class="relative py-6 pt-12 bg-[rgba(234,234,234,0.25)] shadow-lg rounded-lg w-full">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 px-6 mt-8">
+                            <!-- Column 1: Loan Parameters -->
+                            <div class="space-y-5">
+                                <div>
+                                    <div class="flex items-center justify-between w-full">
+                                        <label for="loanInterestRateDisplay" class="block text-sm font-normal text-textlight font-albert_sans">Loan Interest Rate</label>
+                                        <div class="w-[114px] h-[29px] p-2 rounded-[2px] bg-input_box_fill bg-opacity-10 shadow-custom-input flex items-center">
+                                            <input type="number" id="loanInterestRateDisplay" value="8.5" min="1" max="20" step="0.1" class="w-full bg-transparent border-none focus:ring-0 text-input_text_color text-right p-0 m-0 font-albert_sans font-normal text-base">
+                                            <span class="font-normal text-input_text_color pl-1">%</span>
+                                        </div>
+                                    </div>
+                                    <input type="range" id="loanInterestRateSlider" value="8.5" min="1" max="20" step="0.1" class="w-full mt-[18px]">
+                                </div>
+                                <div id="loanTenureContainer">
+                                    <div class="flex items-center justify-between w-full">
+                                        <label class="block text-sm font-normal text-textlight font-albert_sans">Loan Tenure</label>
+                                        <div class="w-[114px] h-[29px] p-2 rounded-[2px] bg-input_box_fill bg-opacity-10 shadow-custom-input flex items-center">
+                                            <input type="number" id="loanTenureDisplay" value="30" min="1" max="30" class="w-full bg-transparent border-none focus:ring-0 text-input_text_color text-right p-0 m-0 font-albert_sans font-normal text-base">
+                                            <span class="font-normal text-input_text_color pl-1">Yr</span>
+                                        </div>
+                                    </div>
+                                    <input type="range" id="loanTenureSlider" value="30" min="1" max="30" class="w-full mt-[18px]">
+                                </div>
+                                <div class="flex items-center justify-between w-full">
+                                    <label class="block text-sm font-normal text-textlight font-albert_sans">Monthly EMI</label>
+                                    <div class="w-[114px] h-[29px] p-2 rounded-[2px] bg-input_box_fill bg-opacity-10 shadow-custom-input flex items-center justify-end">
+                                        <p id="emiResult" class="w-full bg-transparent text-right p-0 m-0 font-albert_sans font-normal text-base text-emi_purple">₹ 0</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Column 2: Investment Parameters -->
+                            <div class="space-y-5">
+                                 <div>
+                                    <div class="flex items-center justify-between w-full">
+                                        <label for="investmentRateDisplay" class="block text-sm font-normal text-textlight font-albert_sans">Investment Return Rate</label>
+                                        <div class="w-[114px] h-[29px] p-2 rounded-[2px] bg-input_box_fill bg-opacity-10 shadow-custom-input flex items-center">
+                                            <input type="number" id="investmentRateDisplay" value="12" min="1" max="30" step="0.1" class="w-full bg-transparent border-none focus:ring-0 text-input_text_color text-right p-0 m-0 font-albert_sans font-normal text-base">
+                                            <span class="font-normal text-input_text_color pl-1">%</span>
+                                        </div>
+                                    </div>
+                                    <input type="range" id="investmentRateSlider" value="12" min="1" max="30" step="0.1" class="w-full mt-[18px]">
+                                </div>
+                                <div id="investmentTenureContainer">
+                                    <div class="flex items-center justify-between w-full">
+                                        <label for="investmentTenureDisplay" class="block text-sm font-normal text-textlight font-albert_sans">Investment Tenure</label>
+                                        <div class="w-[114px] h-[29px] p-2 rounded-[2px] bg-input_box_fill bg-opacity-10 shadow-custom-input flex items-center">
+                                            <input type="number" id="investmentTenureDisplay" value="30" min="1" max="30" class="w-full bg-transparent border-none focus:ring-0 text-input_text_color text-right p-0 m-0 font-albert_sans font-normal text-base">
+                                            <span class="font-normal text-input_text_color pl-1">Yr</span>
+                                        </div>
+                                    </div>
+                                    <input type="range" id="investmentTenureSlider" value="30" min="1" max="30" class="w-full mt-[18px]">
+                                </div>
+                                <div class="flex items-center justify-between w-full">
+                                    <label class="block text-sm font-normal text-textlight font-albert_sans">Monthly Investment</label>
+                                     <div class="w-[114px] h-[29px] p-2 rounded-[2px] bg-input_box_fill bg-opacity-10 shadow-custom-input flex items-center justify-end">
+                                        <p id="monthlyInvestmentResult" class="w-full bg-transparent text-right p-0 m-0 font-albert_sans font-normal text-base text-investment_green">₹ 0</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Right Side: Pie Chart & Summary Section (1/4 width) -->
+            <section class="lg:col-span-1 bg-card p-6 flex flex-col items-center justify-center space-y-6">
+                 <div id="chartsContainer" class="w-full max-w-[350px]">
+                    <div class="w-full h-[200px] relative">
+                        <canvas id="monthlyBudgetChart"></canvas>
+                        <div id="chartMessage" class="absolute inset-0 flex items-center justify-center text-center text-textlight p-4">
+                            Your budget breakdown will appear here.
+                        </div>
+                    </div>
+                 </div>
+                 <div id="summaryResultsContainer" class="w-full max-w-[350px] bg-background p-4 rounded-lg shadow-inner hidden">
+                    <!-- Summary results will be injected here -->
+                 </div>
+            </section>
+        </div>
+
+        <!-- Bottom Section: Full-Width Final Results -->
+        <section id="finalResultsSection" class="bg-background p-6 hidden">
+            <div id="mainResultsContainer" class="max-w-7xl mx-auto">
+                <!-- Result widgets will be injected here by JavaScript -->
+            </div>
+            
+            <div id="paiVsTraditionalContainer" class="max-w-7xl mx-auto mt-8 bg-card p-4 rounded-lg shadow-default hidden grid grid-cols-1 lg:grid-cols-3 gap-12 items-start">
+                <div class="lg:col-span-2 h-[400px]">
+                    <canvas id="paiVsTraditionalChart"></canvas>
+                </div>
+                <div id="paiVsTraditionalExplanation" class="lg:col-span-1 text-base text-textlight leading-relaxed">
+                    <!-- Dynamic explanation will go here -->
+                </div>
+            </div>
+
+            <div id="comparisonChartContainer" class="max-w-7xl mx-auto mt-8 bg-card p-4 rounded-lg shadow-default hidden grid grid-cols-1 lg:grid-cols-3 gap-12 items-start">
+                <div id="chartExplanation" class="lg:col-span-1 text-base text-textlight leading-relaxed">
+                    <!-- Dynamic explanation will go here -->
+                </div>
+                <div class="lg:col-span-2 h-[400px]">
+                    <canvas id="comparisonChart"></canvas>
+                </div>
+            </div>
+
+            <div id="amortizationContainer" class="max-w-7xl mx-auto mt-8 bg-card p-4 rounded-lg shadow-default hidden grid grid-cols-1 lg:grid-cols-3 gap-12 items-start">
+                <div id="amortizationTableContainer" class="lg:col-span-2 h-[400px] overflow-y-auto">
+                    <!-- Amortization table will be injected here -->
+                </div>
+                <div id="amortizationExplanation" class="lg:col-span-1 text-base text-textlight leading-relaxed">
+                    <!-- Dynamic explanation will go here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- SEO Content Sections -->
+        <section class="bg-white p-6 md:p-12">
+            <div class="w-full md:w-3/5 space-y-12">
+                
+                <div>
+                    <h2 class="text-[21px] font-normal text-textdark font-albert_sans mb-4">How to Use the PaiFinance Home Loan EMI Calculator</h2>
+                    <p class="text-textlight">Using our tool is simple. Just follow these steps to get a clear picture of your financial future:</p>
+                    <ol class="list-decimal list-inside text-textlight space-y-2 mt-2">
+                        <li>Enter your desired <strong>Home Loan Amount</strong> and your total <strong>Monthly Budget</strong> for both loan and investment payments.</li>
+                        <li>Select one of the three goals: <strong>Manual Planner</strong>, <strong>Minimum Time to Offset</strong>, or <strong>Find Optimal Strategy</strong>.</li>
+                        <li>Adjust the sliders for the <strong>Loan Interest Rate</strong> and your expected <strong>Investment Return Rate</strong>.</li>
+                        <li>Instantly see your results, including a detailed breakdown of your payments, charts, and a full amortization schedule.</li>
+                    </ol>
+                </div>
+
+                <div>
+                    <h2 class="text-[21px] font-normal text-textdark font-albert_sans mb-4">Formula to Determine Home Loan EMI</h2>
+                    <p class="text-textlight mb-4">Our calculator uses the industry-standard formula to calculate your Equated Monthly Installment (EMI) for your home loan:</p>
+                    <div class="flex items-center justify-center my-6">
+                        <span class="text-2xl font-semibold mr-4">EMI =</span>
+                        <div class="inline-block text-center text-xl">
+                            <div class="px-4 pb-2">
+                                P &times; R &times; (1 + R)<sup>N</sup>
+                            </div>
+                            <hr class="border-t-2 border-textdark">
+                            <div class="px-4 pt-2">
+                                (1 + R)<sup>N</sup> - 1
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-textlight">Where P is the Principal Loan Amount, R is the monthly interest rate, and N is the number of months. Your investment growth is calculated using the standard <strong>future value of a Systematic Investment Plan (SIP)</strong> formula.</p>
+                </div>
+
+                <div>
+                    <h2 class="text-[21px] font-normal text-textdark font-albert_sans mb-4">How Does the Calculator Help You Manage Your Home Loan?</h2>
+                    <p class="text-textlight">The PaiFinance calculator is more than just a tool; it's a strategic partner for your home loan. It helps you move beyond simply paying off your mortgage and empowers you to build wealth simultaneously. By visualizing the impact of different strategies, you can make informed decisions that align with your financial goals, whether that's becoming debt-free as fast as possible or maximizing your long-term wealth.</p>
+                </div>
+
+                <div>
+                    <h2 class="text-[21px] font-normal text-textdark font-albert_sans mb-4">Advantages of Using the Pai Home Loan Calculator</h2>
+                    <ul class="list-disc list-inside text-textlight space-y-2">
+                        <li><strong>Data-Driven Decisions:</strong> Replace financial guesswork with clear, mathematical insights for your home loan.</li>
+                        <li><strong>Dual-Focus Strategy:</strong> Uniquely designed to help you manage your home loan and build wealth at the same time.</li>
+                        <li><strong>Instant Visualizations:</strong> Powerful charts and graphs help you understand complex home loan scenarios at a glance.</li>
+                        <li><strong>Free and Easy to Use:</strong> No sign-ups, no fees. Just a powerful tool to help you achieve your financial goals.</li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h2 class="text-[21px] font-normal text-textdark font-albert_sans mb-4">FAQs for Home Loan Calculator</h2>
+                    <div class="space-y-4">
+                        <div class="faq-item">
+                            <div class="faq-question cursor-pointer flex justify-between items-center">
+                                <h3 class="font-normal text-textdark">What is a home loan EMI calculator?</h3>
+                                <svg class="chevron w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                            </div>
+                            <div class="faq-answer mt-2 text-textlight">
+                                <p>A home loan EMI calculator is an online tool that helps you calculate the monthly amount you need to pay towards your home loan. The PaiFinance calculator goes a step further by also showing you how you can invest alongside your EMI payments to build wealth.</p>
+                            </div>
+                        </div>
+                        <div class="faq-item">
+                            <div class="faq-question cursor-pointer flex justify-between items-center">
+                                <h3 class="font-normal text-textdark">How is home loan EMI calculated?</h3>
+                                <div class="chevron w-4 h-4 transition-transform">
+                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                </div>
+                            </div>
+                            <div class="faq-answer mt-2 text-textlight">
+                                <p>Home loan EMI is calculated based on three main factors: the principal loan amount, the interest rate, and the loan tenure. Our calculator uses the standard EMI formula to give you an accurate monthly payment amount.</p>
+                            </div>
+                        </div>
+                        <div class="faq-item">
+                            <div class="faq-question cursor-pointer flex justify-between items-center">
+                                <h3 class="font-normal text-textdark">Can I make part payments on my home loan?</h3>
+                                <div class="chevron w-4 h-4 transition-transform">
+                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                </div>
+                            </div>
+                            <div class="faq-answer mt-2 text-textlight">
+                                <p>Yes, most banks allow you to make part payments on your home loan. This can significantly reduce your total interest outgo and help you pay off your loan faster. Our amortization schedule provides a baseline, but part payments will accelerate your journey to being debt-free.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="bg-textdark text-gray-300 py-8 px-6 md:px-12">
+            <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div>
+                    <div class="flex items-center mb-4">
+                        <img src="https://placehold.co/120x40/FFFFFF/1B9272?text=Pai" alt="Pai Logo" class="h-8 w-auto">
+                        <h2 class="text-xl font-bold ml-4">Pai Finance</h2>
+                    </div>
+                    <p class="text-sm">AX Building, Sector-23, Gurgaon, 122017</p>
+                </div> 
+                <div>
+                    <h3 class="font-semibold mb-4">Contact Us</h3>
+                    <p class="text-sm">paifinance.ai@gmail.com</p>
+                </div>
+                <div>
+                    <h3 class="font-semibold mb-4">Legal</h3>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#" class="hover:underline">Privacy Policy</a></li>
+                        <li><a href="#" class="hover:underline">Terms & Conditions</a></li>
+                    </ul>
+                </div>
+            </div>
+        </footer>
+
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const faqItems = document.querySelectorAll('.faq-item');
+            faqItems.forEach(item => {
+                const question = item.querySelector('.faq-question');
+                const answer = item.querySelector('.faq-answer');
+                question.addEventListener('click', () => {
+                    answer.style.display = answer.style.display === 'block' ? 'none' : 'block';
+                    question.classList.toggle('open');
+                });
+            });
+        });
+    </script>
+    <script src="script.js"></script>
+</body>
+</html>
