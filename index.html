@@ -88,12 +88,20 @@
 <body class="font-albert_sans bg-white text-textdark min-h-screen flex flex-col">
 
     <!-- Header Section -->
-    <header class="bg-card shadow-sm h-[68px] pl-[27px] pr-6 md:pr-8 flex items-center justify-between z-10 sticky top-0">
-        <div class="flex items-center">
-            <img src="https://placehold.co/120x40/1B9272/FFFFFF?text=Pai" alt="Pai Logo" class="h-8 w-auto">
-            <h1 class="text-xl font-extrabold text-textdark font-albert_sans ml-[22px]">Pai</h1>
-        </div>
-    </header>
+<header class="bg-card shadow-sm h-[68px] pl-[27px] pr-6 md:pr-8 flex items-center justify-between z-10 sticky top-0">
+    <div class="flex items-center">
+        <!-- Step 1: Make the logo a link to the homepage -->
+        <a href="./index.html">
+            <img src="loogo.svg" alt="Pai Logo" class="h-8 w-auto">
+        </a>
+        <h1 class="text-xl font-extrabold text-textdark font-albert_sans ml-[22px]">Pai</h1>
+    </div>
+    
+    <!-- Step 2: Add the navigation link -->
+    <nav>
+        <a href="./about.html" class="text-sm font-semibold text-textlight hover:text-investment_green transition-colors">About Us</a>
+    </nav>
+</header>
 
     <!-- Main Content Area -->
     <main class="flex-1 flex flex-col">
