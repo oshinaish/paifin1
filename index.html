@@ -151,15 +151,12 @@
                         </div>
                     </div>
                     
-                     <!-- Main Strategy Box Content -->
-    <!-- FIX 1: Added flex and justify-center to perfectly center the grid inside -->
-    <div class="relative py-6 pt-12 bg-[rgba(234,234,234,0.25)] shadow-lg rounded-lg w-full flex justify-center">
-        <!-- FIX 2: The grid now handles all the internal spacing -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8 px-6 mt-8">
+                  <!-- Main Strategy Box Content -->
+    <div class="relative py-6 pt-12 bg-[rgba(234,234,234,0.25)] shadow-lg rounded-lg w-full">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 px-6 mt-8">
             
             <!-- Column 1: Loan Parameters -->
-            <!-- FIX 3: Centered the content within the column -->
-            <div class="space-y-5 flex flex-col items-center">
+            <div class="space-y-5">
                 <div>
                     <div class="flex items-center justify-between w-full max-w-[330px]">
                         <label for="loanInterestRateDisplay" class="block text-sm font-normal text-textlight font-albert_sans">Loan Interest Rate</label>
@@ -189,8 +186,7 @@
             </div>
 
             <!-- Column 2: Investment Parameters -->
-            <!-- FIX 3: Centered the content within the column -->
-            <div class="space-y-5 flex flex-col items-center">
+            <div class="space-y-5">
                  <div>
                     <div class="flex items-center justify-between w-full max-w-[330px]">
                         <label for="investmentRateDisplay" class="block text-sm font-normal text-textlight font-albert_sans">Investment Return Rate</label>
@@ -221,6 +217,7 @@
         </div>
     </div>
 </div>
+
             </section>
 
             <!-- Right Side: Pie Chart & Summary Section (1/4 width) -->
