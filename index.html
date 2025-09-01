@@ -177,13 +177,33 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 </div>
                  <div class="flex justify-between mt-8 space-x-4">
                      <button onclick="prevStep(2)" class="w-1/3 bg-gray-200 text-gray-700 font-semibold py-3 px-4 rounded-lg hover:bg-gray-300 transition">Back</button>
-                    <button onclick="finishOnboarding()" class="w-2/3 bg-success text-white font-semibold py-3 px-4 rounded-lg hover:bg-opacity-90 transition">Create My Financial Plan</button>
+                    <button onclick="finishOnboarding()" class="w-2/3 bg-success text-white font-semibold py-3 px-4 rounded-lg hover:bg-opacity-90 transition">Calculate My Plan</button>
                 </div>
             </div>
         </div>
     </div>
 </div>
-    
+
+<!-- NEW: Post-Onboarding Summary Modal -->
+<div id="postOnboardingSummaryModal" class="hidden fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center p-4 z-50">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg text-center p-8 transform transition-all">
+        <h2 class="text-2xl font-bold text-textdark mb-4">Here's Your Starting Point!</h2>
+        <p class="text-textlight mb-6">Based on your details, here is your initial financial snapshot.</p>
+        <div class="bg-background p-6 rounded-lg space-y-4">
+            <div>
+                <p class="text-sm text-textlight">Your Available Monthly Budget</p>
+                <p id="summaryBudget" class="text-3xl font-bold text-investment_green">₹0</p>
+            </div>
+            <div>
+                <p class="text-sm text-textlight">Potential Annual Tax Savings (on Home Loan)</p>
+                <p id="summaryTaxSavings" class="text-3xl font-bold text-investment_green">₹0</p>
+            </div>
+        </div>
+        <p class="text-xs text-gray-400 mt-2">Tax savings are an estimate based on your income and a ₹50 Lakh loan. Adjust the loan details in the planner.</p>
+        <button id="startPlanningBtn" class="w-full mt-6 bg-investment_green text-white font-semibold py-3 px-4 rounded-lg hover:bg-opacity-90 transition">Start Planning &rarr;</button>
+    </div>
+</div>
+
 <!-- Header Section -->
 <header class="bg-card shadow-sm h-[68px] pl-[27px] pr-6 md:pr-8 flex items-center justify-between z-10 sticky top-0">
     <div class="flex items-center">
@@ -602,6 +622,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         const onboardingTitle = document.getElementById('onboardingTitle');
         const titles = ["Your Monthly Income", "Your Lifestyle", "Your Financial Horizon"];
         let currentStep = 1;
+        let globalOnboardingData = {}; // To store data temporarily
 
         function showStep(stepNumber) {
             steps.forEach((step, index) => {
@@ -643,7 +664,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 }
             }
 
-            const onboardingData = {
+            // Store data globally to be used by the summary modal's button
+            globalOnboardingData = {
                 monthlyIncome: parseFloat(document.getElementById('ob_monthlyIncome').value),
                 epfVpf: parseFloat(document.getElementById('ob_epfVpf').value),
                 monthlyExpenses: parseFloat(document.getElementById('ob_monthlyExpenses').value),
@@ -653,7 +675,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             document.getElementById('onboardingModal').classList.add('hidden');
             document.getElementById('onboardingModal').classList.remove('flex');
             
-            initializeMainCalculator(onboardingData);
+            // This function now just shows the summary.
+            showSummaryAndCalculate(globalOnboardingData);
         }
         
         // --- PAGE INITIALIZATION SCRIPT ---
@@ -662,6 +685,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             const onboardingModal = document.getElementById('onboardingModal');
             const coachmark = document.getElementById('coachmark');
             const pulsingDot = document.getElementById('pulsingDot');
+            const startPlanningBtn = document.getElementById('startPlanningBtn');
 
             pulsingDot.classList.add('animate-pulse-glow');
             
@@ -678,19 +702,74 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 onboardingModal.classList.add('flex');
                 showStep(1);
             });
+            
+            startPlanningBtn.addEventListener('click', () => {
+                document.getElementById('postOnboardingSummaryModal').classList.add('hidden');
+                document.getElementById('postOnboardingSummaryModal').classList.remove('flex');
+                // Use the globally stored data to populate the calculator
+                populateCalculatorAndRun(globalOnboardingData);
+            });
         });
 
+        function calculateTaxSavings(onboardingData, loanAmount, loanInterest = 8.5, tenure = 20) {
+            const annualSalary = onboardingData.monthlyIncome * 12;
+            let taxRate = 0;
+
+            // Simplified tax slab calculation (Old Regime approximation)
+            if (annualSalary > 1000000) {
+                taxRate = 0.30;
+            } else if (annualSalary > 500000) {
+                taxRate = 0.20;
+            } else if (annualSalary > 250000) {
+                taxRate = 0.05;
+            }
+
+            const monthlyInterestRate = (loanInterest / 100) / 12;
+            // Calculate interest for the first year
+            let firstYearInterest = 0;
+            let balance = loanAmount;
+            const emi = loanAmount * monthlyInterestRate * Math.pow(1 + monthlyInterestRate, tenure * 12) / (Math.pow(1 + monthlyInterestRate, tenure * 12) - 1);
+
+            for (let i=0; i<12; i++) {
+                let interest = balance * monthlyInterestRate;
+                firstYearInterest += interest;
+                balance -= (emi - interest);
+            }
+
+            // Deduction under Section 24(b) is capped at ₹2,00,000
+            const deductibleInterest = Math.min(firstYearInterest, 200000);
+            const taxSaved = deductibleInterest * taxRate;
+            return Math.round(taxSaved);
+        }
+
+
         // --- BRIDGE TO YOUR MAIN CALCULATOR CODE ---
-        function initializeMainCalculator(data) {
-            console.log("Onboarding complete! Data received:", data);
+        function showSummaryAndCalculate(data) {
+            console.log("Onboarding complete! Preparing summary with data:", data);
             
-            // This is a simplified calculation for demonstration.
-            // A more accurate calculation would consider income tax slabs.
             const inHandSalary = data.monthlyIncome * (1 - (data.epfVpf/100));
             const budget = inHandSalary - data.monthlyExpenses;
             const finalBudget = Math.max(0, Math.round(budget));
+            
+            // Use the default loan amount from the input field for tax calculation
+            const defaultLoanAmount = parseFloat(document.getElementById('loanAmount').value);
+            const taxSavings = calculateTaxSavings(data, defaultLoanAmount, parseFloat(document.getElementById('loanInterestRateDisplay').value), data.planningYears);
 
-            // Get all the relevant elements from the main calculator
+            // Populate summary modal
+            document.getElementById('summaryBudget').textContent = `₹${finalBudget.toLocaleString('en-IN')}`;
+            document.getElementById('summaryTaxSavings').textContent = `₹${taxSavings.toLocaleString('en-IN')}`;
+            
+            // Show the modal
+            const summaryModal = document.getElementById('postOnboardingSummaryModal');
+            summaryModal.classList.remove('hidden');
+            summaryModal.classList.add('flex');
+        }
+
+        function populateCalculatorAndRun(data) {
+             const inHandSalary = data.monthlyIncome * (1 - (data.epfVpf/100));
+            const budget = inHandSalary - data.monthlyExpenses;
+            const finalBudget = Math.max(0, Math.round(budget));
+            
             const monthlyBudgetInput = document.getElementById('monthlyBudget');
             const monthlyBudgetSlider = document.getElementById('monthlyBudgetSlider');
             const loanTenureInput = document.getElementById('loanTenureDisplay');
@@ -698,13 +777,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             const investmentTenureInput = document.getElementById('investmentTenureDisplay');
             const investmentTenureSlider = document.getElementById('investmentTenureSlider');
 
-            // Update the budget input and slider with the calculated value
             if (monthlyBudgetInput && monthlyBudgetSlider) {
                 monthlyBudgetInput.value = finalBudget;
                 monthlyBudgetSlider.value = finalBudget;
             }
 
-            // Update both tenure inputs and sliders with the planning horizon
             const planningYears = data.planningYears;
              if (loanTenureInput && loanTenureSlider) {
                 loanTenureInput.value = planningYears;
@@ -715,14 +792,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 investmentTenureSlider.value = planningYears;
             }
 
-
-            // This is the crucial part: we need to trigger the main calculation
-            // function that already exists in your script.js.
-            // We dispatch 'input' events to simulate user interaction.
+            // CRUCIAL: Dispatch input events to trigger calculations in script.js
             const inputEvent = new Event('input', { bubbles: true });
             monthlyBudgetInput.dispatchEvent(inputEvent);
-            loanTenureInput.dispatchEvent(inputEvent);
+            loanTenureInput.dispatchEvent(inputEvent); // Dispatching on one tenure input is enough as they are synced
         }
+
     </script>
     <script src="script.js"></script>
 </body>
