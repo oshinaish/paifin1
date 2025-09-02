@@ -121,6 +121,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             transform-origin: bottom right;
             transform: scale(0.95);
             opacity: 0;
+            display: flex;
+            flex-direction: column;
         }
         #chatbot-container.open #chatbot-window {
             max-height: 70vh; /* Adjust as needed */
@@ -130,6 +132,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         #chatbot-container.open #chatbot-icon {
             transform: scale(0);
             opacity: 0;
+        }
+        #chatbot-messages {
+            flex-grow: 1;
         }
     </style>
 </head>
@@ -248,6 +253,28 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <button id="startPlanningBtn" class="w-full mt-6 bg-investment_green text-white font-semibold py-3 px-4 rounded-lg hover:bg-opacity-90 transition">Start Planning &rarr;</button>
     </div>
 </div>
+
+<!-- NEW: Connect to Expert Modal -->
+<div id="expertModal" class="hidden fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center p-4 z-50">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-8 transform transition-all relative">
+        <!-- Close button -->
+        <button id="closeExpertModal" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors z-10">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+        <div id="expertModalContent">
+            <h2 class="text-2xl font-bold text-center mb-4 text-textdark">Connect with an Expert</h2>
+            <p class="text-center text-textlight mb-6">Please provide your details, and a financial advisor will reach out to you shortly.</p>
+            <form id="expertForm">
+                <div class="space-y-4">
+                    <input type="text" placeholder="Your Name" required class="w-full p-3 border border-gray-300 rounded-md focus:ring-investment_green focus:border-investment_green">
+                    <input type="tel" placeholder="Your Phone Number" required class="w-full p-3 border border-gray-300 rounded-md focus:ring-investment_green focus:border-investment_green">
+                    <button type="submit" class="w-full bg-investment_green text-white font-semibold py-3 rounded-lg hover:bg-opacity-90 transition">Submit Request</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 
 <!-- Header Section -->
 <header class="bg-card shadow-sm h-[68px] pl-[27px] pr-6 md:pr-8 flex items-center justify-between z-10 sticky top-0">
@@ -416,6 +443,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                  <div id="summaryResultsContainer" class="w-full max-w-[350px] bg-background p-4 rounded-lg shadow-inner hidden">
                     <!-- Summary results will be injected here -->
                  </div>
+                 <!-- NEW: Connect to Expert Button -->
+                 <button id="connectExpertBtn" class="hidden w-full max-w-[350px] mt-4 bg-investment_green text-white font-semibold py-3 px-4 rounded-lg hover:bg-opacity-90 transition">Connect to an Expert</button>
             </section>
         </div>
 
@@ -656,7 +685,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <div id="chatbot-window" class="w-80 bg-white rounded-xl shadow-2xl border border-gray-200">
             <!-- Header -->
             <div class="bg-investment_green text-white p-4 rounded-t-xl flex justify-between items-center">
-                <h3 class="font-bold text-lg">Pai Finance Assistant</h3>
+                <h3 class="font-bold text-lg">Funda Chachi</h3>
                 <button id="close-chatbot" class="text-white hover:text-gray-200">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
@@ -894,6 +923,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             const chatbotOptions = document.getElementById('chatbot-options');
             const chatbotContactForm = document.getElementById('chatbot-contact-form');
             const chatbotSubmitBtn = document.getElementById('chatbot-submit-form');
+            
+            const connectExpertBtn = document.getElementById('connectExpertBtn');
+            const expertModal = document.getElementById('expertModal');
+            const closeExpertModalBtn = document.getElementById('closeExpertModal');
+            const expertForm = document.getElementById('expertForm');
+            const expertModalContent = document.getElementById('expertModalContent');
 
             // Show chatbot icon after a delay
             setTimeout(() => {
@@ -945,6 +980,39 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             chatbotSubmitBtn.addEventListener('click', () => {
                 chatbotContactForm.innerHTML = `<p class="text-center text-investment_green font-semibold">Thank you! Your request has been sent. Our team will contact you soon.</p>`;
             });
+
+            // --- EXPERT MODAL LOGIC ---
+            connectExpertBtn.addEventListener('click', () => {
+                expertModal.classList.remove('hidden');
+            });
+
+            closeExpertModalBtn.addEventListener('click', () => {
+                expertModal.classList.add('hidden');
+            });
+
+            expertForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                expertModalContent.innerHTML = `<h2 class="text-2xl font-bold text-center mb-4 text-textdark">Thank You!</h2><p class="text-center text-textlight">Your request has been submitted. An expert will be in touch with you shortly.</p>`;
+            });
+
+
+            // Observe summary box to show the "Connect" button
+            const summaryBox = document.getElementById('summaryResultsContainer');
+            const observer = new MutationObserver((mutations) => {
+                mutations.forEach((mutation) => {
+                    if (mutation.attributeName === 'class') {
+                        const isHidden = summaryBox.classList.contains('hidden');
+                        if (isHidden) {
+                            connectExpertBtn.classList.add('hidden');
+                        } else {
+                            connectExpertBtn.classList.remove('hidden');
+                        }
+                    }
+                });
+            });
+
+            observer.observe(summaryBox, { attributes: true });
+
 
         });
 
