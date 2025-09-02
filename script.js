@@ -707,6 +707,29 @@ document.addEventListener('DOMContentLoaded', () => {
         handleGoalSelection(document.querySelector('.goal-button.selected'));
     }
 
+    // --- NEW: EVENT LISTENER FOR ONBOARDING COMPLETION ---
+    document.addEventListener('onboardingComplete', (e) => {
+        const { budget, tenure } = e.detail;
+        
+        // 1. Populate the calculator's input fields with data from onboarding
+        monthlyBudgetInput.value = budget;
+        loanTenureInput.value = tenure;
+        investmentTenureInput.value = tenure;
+        
+        // 2. Manually trigger 'input' events to sync sliders and UI
+        // This is crucial for the sliders to visually update to the new values.
+        const inputEvent = new Event('input', { bubbles: true });
+        monthlyBudgetInput.dispatchEvent(inputEvent);
+        loanTenureInput.dispatchEvent(inputEvent);
+        investmentTenureInput.dispatchEvent(inputEvent);
+
+        // 3. Programmatically "click" the Optimal Strategy button
+        const optimalButton = document.getElementById('btnOptimalStrategy');
+        if (optimalButton) {
+            handleGoalSelection(optimalButton);
+        }
+    });
+
     initializeApp();
 });
 
