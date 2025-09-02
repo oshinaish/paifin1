@@ -122,7 +122,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
 <!-- Onboarding Modal (Initially Hidden) -->
 <div id="onboardingModal" class="hidden fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center p-4 z-50">
-    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg transform transition-all">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg transform transition-all relative">
+        <!-- Close button -->
+        <button id="closeOnboardingModal" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors z-10">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
         <!-- Progress Bar -->
         <div class="p-6 border-b border-gray-200">
              <div class="flex justify-between items-center mb-2">
@@ -186,7 +190,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
 <!-- NEW: Post-Onboarding Summary Modal -->
 <div id="postOnboardingSummaryModal" class="hidden fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center p-4 z-50">
-    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg text-left p-8 transform transition-all">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg text-left p-8 transform transition-all relative">
+        <!-- Close button -->
+        <button id="closeSummaryModal" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors z-10">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
         <h2 class="text-2xl font-bold text-textdark mb-4 text-center">Here's Your Starting Point!</h2>
         <div class="bg-background p-4 rounded-lg space-y-2 text-sm">
              <div class="flex justify-between items-center">
@@ -268,16 +276,25 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                                         <input type="number" id="monthlyBudget" value="70000" min="10000" max="1000000" step="1000" class="w-full bg-transparent border-none focus:ring-0 text-input_text_color text-right p-0 m-0 font-albert_sans font-normal text-base">
                                      </div>
                                      <!-- Onboarding Trigger Icon -->
-                                    <button id="onboardingTriggerIcon" class="relative flex-shrink-0">
+                                    <button id="onboardingTriggerIcon" class="relative flex-shrink-0 group">
                                          <svg class="w-6 h-6 text-investment_green" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                                          
                                          <!-- Coachmark -->
-                                         <div id="coachmark" class="absolute -top-12 -right-2 w-max z-20">
+                                         <div id="coachmark" class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-max z-20">
                                              <div class="relative bg-investment_green text-white text-sm font-semibold py-2 px-4 rounded-lg shadow-lg">
                                                 First, let's calculate your budget!
                                                 <div class="absolute left-1/2 -bottom-2 transform -translate-x-1/2 w-0 h-0 border-l-8 border-l-transparent border-r-8 border-r-transparent border-t-8 border-t-investment_green"></div>
                                              </div>
                                          </div>
+
+                                         <!-- Hover Tooltip -->
+                                         <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-max z-20 hidden group-hover:block">
+                                             <div class="relative bg-textdark text-white text-xs font-semibold py-1 px-3 rounded-md shadow-lg">
+                                                Edit Manually
+                                                <div class="absolute left-1/2 -bottom-1.5 transform -translate-x-1/2 w-0 h-0 border-l-4 border-l-transparent border-r-4 border-r-transparent border-t-4 border-t-textdark"></div>
+                                             </div>
+                                         </div>
+
                                           <!-- Pulsing Dot on Icon -->
                                           <span id="pulsingDot" class="absolute top-0 right-0 block h-3 w-3 rounded-full bg-investment_green"></span>
                                     </button>
@@ -699,9 +716,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         document.addEventListener('DOMContentLoaded', () => {
             const onboardingTriggerIcon = document.getElementById('onboardingTriggerIcon');
             const onboardingModal = document.getElementById('onboardingModal');
+            const summaryModal = document.getElementById('postOnboardingSummaryModal');
             const coachmark = document.getElementById('coachmark');
             const pulsingDot = document.getElementById('pulsingDot');
             const startPlanningBtn = document.getElementById('startPlanningBtn');
+            const closeOnboardingModalBtn = document.getElementById('closeOnboardingModal');
+            const closeSummaryModalBtn = document.getElementById('closeSummaryModal');
 
             pulsingDot.classList.add('animate-pulse-glow');
             
@@ -720,9 +740,19 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             });
             
             startPlanningBtn.addEventListener('click', () => {
-                document.getElementById('postOnboardingSummaryModal').classList.add('hidden');
-                document.getElementById('postOnboardingSummaryModal').classList.remove('flex');
+                summaryModal.classList.add('hidden');
+                summaryModal.classList.remove('flex');
                 populateCalculatorAndRun(globalOnboardingData);
+            });
+
+            closeOnboardingModalBtn.addEventListener('click', () => {
+                onboardingModal.classList.add('hidden');
+                onboardingModal.classList.remove('flex');
+            });
+
+            closeSummaryModalBtn.addEventListener('click', () => {
+                summaryModal.classList.add('hidden');
+                summaryModal.classList.remove('flex');
             });
         });
         
