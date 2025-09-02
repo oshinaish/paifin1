@@ -1,8 +1,7 @@
 /**
  * PaiFinance - Interactive Script
- * Version: 15.0 - FINAL SUMMARY BOX FIX
- * Last updated: August 22, 2025, 12:30 AM IST
- * Built by the Bros.
+ * Version: 17.0 - REALISTIC TRADITIONAL WEALTH (Separated Logic)
+ * Last updated: September 4, 2025, 12:45 AM IST
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -50,7 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let paiVsTraditionalChart = null;
     let calculationTimeout;
 
-    // --- 2. CORE FINANCIAL ENGINE (Sealed and Final) ---
+    // --- 2. CORE FINANCIAL ENGINE ---
     function calculateEMI(principal, annualRate, tenureYears) {
         if (principal <= 0 || annualRate <= 0 || tenureYears <= 0) return 0;
         const monthlyRate = (annualRate / 100) / 12;
@@ -218,12 +217,18 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
 
         if (title !== 'Your Strategy Visualised') {
-            const paiVsTraditionalData = generatePaiVsTraditionalData(scenario);
+            const fullBudget = parseFloat(monthlyBudgetInput.value);
+            const paiVsTraditionalData = generatePaiVsTraditionalData(scenario, fullBudget);
             renderPaiVsTraditionalChart(paiVsTraditionalData);
+
+            const traditionalResultText = `₹${Math.round(paiVsTraditionalData.finalTraditionalNetWealth).toLocaleString('en-IN')}`;
+            const traditionalResultColor = paiVsTraditionalData.finalTraditionalNetWealth >= 0 ? 'text-investment_green' : 'text-danger';
+
             paiVsTraditionalExplanation.innerHTML = `
-                <h4 class="text-lg font-bold text-textdark mb-2 pt-4">PaiFinance vs. Traditional Loans</h4>
-                <p>This chart shows the power of the PaiFinance approach. The same monthly budget, when properly allocated across the right investing channels, can produce a more fruitful result. The <span class="font-semibold text-danger">red line</span> shows how your net financial position gets worse over time with a traditional loan, ending at <strong class="text-danger">-₹${scenario.totalInterestPaid.toLocaleString('en-IN')}</strong>.</p>
-                <p class="mt-2">The <span class="font-semibold text-investment_green">green line</span> shows how the PaiFinance strategy helps you build positive net wealth, ending at <strong class="text-investment_green">₹${scenario.netWealth.toLocaleString('en-IN')}</strong>. This is the financial advantage of using PaiFinance.</p>
+                <h4 class="text-lg font-bold text-textdark mb-2 pt-4">PaiFinance vs. Smart Traditional</h4>
+                <p>This chart compares two strategies using the same monthly budget.</p>
+                <p class="mt-2">The <span class="font-semibold text-danger">red line</span> shows a smart traditional strategy: using your entire budget to pay off the loan first, then investing for the remaining years. This results in a final net wealth of <strong class="font-bold ${traditionalResultColor}">${traditionalResultText}</strong>.</p>
+                <p class="mt-2">The <span class="font-semibold text-investment_green">green line</span> shows the PaiFinance strategy of paying the loan and investing simultaneously. This results in a final net wealth of <strong class="text-investment_green">₹${scenario.netWealth.toLocaleString('en-IN')}</strong>.</p>
             `;
         }
         
@@ -272,7 +277,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 </table>
             `;
             canvasId = 'loanWidgetChart';
-            percentage = Math.round((scenario.totalInterestPaid / (scenario.principal + scenario.totalInterestPaid)) * 100);
+            percentage = (scenario.principal + scenario.totalInterestPaid) > 0 ? Math.round((scenario.totalInterestPaid / (scenario.principal + scenario.totalInterestPaid)) * 100) : 0;
             percentageColor = 'text-textdark';
         } else {
             content = `
@@ -285,7 +290,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 </table>
             `;
             canvasId = 'investmentWidgetChart';
-            percentage = Math.round((totalGains / scenario.futureValue) * 100);
+            percentage = scenario.futureValue > 0 ? Math.round((totalGains / scenario.futureValue) * 100) : 0;
             percentageColor = 'text-textdark';
         }
 
@@ -342,8 +347,24 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function updatePieChart(emi, investment) {
+        const total = emi + investment;
+        if (total === 0) {
+            chartMessage.style.display = 'flex';
+            if(monthlyBudgetChart) monthlyBudgetChart.destroy();
+            monthlyBudgetChart = null;
+            return;
+        }
+
         chartMessage.style.display = 'none';
-        const data = { labels: ['EMI', 'Investment'], datasets: [{ data: [emi, investment], backgroundColor: ['rgba(154, 133, 225, 0.75)', 'rgba(27, 146, 114, 0.75)'], borderColor: '#F9FAFB', borderWidth: 2 }] };
+        const data = { 
+            labels: ['EMI', 'Investment'], 
+            datasets: [{ 
+                data: [emi, investment], 
+                backgroundColor: ['rgba(154, 133, 225, 0.75)', 'rgba(27, 146, 114, 0.75)'], 
+                borderColor: '#F9FAFB', 
+                borderWidth: 2 
+            }] 
+        };
         if (monthlyBudgetChart) {
             monthlyBudgetChart.data = data;
             monthlyBudgetChart.update();
@@ -527,33 +548,80 @@ document.addEventListener('DOMContentLoaded', () => {
         amortizationTableContainer.innerHTML = tableHTML;
     }
     
-    function generatePaiVsTraditionalData(scenario) {
-        const labels = [];
-        const paiData = [];
-        const traditionalData = [];
-        let investmentValue = 0;
-        let cumulativeInterest = 0;
-        const monthlyInvestmentRate = scenario.investmentAnnualRate / 100 / 12;
+    /**
+     * NEW REALISTIC TRADITIONAL WEALTH CALCULATION
+     * This function calculates two scenarios:
+     * 1. Pai Strategy: Simultaneous loan payment and investment.
+     * 2. Traditional Strategy: Pay off loan first with the entire budget, then invest the budget for the remaining tenure.
+     */
+    function generatePaiVsTraditionalData(scenario, fullBudget) {
+        const totalMonths = Math.ceil((scenario.investmentTenure || scenario.tenure) * 12);
+        const labels = Array.from({ length: Math.ceil(totalMonths / 12) + 1 }, (_, i) => `Yr ${i}`);
+        
         const monthlyLoanRate = scenario.loanAnnualRate / 100 / 12;
-        let remainingLoan = scenario.principal;
+        const monthlyInvestmentRate = scenario.investmentAnnualRate / 100 / 12;
 
-        for (let year = 0; year <= Math.ceil(scenario.tenure); year++) {
-            labels.push(`Yr ${year}`);
-            paiData.push(investmentValue - cumulativeInterest);
-            traditionalData.push(-cumulativeInterest);
-
-            for (let month = 1; month <= 12; month++) {
-                if (remainingLoan > 0) {
-                    const interest = remainingLoan * monthlyLoanRate;
-                    cumulativeInterest += interest;
-                    const principalPaid = scenario.emi - interest;
-                    remainingLoan -= principalPaid;
-                }
-                investmentValue = (investmentValue + scenario.monthlyInvestment) * (1 + monthlyInvestmentRate);
+        // --- PAI STRATEGY (SIMULTANEOUS) ---
+        const paiData = [0];
+        let paiInvestmentValue = 0;
+        let paiCumulativeInterest = 0;
+        let paiRemainingLoan = scenario.principal;
+        for (let month = 1; month <= totalMonths; month++) {
+            if (paiRemainingLoan > 0) {
+                const interest = paiRemainingLoan * monthlyLoanRate;
+                paiCumulativeInterest += interest;
+                const principalPaid = scenario.emi - interest;
+                paiRemainingLoan -= principalPaid;
+            }
+            if (scenario.monthlyInvestment > 0) {
+               paiInvestmentValue = (paiInvestmentValue + scenario.monthlyInvestment) * (1 + monthlyInvestmentRate);
+            }
+            if (month % 12 === 0) {
+                paiData.push(paiInvestmentValue - paiCumulativeInterest);
             }
         }
-        return { labels, paiData, traditionalData };
+         if (totalMonths % 12 !== 0) {
+            paiData.push(paiInvestmentValue - paiCumulativeInterest);
+        }
+
+        // --- TRADITIONAL STRATEGY (DEBT-FIRST) ---
+        const traditionalData = [0];
+        let traditionalRemainingLoan = scenario.principal;
+        let traditionalCumulativeInterest = 0;
+        let traditionalInvestmentValue = 0;
+        for (let month = 1; month <= totalMonths; month++) {
+            // Phase 1: Pay off loan aggressively
+            if (traditionalRemainingLoan > 0) {
+                const interest = traditionalRemainingLoan * monthlyLoanRate;
+                traditionalCumulativeInterest += interest;
+                let principalPaid = fullBudget - interest;
+
+                if (principalPaid < 0) principalPaid = 0; // In case budget is less than interest
+
+                // If the payment is more than the remaining balance, pay only what's left
+                if ((principalPaid + interest) > (traditionalRemainingLoan + interest) ) {
+                    principalPaid = traditionalRemainingLoan;
+                }
+                 traditionalRemainingLoan -= principalPaid;
+            }
+            // Phase 2: Once loan is paid, invest the full budget
+            else {
+                 traditionalInvestmentValue = (traditionalInvestmentValue + fullBudget) * (1 + monthlyInvestmentRate);
+            }
+
+            if (month % 12 === 0) {
+                traditionalData.push(traditionalInvestmentValue - traditionalCumulativeInterest);
+            }
+        }
+         if (totalMonths % 12 !== 0) {
+            traditionalData.push(traditionalInvestmentValue - traditionalCumulativeInterest);
+        }
+
+        const finalTraditionalNetWealth = traditionalInvestmentValue - traditionalCumulativeInterest;
+
+        return { labels, paiData, traditionalData, finalTraditionalNetWealth };
     }
+
 
     function renderPaiVsTraditionalChart(data) {
         if (paiVsTraditionalChart) {
@@ -595,10 +663,9 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
-    
+
     function updateSummaryBox(scenario, title, displayTenure, crossoverYear) {
         summaryResultsContainer.classList.remove('hidden');
-        summaryResultsContainer.classList.add('animated-border');
         let summaryHTML = '';
 
         if (title === 'Your Strategy Visualised') {
@@ -613,11 +680,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 <p class="text-xs text-center mt-1">You can become debt-free in <strong>Year ${crossoverYear}</strong>.</p>
             `;
         } else if (title === 'Winning the Financial Race') {
-            const traditionalNetWealth = -scenario.totalInterestPaid;
+            const fullBudget = parseFloat(monthlyBudgetInput.value);
+            const traditionalData = generatePaiVsTraditionalData(scenario, fullBudget);
+            const traditionalNetWealth = traditionalData.finalTraditionalNetWealth;
             const advantage = scenario.netWealth - traditionalNetWealth;
             summaryHTML = `
-                <h4 class="text-sm font-bold text-center mb-2">Result Summary</h4>
-                <p class="text-xs text-center">By using the PaiFinance strategy, you can generate a net wealth of <strong class="text-investment_green">₹${scenario.netWealth.toLocaleString('en-IN')}</strong>, as opposed to a net negative of <strong class="text-danger">-₹${scenario.totalInterestPaid.toLocaleString('en-IN')}</strong> with a traditional loan.</p>
+                <h4 class="text-sm font-bold text-center mb-2">Optimal Strategy Found!</h4>
+                <p class="text-xs text-center">With a tenure of <strong class="text-investment_green">${displayTenure}</strong>, your net wealth is <strong class="text-investment_green">₹${scenario.netWealth.toLocaleString('en-IN')}</strong>.</p>
+                 <p class="text-xs text-center mt-1">This is a <strong class="text-success">₹${advantage.toLocaleString('en-IN')}</strong> advantage over the smart traditional method.</p>
             `;
         }
         summaryResultsContainer.innerHTML = summaryHTML;
@@ -626,7 +696,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- 5. INITIALIZATION ---
     function initializeApp() {
         ['loanAmount', 'monthlyBudget', 'loanInterestRateDisplay', 'investmentRateDisplay', 'loanTenureDisplay', 'investmentTenureDisplay'].forEach(id => {
-            syncAndStyle(document.getElementById(id), document.getElementById(id.replace('Display', '') + 'Slider'));
+            const input = document.getElementById(id);
+            const slider = document.getElementById(id.replace('Display', '') + 'Slider');
+            if (input && slider) {
+                 syncAndStyle(input, slider);
+            }
         });
         goalButtons.forEach(button => { button.addEventListener('click', () => handleGoalSelection(button)); });
         finalResultsSection.classList.add('hidden');
@@ -635,3 +709,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
     initializeApp();
 });
+
