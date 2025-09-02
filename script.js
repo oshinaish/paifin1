@@ -1,7 +1,7 @@
 /**
  * PaiFinance - Interactive Script
- * Version: 17.0 - REALISTIC TRADITIONAL WEALTH (Separated Logic)
- * Last updated: September 4, 2025, 12:45 AM IST
+ * Version: 19.0 - EMI Budget Validation
+ * Last updated: September 6, 2025, 01:00 AM IST
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -42,6 +42,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const chartMessage = document.getElementById('chartMessage');
     const comparisonChartCanvas = document.getElementById('comparisonChart');
     const paiVsTraditionalChartCanvas = document.getElementById('paiVsTraditionalChart');
+    const warningToast = document.getElementById('warningToast');
+    const warningMessage = document.getElementById('warningMessage');
+    let warningTimeout;
+
     let monthlyBudgetChart = null;
     let comparisonChart = null;
     let loanWidgetChart = null;
@@ -150,6 +154,20 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- 4. UI INTERACTIVITY & DISPLAY FUNCTIONS ---
+
+    function showWarning(message) {
+        if (!warningToast || !warningMessage) return;
+        warningMessage.textContent = message;
+        warningToast.classList.remove('hidden', 'opacity-0');
+        
+        clearTimeout(warningTimeout);
+        warningTimeout = setTimeout(() => {
+            warningToast.classList.add('opacity-0');
+            // Wait for transition to finish before hiding
+            setTimeout(() => warningToast.classList.add('hidden'), 300);
+        }, 3000);
+    }
+
     function updatePlannerResults() {
         const principal = parseFloat(loanAmountInput.value);
         const annualRate = parseFloat(loanInterestRateInput.value);
@@ -374,38 +392,82 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     function syncAndStyle(inputElement, sliderElement) {
-        const updateSlider = () => {
+        // Store the last valid value on the element itself for easy access
+        sliderElement.dataset.lastValidValue = sliderElement.value;
+        inputElement.dataset.lastValidValue = inputElement.value;
+
+        const updateVisuals = (value) => {
             const min = parseFloat(sliderElement.min);
             const max = parseFloat(sliderElement.max);
-            const value = parseFloat(sliderElement.value);
             const progress = ((value - min) / (max - min)) * 100;
             sliderElement.style.setProperty('--range-progress', `${progress}%`);
         };
-        
-        sliderElement.addEventListener('input', () => { 
-            inputElement.value = sliderElement.value; 
-            updateSlider(); 
-            triggerCalculation();
-        });
-        inputElement.addEventListener('input', () => {
-            if (parseFloat(inputElement.value) >= parseFloat(sliderElement.min) && parseFloat(inputElement.value) <= parseFloat(sliderElement.max)) {
-                sliderElement.value = inputElement.value;
-                updateSlider();
-                triggerCalculation();
+
+        const eventHandler = (e) => {
+            const isLoanControl = ['loanTenureSlider', 'loanTenureDisplay', 'loanInterestRateSlider', 'loanInterestRateDisplay'].includes(e.target.id);
+            const isPlannerMode = document.querySelector('.goal-button.selected').dataset.goal === 'planner';
+            let newValue = parseFloat(e.target.value);
+             if (isNaN(newValue)) {
+                newValue = parseFloat(e.target.dataset.lastValidValue) || 0;
+             }
+
+            // Perform validation only for specific controls in planner mode
+            if (isPlannerMode && isLoanControl) {
+                const principal = parseFloat(loanAmountInput.value);
+                const budget = parseFloat(monthlyBudgetInput.value);
+                const prospectiveTenure = (e.target.id.includes('Tenure')) ? newValue : parseFloat(loanTenureInput.value);
+                const prospectiveRate = (e.target.id.includes('InterestRate')) ? newValue : parseFloat(loanInterestRateInput.value);
+
+                const previewEmi = calculateEMI(principal, prospectiveRate, prospectiveTenure);
+
+                if (previewEmi > budget) {
+                    showWarning('Monthly EMI cannot exceed your budget!');
+                    // Revert to last valid value
+                    const lastValue = e.target.type === 'range' ? sliderElement.dataset.lastValidValue : inputElement.dataset.lastValidValue;
+                    e.target.value = lastValue;
+                    // If it was the slider, also revert the input box and vice-versa
+                    if (e.target.type === 'range') {
+                        inputElement.value = lastValue;
+                    } else {
+                        sliderElement.value = lastValue;
+                    }
+                    updateVisuals(lastValue);
+                    return; // Stop the update
+                }
             }
-        });
-        updateSlider();
+
+            // If valid, update the other element and the "last valid" value
+            if (e.target.type === 'range') {
+                inputElement.value = newValue;
+            } else {
+                sliderElement.value = newValue;
+            }
+            
+            sliderElement.dataset.lastValidValue = newValue;
+            inputElement.dataset.lastValidValue = newValue;
+            
+            updateVisuals(newValue);
+            triggerCalculation();
+        };
+
+        sliderElement.addEventListener('input', eventHandler);
+        inputElement.addEventListener('change', eventHandler); // Use change to avoid firing on every keystroke
+        
+        updateVisuals(sliderElement.value);
     }
     
     function triggerCalculation() {
-        const selectedGoal = document.querySelector('.goal-button.selected').dataset.goal;
-        if (selectedGoal === 'planner') {
-            runPlannerMode();
-        } else if (selectedGoal === 'min-time') {
-            findMinimumTime();
-        } else if (selectedGoal === 'optimal-strategy') {
-            findOptimalStrategy();
-        }
+        clearTimeout(calculationTimeout);
+        calculationTimeout = setTimeout(() => {
+             const selectedGoal = document.querySelector('.goal-button.selected').dataset.goal;
+            if (selectedGoal === 'planner') {
+                runPlannerMode();
+            } else if (selectedGoal === 'min-time') {
+                findMinimumTime();
+            } else if (selectedGoal === 'optimal-strategy') {
+                findOptimalStrategy();
+            }
+        }, 250); // Debounce calculation
     }
     
     function updateSliderProgress(slider, value) {
