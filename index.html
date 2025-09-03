@@ -422,7 +422,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     <!-- Summary results will be injected here -->
                  </div>
                  <!-- NEW: Connect to Expert Button -->
-                 <button id="connectExpertBtn" class="hidden w-full max-w-[350px] mt-4 bg-investment_green text-white font-semibold py-3 px-4 rounded-lg hover:bg-opacity-90 transition">Connect to an Expert</button>
+                 <button id="connectExpertBtn" class="hidden w-full max-w-[350px] mt-4 bg-transparent border-2 border-investment_green text-investment_green font-semibold py-3 px-4 rounded-lg hover:bg-investment_green hover:text-white transition-colors duration-300">Connect to an Expert</button>
             </section>
         </div>
 
@@ -684,9 +684,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         </div>
         <!-- Chat Icon -->
          <button id="chatbot-icon" class="bg-investment_green text-white w-16 h-16 rounded-full shadow-lg flex items-center justify-center">
-             <svg class="w-10 h-10" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2ZM12 4C16.4183 4 20 7.58172 20 12C20 16.4183 16.4183 20 12 20C7.58172 20 4 16.4183 4 12C4 7.58172 7.58172 4 12 4ZM13 14.5C13 15.3284 12.3284 16 11.5 16H11.45C10.622 16 9.95001 15.3284 9.95001 14.5C9.95001 13.6716 10.622 13 11.45 13H11.5C12.3284 13 13 13.6716 13 14.5ZM15.5 10C16.3284 10 17 9.32843 17 8.5C17 7.67157 16.3284 7 15.5 7C14.6716 7 14 7.67157 14 8.5C14 9.32843 14.6716 10 15.5 10ZM8.5 10C9.32843 10 10 9.32843 10 8.5C10 7.67157 9.32843 7 8.5 7C7.67157 7 7 7.67157 7 8.5C7 9.32843 7.67157 10 8.5 10Z"/>
-            </svg>
+             <img src="chatbot_icon.svg" alt="Chatbot Icon" class="w-10 h-10">
          </button>
     </div>
 
@@ -918,8 +916,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             
             // --- EXPERT MODAL LOGIC ---
             connectExpertBtn.addEventListener('click', () => {
-                expertModal.classList.remove('hidden');
-                expertModal.classList.add('flex');
+                chatbotContainer.classList.add('open');
+                // Simulate clicking the contact option
+                handleChatbotOption('contact', 'Connect to an Advisor');
             });
 
             closeExpertModalBtn.addEventListener('click', () => {
