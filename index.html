@@ -106,14 +106,17 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         .onboarding-step { display: none; }
         .onboarding-step.active { display: block; }
         .progress-bar-fill { transition: width 0.3s ease-in-out; }
-        @keyframes pulse-glow {
-            0%, 100% { box-shadow: 0 0 0 0 rgba(27, 146, 114, 0.7); }
-            50% { box-shadow: 0 0 0 12px rgba(27, 146, 114, 0); }
-        }
-        .animate-pulse-glow { animation: pulse-glow 2s infinite; }
 
         /* --- STYLES FOR CHATBOT --- */
-        #chatbot-container { transition: all 0.3s ease-in-out; }
+        #chatbot-container {
+            transition: transform 0.5s ease-out, opacity 0.5s ease-out;
+            transform: translateX(200px); /* Start off-screen */
+            opacity: 0;
+        }
+        #chatbot-container.visible {
+            transform: translateX(0);
+            opacity: 1;
+        }
         #chatbot-window { 
             max-height: 0;
             overflow: hidden;
@@ -317,34 +320,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                           <div>
                             <div class="flex items-center justify-between w-full max-w-[330px]">
                                 <label for="monthlyBudget" class="block text-sm font-normal text-textlight font-albert_sans">Monthly Budget</label>
-                                <div class="flex items-center space-x-2">
-                                     <div class="w-[114px] h-[29px] p-2 rounded-[2px] bg-input_box_fill bg-opacity-10 shadow-custom-input flex items-center">
-                                        <span class="font-normal text-input_text_color pl-1">₹</span>
-                                        <input type="number" id="monthlyBudget" value="70000" min="10000" max="1000000" step="1000" class="w-full bg-transparent border-none focus:ring-0 text-input_text_color text-right p-0 m-0 font-albert_sans font-normal text-base">
-                                     </div>
-                                     <!-- Onboarding Trigger Icon -->
-                                    <button id="onboardingTriggerIcon" class="relative flex-shrink-0 group">
-                                         <svg class="w-6 h-6 text-investment_green" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                                         
-                                         <!-- Coachmark -->
-                                         <div id="coachmark" class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-max z-20">
-                                             <div class="relative bg-investment_green text-white text-sm font-semibold py-2 px-4 rounded-lg shadow-lg">
-                                                First, let's calculate your budget!
-                                                <div class="absolute left-1/2 -bottom-2 transform -translate-x-1/2 w-0 h-0 border-l-8 border-l-transparent border-r-8 border-r-transparent border-t-8 border-t-investment_green"></div>
-                                             </div>
-                                         </div>
-
-                                         <!-- Hover Tooltip -->
-                                         <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-max z-20 hidden group-hover:block">
-                                             <div class="relative bg-textdark text-white text-xs font-semibold py-1 px-3 rounded-md shadow-lg">
-                                                Edit Manually
-                                                <div class="absolute left-1/2 -bottom-1.5 transform -translate-x-1/2 w-0 h-0 border-l-4 border-l-transparent border-r-4 border-r-transparent border-t-4 border-t-textdark"></div>
-                                             </div>
-                                         </div>
-
-                                          <!-- Pulsing Dot on Icon -->
-                                          <span id="pulsingDot" class="absolute top-0 right-0 block h-3 w-3 rounded-full bg-investment_green"></span>
-                                    </button>
+                                <div class="w-[114px] h-[29px] p-2 rounded-[2px] bg-input_box_fill bg-opacity-10 shadow-custom-input flex items-center">
+                                    <span class="font-normal text-input_text_color pl-1">₹</span>
+                                    <input type="number" id="monthlyBudget" value="70000" min="10000" max="1000000" step="1000" class="w-full bg-transparent border-none focus:ring-0 text-input_text_color text-right p-0 m-0 font-albert_sans font-normal text-base">
                                 </div>
                             </div>
                             <input type="range" id="monthlyBudgetSlider" value="70000" min="10000" max="1000000" step="1000" class="w-full max-w-[330px] mt-[18px]">
@@ -535,7 +513,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                      <p>Loans against residential, commercial, or land property require precise planning. The Loan Against Property EMI Calculator provides an accurate estimate of your repayment. In addition, Pai Finance shows how to allocate part of your budget to investments that grow over time—ensuring liquidity and stability during repayment.</p>
                      <h3 class="font-semibold text-investment_green">Why Choose Pai Finance EMI Calculators?</h3>
                      <p>Most EMI calculators show only what you owe. Pai Finance goes further by helping you plan investments that run in parallel with your repayments. This dual approach empowers you to take loans with confidence—knowing that you're also building wealth alongside.</p>
-                     <p>Whether you're financing a home, car, bike, education, or personal need, Pai Finance provides clarity, control, and a smarter path toward financial freedom.</p>
+                     <p>Whether you're financing a home, car, a bike, education, or personal need, Pai Finance provides clarity, control, and a smarter path toward financial freedom.</p>
                  </div>
              </div>
 
@@ -680,7 +658,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     </div>
     
     <!-- NEW: Chatbot Container -->
-    <div id="chatbot-container" class="hidden fixed bottom-5 right-5 z-40">
+    <div id="chatbot-container" class="fixed bottom-5 right-5 z-40">
         <!-- Chat Window -->
         <div id="chatbot-window" class="w-80 bg-white rounded-xl shadow-2xl border border-gray-200">
             <!-- Header -->
@@ -691,38 +669,27 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 </button>
             </div>
             <!-- Messages -->
-            <div id="chatbot-messages" class="p-4 h-80 overflow-y-auto space-y-4">
+            <div id="chatbot-messages" class="p-4 h-auto overflow-y-auto space-y-4">
                  <!-- Initial Messages -->
                 <div class="flex">
                     <div class="bg-gray-200 text-textdark p-3 rounded-lg max-w-xs">
-                        <p>Welcome to PaiFinance! How can I help you today?</p>
+                        <p>First time here? Let's get you set up for the best results!</p>
                     </div>
                 </div>
             </div>
             <!-- Options / Form -->
             <div id="chatbot-input-area" class="p-4 border-t border-gray-200">
-                <div id="chatbot-options" class="space-y-2">
-                    <button class="w-full text-left p-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition text-textdark font-semibold" data-option="loan">Loan Guidance</button>
-                    <button class="w-full text-left p-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition text-textdark font-semibold" data-option="investment">Investment Guidance</button>
-                    <button class="w-full text-left p-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition text-textdark font-semibold" data-option="contact">Contact an Advisor</button>
-                </div>
-                <div id="chatbot-contact-form" class="hidden space-y-3">
-                    <p class="text-sm font-semibold text-textdark text-center">Please fill out the form below to connect with an advisor.</p>
-                    <input type="text" placeholder="Your Name" class="w-full p-2 border border-gray-300 rounded-md focus:ring-investment_green focus:border-investment_green">
-                    <input type="email" placeholder="Your Email" class="w-full p-2 border border-gray-300 rounded-md focus:ring-investment_green focus:border-investment_green">
-                    <textarea placeholder="Your Message" rows="3" class="w-full p-2 border border-gray-300 rounded-md focus:ring-investment_green focus:border-investment_green"></textarea>
-                    <button id="chatbot-submit-form" class="w-full bg-investment_green text-white font-semibold py-2 px-4 rounded-lg hover:bg-opacity-90 transition">Send Message</button>
-                </div>
+                <button id="startOnboardingFromChatbot" class="w-full bg-investment_green text-white font-semibold py-3 px-4 rounded-lg hover:bg-opacity-90 transition">Let's Get Started!</button>
             </div>
         </div>
         <!-- Chat Icon -->
          <button id="chatbot-icon" class="bg-investment_green text-white w-16 h-16 rounded-full shadow-lg flex items-center justify-center">
-             <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 5.523-4.477 10-10 10S1 17.523 1 12 5.477 2 11 2s10 4.477 10 10z"></path></svg>
+             <svg class="w-10 h-10" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2ZM12 4C16.4183 4 20 7.58172 20 12C20 16.4183 16.4183 20 12 20C7.58172 20 4 16.4183 4 12C4 7.58172 7.58172 4 12 4ZM13 14.5C13 15.3284 12.3284 16 11.5 16H11.45C10.622 16 9.95001 15.3284 9.95001 14.5C9.95001 13.6716 10.622 13 11.45 13H11.5C12.3284 13 13 13.6716 13 14.5ZM15.5 10C16.3284 10 17 9.32843 17 8.5C17 7.67157 16.3284 7 15.5 7C14.6716 7 14 7.67157 14 8.5C14 9.32843 14.6716 10 15.5 10ZM8.5 10C9.32843 10 10 9.32843 10 8.5C10 7.67157 9.32843 7 8.5 7C7.67157 7 7 7.67157 7 8.5C7 9.32843 7.67157 10 8.5 10Z"/>
+            </svg>
          </button>
     </div>
 
-
-    </main>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -802,31 +769,35 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         
         // --- PAGE INITIALIZATION SCRIPT ---
         document.addEventListener('DOMContentLoaded', () => {
-            const onboardingTriggerIcon = document.getElementById('onboardingTriggerIcon');
             const onboardingModal = document.getElementById('onboardingModal');
             const summaryModal = document.getElementById('postOnboardingSummaryModal');
-            const coachmark = document.getElementById('coachmark');
-            const pulsingDot = document.getElementById('pulsingDot');
             const startPlanningBtn = document.getElementById('startPlanningBtn');
             const closeOnboardingModalBtn = document.getElementById('closeOnboardingModal');
             const closeSummaryModalBtn = document.getElementById('closeSummaryModal');
+            const calculatorWrapper = document.getElementById('calculatorWrapper');
 
-            pulsingDot.classList.add('animate-pulse-glow');
-            
-            setTimeout(() => {
-                pulsingDot.classList.remove('animate-pulse-glow');
-            }, 3000);
 
-            setTimeout(() => {
-                coachmark.style.display = 'none';
-            }, 5000);
+            // NEW: Hide calculator by default, show welcome screen if it's the first visit
+            const isFirstVisit = !localStorage.getItem('paiFinanceVisited');
+            if (isFirstVisit) {
+                const welcomeScreen = document.getElementById('welcomeScreen');
+                const startWelcomeBtn = document.getElementById('startWelcomeBtn');
+                
+                welcomeScreen.classList.remove('hidden');
 
-            onboardingTriggerIcon.addEventListener('click', () => {
-                onboardingModal.classList.remove('hidden');
-                onboardingModal.classList.add('flex');
-                showStep(1);
-            });
-            
+                startWelcomeBtn.addEventListener('click', () => {
+                    welcomeScreen.classList.add('hidden');
+                    calculatorWrapper.classList.remove('hidden');
+                    localStorage.setItem('paiFinanceVisited', 'true');
+                    // Directly open the onboarding modal after welcome
+                    onboardingModal.classList.remove('hidden');
+                    onboardingModal.classList.add('flex');
+                    showStep(1);
+                });
+            } else {
+                calculatorWrapper.classList.remove('hidden');
+            }
+
             startPlanningBtn.addEventListener('click', () => {
                 summaryModal.classList.add('hidden');
                 summaryModal.classList.remove('flex');
@@ -919,10 +890,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             const chatbotContainer = document.getElementById('chatbot-container');
             const chatbotIcon = document.getElementById('chatbot-icon');
             const closeChatbotBtn = document.getElementById('close-chatbot');
-            const chatbotMessages = document.getElementById('chatbot-messages');
-            const chatbotOptions = document.getElementById('chatbot-options');
-            const chatbotContactForm = document.getElementById('chatbot-contact-form');
-            const chatbotSubmitBtn = document.getElementById('chatbot-submit-form');
+            const startOnboardingFromChatbot = document.getElementById('startOnboardingFromChatbot');
+            const onboardingModal = document.getElementById('onboardingModal');
             
             const connectExpertBtn = document.getElementById('connectExpertBtn');
             const expertModal = document.getElementById('expertModal');
@@ -932,62 +901,30 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
             // Show chatbot icon after a delay
             setTimeout(() => {
-                chatbotContainer.classList.remove('hidden');
-                chatbotContainer.classList.add('flex');
-            }, 5000);
+                chatbotContainer.classList.add('visible');
+            }, 3000);
 
             // Open/Close chat window
             chatbotIcon.addEventListener('click', () => chatbotContainer.classList.add('open'));
             closeChatbotBtn.addEventListener('click', () => chatbotContainer.classList.remove('open'));
 
-            // Handle option clicks
-            chatbotOptions.addEventListener('click', (e) => {
-                if (e.target.tagName === 'BUTTON') {
-                    const option = e.target.dataset.option;
-                    handleChatbotOption(option);
-                }
+            // Handle start onboarding click
+            startOnboardingFromChatbot.addEventListener('click', () => {
+                chatbotContainer.classList.remove('open');
+                onboardingModal.classList.remove('hidden');
+                onboardingModal.classList.add('flex');
+                showStep(1);
             });
-
-            function handleChatbotOption(option) {
-                // Add user's choice to chat
-                const userMessage = document.createElement('div');
-                userMessage.className = 'flex justify-end';
-                userMessage.innerHTML = `<div class="bg-investment_green text-white p-3 rounded-lg max-w-xs"><p>${option.charAt(0).toUpperCase() + option.slice(1)} Guidance</p></div>`;
-                chatbotMessages.appendChild(userMessage);
-
-                // Show bot response
-                setTimeout(() => {
-                    let botResponseText = '';
-                    if (option === 'loan') {
-                        botResponseText = "A good tip for loans is to check your CIBIL score beforehand. A score above 750 often gets you better interest rates. Use our 'Optimal Strategy' to see how different rates impact your wealth!";
-                    } else if (option === 'investment') {
-                        botResponseText = "Consistency is key in investing. Even small, regular investments (like a SIP) can grow into a large corpus over time due to compounding. Notice how your wealth grows faster in later years on our charts!";
-                    } else if (option === 'contact') {
-                        chatbotOptions.classList.add('hidden');
-                        chatbotContactForm.classList.remove('hidden');
-                        botResponseText = "Of course. Please provide your details below, and one of our wealth advisors will get in touch with you shortly.";
-                    }
-                    
-                    const botMessage = document.createElement('div');
-                    botMessage.className = 'flex';
-                    botMessage.innerHTML = `<div class="bg-gray-200 text-textdark p-3 rounded-lg max-w-xs"><p>${botResponseText}</p></div>`;
-                    chatbotMessages.appendChild(botMessage);
-                    chatbotMessages.scrollTop = chatbotMessages.scrollHeight; // Scroll to bottom
-                }, 500);
-            }
             
-             // Handle form submission
-            chatbotSubmitBtn.addEventListener('click', () => {
-                chatbotContactForm.innerHTML = `<p class="text-center text-investment_green font-semibold">Thank you! Your request has been sent. Our team will contact you soon.</p>`;
-            });
-
             // --- EXPERT MODAL LOGIC ---
             connectExpertBtn.addEventListener('click', () => {
                 expertModal.classList.remove('hidden');
+                expertModal.classList.add('flex');
             });
 
             closeExpertModalBtn.addEventListener('click', () => {
                 expertModal.classList.add('hidden');
+                expertModal.classList.remove('flex');
             });
 
             expertForm.addEventListener('submit', (e) => {
@@ -1010,10 +947,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     }
                 });
             });
-
-            observer.observe(summaryBox, { attributes: true });
-
-
+            if (summaryBox) {
+                observer.observe(summaryBox, { attributes: true });
+            }
         });
 
     </script>
