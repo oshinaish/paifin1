@@ -108,36 +108,18 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         .progress-bar-fill { transition: width 0.3s ease-in-out; }
 
         /* --- STYLES FOR CHATBOT --- */
-        #chatbot-container {
+        #chatbot-icon-button {
             transition: transform 0.5s ease-out, opacity 0.5s ease-out;
             transform: translateX(120%); /* Start completely off-screen */
             opacity: 0;
         }
-        #chatbot-container.visible {
+        #chatbot-icon-button.visible {
             transform: translateX(0);
             opacity: 1;
         }
-        #chatbot-window { 
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.5s ease-in-out, opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+        #chatbot-window {
+            transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
             transform-origin: bottom right;
-            transform: scale(0.95);
-            opacity: 0;
-            display: flex;
-            flex-direction: column;
-        }
-        #chatbot-container.open #chatbot-window {
-            max-height: 70vh; /* Adjust as needed */
-            opacity: 1;
-            transform: scale(1);
-        }
-        #chatbot-container.open #chatbot-icon {
-            transform: scale(0);
-            opacity: 0;
-        }
-        #chatbot-messages {
-            flex-grow: 1;
         }
     </style>
 </head>
