@@ -126,274 +126,295 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <body class="font-albert_sans bg-white text-textdark min-h-screen flex flex-col">
 
     <!-- Google Tag Manager (noscript) -->
-    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MXDD3M82"
-    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-    <!-- End Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MXDD3M82"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
 
-    <div id="calculatorWrapper">
-        <!-- Onboarding Modal (Initially Hidden) -->
-        <div id="onboardingModal" class="hidden fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center p-4 z-50">
-            <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg transform transition-all relative">
-                <!-- Close button -->
-                <button id="closeOnboardingModal" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors z-10">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                </button>
-                <!-- Progress Bar -->
-                <div class="p-6 border-b border-gray-200">
-                    <div class="flex justify-between items-center mb-2">
-                        <h2 id="onboardingTitle" class="text-xl font-bold text-textdark">Calculate Your Budget</h2>
-                        <span id="stepCounter" class="text-sm font-medium text-textlight">Step 1 of 3</span>
+<div id="calculatorWrapper">
+    <!-- Onboarding Modal (Initially Hidden) -->
+    <div id="onboardingModal" class="hidden fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg transform transition-all relative">
+            <!-- Close button -->
+            <button id="closeOnboardingModal" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors z-10">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            <!-- Progress Bar -->
+            <div class="p-6 border-b border-gray-200">
+                <div class="flex justify-between items-center mb-2">
+                    <h2 id="onboardingTitle" class="text-xl font-bold text-textdark">Your Financial Snapshot</h2>
+                    <span id="stepCounter" class="text-sm font-medium text-textlight">Step 1 of 4</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2.5">
+                    <div id="progressBar" class="bg-investment_green h-2.5 rounded-full" style="width: 25%"></div>
+                </div>
+            </div>
+            <div class="p-8">
+                <!-- Step 1: Income -->
+                <div id="step1" class="onboarding-step active">
+                    <h3 class="text-2xl font-semibold text-textdark mb-2">Your Monthly Income</h3>
+                    <p class="text-textlight mb-6">Let's start with your earnings to understand your cash flow.</p>
+                    <div class="space-y-4">
+                        <div>
+                            <label for="ob_monthlyIncome" class="block text-sm font-medium text-textlight">Gross Monthly Salary (₹)</label>
+                            <input type="number" id="ob_monthlyIncome" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-investment_green focus:border-investment_green" placeholder="e.g., 100000">
+                        </div>
+                        <div>
+                            <label for="ob_epfVpf" class="block text-sm font-medium text-textlight">Monthly EPF/VPF Contribution (%)</label>
+                            <input type="number" id="ob_epfVpf" value="12" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-investment_green focus:border-investment_green">
+                        </div>
                     </div>
-                    <div class="w-full bg-gray-200 rounded-full h-2.5">
-                        <div id="progressBar" class="bg-investment_green h-2.5 rounded-full" style="width: 33%"></div>
+                    <button onclick="nextStep(2)" class="w-full mt-8 bg-investment_green text-white font-semibold py-3 px-4 rounded-lg hover:bg-opacity-90 transition">Next: Expenses</button>
+                </div>
+                <!-- Step 2: Expenses -->
+                <div id="step2" class="onboarding-step">
+                    <h3 class="text-2xl font-semibold text-textdark mb-2">Your Lifestyle</h3>
+                    <p class="text-textlight mb-6">Understanding your expenses helps determine what's left for your goals.</p>
+                    <div class="space-y-4">
+                        <div>
+                            <label for="ob_monthlyExpenses" class="block text-sm font-medium text-textlight">Monthly Household Expenses (₹)</label>
+                            <input type="number" id="ob_monthlyExpenses" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-investment_green focus:border-investment_green" placeholder="e.g., 35000">
+                        </div>
+                    </div>
+                    <div class="flex justify-between mt-8 space-x-4">
+                        <button onclick="prevStep(1)" class="w-1/3 bg-gray-200 text-gray-700 font-semibold py-3 px-4 rounded-lg hover:bg-gray-300 transition">Back</button>
+                        <button onclick="nextStep(3)" class="w-2/3 bg-investment_green text-white font-semibold py-3 px-4 rounded-lg hover:bg-opacity-90 transition">Next: Loan & Horizon</button>
                     </div>
                 </div>
-                <div class="p-8">
-                    <!-- Step 1: Income -->
-                    <div id="step1" class="onboarding-step active">
-                        <h3 class="text-2xl font-semibold text-textdark mb-2">Your Monthly Income</h3>
-                        <p class="text-textlight mb-6">Let's start with your earnings to understand your cash flow.</p>
-                        <div class="space-y-4">
-                            <div>
-                                <label for="ob_monthlyIncome" class="block text-sm font-medium text-textlight">Gross Monthly Salary (₹)</label>
-                                <input type="number" id="ob_monthlyIncome" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-investment_green focus:border-investment_green" placeholder="e.g., 100000">
-                            </div>
-                            <div>
-                                <label for="ob_epfVpf" class="block text-sm font-medium text-textlight">Monthly EPF/VPF Contribution (%)</label>
-                                <input type="number" id="ob_epfVpf" value="12" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-investment_green focus:border-investment_green">
-                            </div>
+                 <!-- Step 3: Loan & Horizon -->
+                <div id="step3" class="onboarding-step">
+                    <h3 class="text-2xl font-semibold text-textdark mb-2">Your Goal</h3>
+                    <p class="text-textlight mb-6">Tell us about the loan you're planning for.</p>
+                    <div class="space-y-4">
+                        <div>
+                            <label for="ob_loanAmount" class="block text-sm font-medium text-textlight">Loan Amount (₹)</label>
+                            <input type="number" id="ob_loanAmount" value="5000000" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-investment_green focus:border-investment_green">
                         </div>
-                        <button onclick="nextStep(2)" class="w-full mt-8 bg-investment_green text-white font-semibold py-3 px-4 rounded-lg hover:bg-opacity-90 transition">Next: Expenses</button>
-                    </div>
-                    <!-- Step 2: Expenses -->
-                    <div id="step2" class="onboarding-step">
-                        <h3 class="text-2xl font-semibold text-textdark mb-2">Your Lifestyle</h3>
-                        <p class="text-textlight mb-6">Understanding your expenses helps determine what's left for your goals.</p>
-                        <div class="space-y-4">
-                            <div>
-                                <label for="ob_monthlyExpenses" class="block text-sm font-medium text-textlight">Monthly Household Expenses (₹)</label>
-                                <input type="number" id="ob_monthlyExpenses" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-investment_green focus:border-investment_green" placeholder="e.g., 35000">
-                            </div>
-                        </div>
-                        <div class="flex justify-between mt-8 space-x-4">
-                            <button onclick="prevStep(1)" class="w-1/3 bg-gray-200 text-gray-700 font-semibold py-3 px-4 rounded-lg hover:bg-gray-300 transition">Back</button>
-                            <button onclick="nextStep(3)" class="w-2/3 bg-investment_green text-white font-semibold py-3 px-4 rounded-lg hover:bg-opacity-90 transition">Next: Your Goal</button>
+                         <div>
+                            <label for="ob_planningYears" class="block text-sm font-medium text-textlight">Planning Horizon (Years)</label>
+                            <input type="number" id="ob_planningYears" value="20" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-investment_green focus:border-investment_green">
                         </div>
                     </div>
-                    <!-- Step 3: Goal -->
-                    <div id="step3" class="onboarding-step">
-                        <h3 class="text-2xl font-semibold text-textdark mb-2">Your Financial Horizon</h3>
-                        <p class="text-textlight mb-6">How many years are you planning for? This helps in projecting long-term growth.</p>
-                        <div class="space-y-4">
-                            <div>
-                                <label for="ob_planningYears" class="block text-sm font-medium text-textlight">Planning Horizon (Years)</label>
-                                <input type="number" id="ob_planningYears" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-investment_green focus:border-investment_green" placeholder="e.g., 20">
-                            </div>
+                    <div class="flex justify-between mt-8 space-x-4">
+                        <button onclick="prevStep(2)" class="w-1/3 bg-gray-200 text-gray-700 font-semibold py-3 px-4 rounded-lg hover:bg-gray-300 transition">Back</button>
+                        <button onclick="nextStep(4)" class="w-2/3 bg-investment_green text-white font-semibold py-3 px-4 rounded-lg hover:bg-opacity-90 transition">Next: Assumptions</button>
+                    </div>
+                </div>
+                <!-- Step 4: Assumptions -->
+                <div id="step4" class="onboarding-step">
+                    <h3 class="text-2xl font-semibold text-textdark mb-2">Assumptions</h3>
+                    <p class="text-textlight mb-6">Finally, let's set the expected interest and return rates.</p>
+                     <div class="space-y-4">
+                        <div>
+                            <label for="ob_loanROI" class="block text-sm font-medium text-textlight">Loan Interest Rate (% p.a.)</label>
+                            <input type="number" id="ob_loanROI" value="8.5" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-investment_green focus:border-investment_green">
                         </div>
-                        <div class="flex justify-between mt-8 space-x-4">
-                            <button onclick="prevStep(2)" class="w-1/3 bg-gray-200 text-gray-700 font-semibold py-3 px-4 rounded-lg hover:bg-gray-300 transition">Back</button>
-                            <button onclick="finishOnboarding()" class="w-2/3 bg-success text-white font-semibold py-3 px-4 rounded-lg hover:bg-opacity-90 transition">Calculate My Plan</button>
+                        <div>
+                            <label for="ob_investmentROI" class="block text-sm font-medium text-textlight">Expected Investment Return (% p.a.)</label>
+                            <input type="number" id="ob_investmentROI" value="12" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-investment_green focus:border-investment_green">
                         </div>
+                    </div>
+                     <div class="flex justify-between mt-8 space-x-4">
+                         <button onclick="prevStep(3)" class="w-1/3 bg-gray-200 text-gray-700 font-semibold py-3 px-4 rounded-lg hover:bg-gray-300 transition">Back</button>
+                        <button onclick="finishOnboarding()" class="w-2/3 bg-success text-white font-semibold py-3 px-4 rounded-lg hover:bg-opacity-90 transition">Calculate My Plan</button>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
 
-        <!-- Post-Onboarding Summary Modal -->
-        <div id="postOnboardingSummaryModal" class="hidden fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center p-4 z-50">
-            <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg text-left p-8 transform transition-all relative">
-                <!-- Close button -->
-                <button id="closeSummaryModal" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors z-10">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                </button>
-                <h2 class="text-2xl font-bold text-textdark mb-4 text-center">Here's Your Starting Point!</h2>
-                <div class="bg-background p-4 rounded-lg space-y-2 text-sm">
-                    <div class="flex justify-between items-center">
-                        <span class="text-textlight">Gross Monthly Salary</span>
-                        <span id="summaryGross" class="font-semibold text-textdark">₹0</span>
-                    </div>
-                    <div class="flex justify-between items-center">
-                        <span class="text-textlight">(-) Monthly Tax (est.)</span>
-                        <span id="summaryTax" class="font-semibold text-danger">- ₹0</span>
-                    </div>
-                    <div class="flex justify-between items-center">
-                        <span class="text-textlight">(-) EPF/VPF</span>
-                        <span id="summaryEpf" class="font-semibold text-danger">- ₹0</span>
-                    </div>
-                    <div class="flex justify-between items-center border-t pt-2 mt-2">
-                        <span class="text-textlight font-bold">In-Hand Salary</span>
-                        <span id="summaryInHand" class="font-bold text-textdark">₹0</span>
-                    </div>
-                    <div class="flex justify-between items-center">
-                        <span class="text-textlight">(-) Household Expenses</span>
-                        <span id="summaryExpenses" class="font-semibold text-danger">- ₹0</span>
-                    </div>
+    <!-- Post-Onboarding Summary Modal -->
+    <div id="postOnboardingSummaryModal" class="hidden fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg text-left p-8 transform transition-all relative">
+            <!-- Close button -->
+            <button id="closeSummaryModal" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors z-10">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            <h2 class="text-2xl font-bold text-textdark mb-4 text-center">Here's Your Starting Point!</h2>
+            <div class="bg-background p-4 rounded-lg space-y-2 text-sm">
+                <div class="flex justify-between items-center">
+                    <span class="text-textlight">Gross Monthly Salary</span>
+                    <span id="summaryGross" class="font-semibold text-textdark">₹0</span>
                 </div>
-                <div class="bg-green-50 p-4 rounded-lg mt-4">
-                    <div class="flex justify-between items-center">
-                        <span class="font-bold text-investment_green">Available Monthly Budget</span>
-                        <span id="summaryBudget" class="text-2xl font-bold text-investment_green">₹0</span>
-                    </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-textlight">(-) Monthly Tax (est.)</span>
+                    <span id="summaryTax" class="font-semibold text-danger">- ₹0</span>
                 </div>
-                <p class="text-xs text-gray-400 mt-2 text-center">Tax is estimated using the old regime for simplicity.</p>
-                <button id="startPlanningBtn" class="w-full mt-6 bg-investment_green text-white font-semibold py-3 px-4 rounded-lg hover:bg-opacity-90 transition">Start Planning &rarr;</button>
+                <div class="flex justify-between items-center">
+                    <span class="text-textlight">(-) EPF/VPF</span>
+                    <span id="summaryEpf" class="font-semibold text-danger">- ₹0</span>
+                </div>
+                <div class="flex justify-between items-center border-t pt-2 mt-2">
+                    <span class="text-textlight font-bold">In-Hand Salary</span>
+                    <span id="summaryInHand" class="font-bold text-textdark">₹0</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-textlight">(-) Household Expenses</span>
+                    <span id="summaryExpenses" class="font-semibold text-danger">- ₹0</span>
+                </div>
+            </div>
+            <div class="bg-green-50 p-4 rounded-lg mt-4">
+                <div class="flex justify-between items-center">
+                    <span class="font-bold text-investment_green">Available Monthly Budget</span>
+                    <span id="summaryBudget" class="text-2xl font-bold text-investment_green">₹0</span>
+                </div>
+            </div>
+            <p class="text-xs text-gray-400 mt-2 text-center">Tax is estimated using the old regime for simplicity.</p>
+            <button id="startPlanningBtn" class="w-full mt-6 bg-investment_green text-white font-semibold py-3 px-4 rounded-lg hover:bg-opacity-90 transition">Start Planning &rarr;</button>
+        </div>
+    </div>
+
+    <!-- Connect to Expert Modal -->
+    <div id="expertModal" class="hidden fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-8 transform transition-all relative">
+            <!-- Close button -->
+            <button id="closeExpertModal" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors z-10">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            <div id="expertModalContent">
+                <h2 class="text-2xl font-bold text-center mb-4 text-textdark">Connect with an Expert</h2>
+                <p class="text-center text-textlight mb-6">Please provide your details, and a financial advisor will reach out to you shortly.</p>
+                <form id="expertForm">
+                    <div class="space-y-4">
+                        <input type="text" placeholder="Your Name" required class="w-full p-3 border border-gray-300 rounded-md focus:ring-investment_green focus:border-investment_green">
+                        <input type="tel" placeholder="Your Phone Number" required class="w-full p-3 border border-gray-300 rounded-md focus:ring-investment_green focus:border-investment_green">
+                        <button type="submit" class="w-full bg-investment_green text-white font-semibold py-3 rounded-lg hover:bg-opacity-90 transition">Submit Request</button>
+                    </div>
+                </form>
             </div>
         </div>
+    </div>
 
-        <!-- Connect to Expert Modal -->
-        <div id="expertModal" class="hidden fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center p-4 z-50">
-            <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-8 transform transition-all relative">
-                <!-- Close button -->
-                <button id="closeExpertModal" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors z-10">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                </button>
-                <div id="expertModalContent">
-                    <h2 class="text-2xl font-bold text-center mb-4 text-textdark">Connect with an Expert</h2>
-                    <p class="text-center text-textlight mb-6">Please provide your details, and a financial advisor will reach out to you shortly.</p>
-                    <form id="expertForm">
-                        <div class="space-y-4">
-                            <input type="text" placeholder="Your Name" required class="w-full p-3 border border-gray-300 rounded-md focus:ring-investment_green focus:border-investment_green">
-                            <input type="tel" placeholder="Your Phone Number" required class="w-full p-3 border border-gray-300 rounded-md focus:ring-investment_green focus:border-investment_green">
-                            <button type="submit" class="w-full bg-investment_green text-white font-semibold py-3 rounded-lg hover:bg-opacity-90 transition">Submit Request</button>
+
+    <!-- Header Section -->
+    <header class="bg-card shadow-sm h-[68px] pl-[27px] pr-6 md:pr-8 flex items-center justify-between z-10 sticky top-0">
+        <div class="flex items-center">
+            <a href="./index.html">
+                <img src="loogo.svg" alt="Pai Logo" class="h-8 w-auto">
+            </a>
+            <h1 class="text-xl font-extrabold text-textdark font-albert_sans ml-[22px]">Pai</h1>
+        </div>
+        
+        <nav>
+            <a href="./about.html" class="text-sm font-semibold text-textlight hover:text-investment_green transition-colors">About Us</a>
+        </nav>
+    </header>
+
+        <!-- Main Content Area -->
+        <main class="flex-1 flex flex-col">
+            <!-- Top Section: Inputs and Pie Chart -->
+            <div class="grid grid-cols-1 lg:grid-cols-4">
+                <!-- Left Side: Input & Calculation Section (3/4 width) -->
+                <section class="lg:col-span-3 bg-card p-6">
+                    <h2 class="text-[21px] font-normal text-textdark font-albert_sans mb-6">Smart Loan & Investment Planner</h2>
+                    
+                    <!-- NEW: Primary Inputs Container -->
+                    <div id="primaryInputsContainer" class="bg-background p-6 rounded-lg">
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-6">
+                             <!-- Loan Amount -->
+                            <div>
+                                <div class="flex items-center justify-between w-full">
+                                    <label for="loanAmount" class="block text-sm font-normal text-textlight font-albert_sans">Loan Amount</label>
+                                    <div class="w-[114px] h-[29px] p-2 rounded-[2px] bg-card shadow-custom-input flex items-center">
+                                        <span class="font-normal text-input_text_color pl-1">₹</span>
+                                        <input type="number" id="loanAmount" value="5000000" min="100000" max="50000000" step="100000" class="w-full bg-transparent border-none focus:ring-0 text-input_text_color text-right p-0 m-0 font-albert_sans font-normal text-base">
+                                    </div>
+                                </div>
+                                <input type="range" id="loanAmountSlider" value="5000000" min="100000" max="50000000" step="100000" class="w-full mt-[18px]">
+                            </div>
+                            <!-- Monthly Budget -->
+                            <div>
+                                <div class="flex items-center justify-between w-full">
+                                    <label for="monthlyBudget" class="block text-sm font-normal text-textlight font-albert_sans">Monthly Budget</label>
+                                    <div class="w-[114px] h-[29px] p-2 rounded-[2px] bg-card shadow-custom-input flex items-center">
+                                        <span class="font-normal text-input_text_color pl-1">₹</span>
+                                        <input type="number" id="monthlyBudget" value="70000" min="10000" max="1000000" step="1000" class="w-full bg-transparent border-none focus:ring-0 text-input_text_color text-right p-0 m-0 font-albert_sans font-normal text-base">
+                                    </div>
+                                </div>
+                                <input type="range" id="monthlyBudgetSlider" value="70000" min="10000" max="1000000" step="1000" class="w-full mt-[18px]">
+                            </div>
+                            <!-- Loan Interest Rate -->
+                             <div>
+                                <div class="flex items-center justify-between w-full">
+                                    <label for="loanInterestRateDisplay" class="block text-sm font-normal text-textlight font-albert_sans">Loan Interest Rate</label>
+                                    <div class="w-[114px] h-[29px] p-2 rounded-[2px] bg-card shadow-custom-input flex items-center">
+                                        <input type="number" id="loanInterestRateDisplay" value="8.5" min="1" max="20" step="0.1" class="w-full bg-transparent border-none focus:ring-0 text-input_text_color text-right p-0 m-0 font-albert_sans font-normal text-base">
+                                        <span class="font-normal text-input_text_color pl-1">%</span>
+                                    </div>
+                                </div>
+                                <input type="range" id="loanInterestRateSlider" value="8.5" min="1" max="20" step="0.1" class="w-full mt-[18px]">
+                            </div>
+                            <!-- Investment Return Rate -->
+                            <div>
+                                <div class="flex items-center justify-between w-full">
+                                    <label for="investmentRateDisplay" class="block text-sm font-normal text-textlight font-albert_sans">Investment Return Rate</label>
+                                    <div class="w-[114px] h-[29px] p-2 rounded-[2px] bg-card shadow-custom-input flex items-center">
+                                        <input type="number" id="investmentRateDisplay" value="12" min="1" max="30" step="0.1" class="w-full bg-transparent border-none focus:ring-0 text-input_text_color text-right p-0 m-0 font-albert_sans font-normal text-base">
+                                        <span class="font-normal text-input_text_color pl-1">%</span>
+                                    </div>
+                                </div>
+                                <input type="range" id="investmentRateSlider" value="12" min="1" max="30" step="0.1" class="w-full mt-[18px]">
+                            </div>
                         </div>
-                    </form>
-                </div>
-            </div>
-        </div>
+                    </div>
+                    
+                    <!-- NEW: Goal Buttons are now central -->
+                     <div class="my-10">
+                        <div class="flex flex-nowrap justify-center gap-4 bg-card p-2 rounded-[30px] shadow-md max-w-max mx-auto">
+                            <button type="button" id="btnPlanner" data-goal="planner" class="goal-button selected flex flex-col items-center justify-center py-2 px-4 rounded-[25px] cursor-pointer transition-all duration-200 text-sm font-bold text-center shadow-sm font-albert_sans uppercase">Manual<br>Planner</button>
+                            <button type="button" id="btnMinTime" data-goal="min-time" class="goal-button flex flex-col items-center justify-center py-2 px-4 rounded-[25px] cursor-pointer transition-all duration-200 text-sm font-bold text-center shadow-sm font-albert_sans uppercase">Minimum Time<br>to Offset</button>
+                            <button type="button" id="btnOptimalStrategy" data-goal="optimal-strategy" class="goal-button flex flex-col items-center justify-center py-2 px-4 rounded-[25px] cursor-pointer transition-all duration-200 text-sm font-bold text-center shadow-sm font-albert_sans uppercase">Find Optimal<br>Strategy</button>
+                        </div>
+                    </div>
 
-
-        <!-- Header Section -->
-        <header class="bg-card shadow-sm h-[68px] pl-[27px] pr-6 md:pr-8 flex items-center justify-between z-10 sticky top-0">
-            <div class="flex items-center">
-                <a href="./index.html">
-                    <img src="loogo.svg" alt="Pai Logo" class="h-8 w-auto">
-                </a>
-                <h1 class="text-xl font-extrabold text-textdark font-albert_sans ml-[22px]">Pai</h1>
-            </div>
-            
-            <nav>
-                <a href="./about.html" class="text-sm font-semibold text-textlight hover:text-investment_green transition-colors">About Us</a>
-            </nav>
-        </header>
-
-            <!-- Main Content Area -->
-            <main class="flex-1 flex flex-col">
-                <!-- Top Section: Inputs and Pie Chart -->
-                <div class="grid grid-cols-1 lg:grid-cols-4">
-                    <!-- Left Side: Input & Calculation Section (3/4 width) -->
-                    <section class="lg:col-span-3 bg-card p-6">
-                        <h2 class="text-[21px] font-normal text-textdark font-albert_sans mb-6">Smart Loan & Investment Planner</h2>
-                        
+                    <!-- NEW: Secondary/Result Inputs Container -->
+                    <div id="strategyBox" class="relative bg-[rgba(234,234,234,0.25)] shadow-lg rounded-lg w-full p-6 hidden">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12">
-                            <!-- Column 1: Loan Details -->
+                            <!-- Column 1: Loan Parameters -->
                             <div class="space-y-5">
-                                <div>
-                                    <div class="flex items-center justify-between w-full max-w-[330px]">
-                                        <label for="loanAmount" class="block text-sm font-normal text-textlight font-albert_sans">Loan Amount</label>
-                                        <div class="w-[114px] h-[29px] p-2 rounded-[2px] bg-input_box_fill bg-opacity-10 shadow-custom-input flex items-center">
-                                            <span class="font-normal text-input_text_color pl-1">₹</span>
-                                            <input type="number" id="loanAmount" value="5000000" min="100000" max="50000000" step="100000" class="w-full bg-transparent border-none focus:ring-0 text-input_text_color text-right p-0 m-0 font-albert_sans font-normal text-base">
+                                <div id="loanTenureContainer">
+                                    <div class="flex items-center justify-between w-full">
+                                        <label class="block text-sm font-normal text-textlight font-albert_sans">Loan Tenure</label>
+                                        <div class="w-[114px] h-[29px] p-2 rounded-[2px] bg-card shadow-custom-input flex items-center">
+                                            <input type="number" id="loanTenureDisplay" value="30" min="1" max="30" class="w-full bg-transparent border-none focus:ring-0 text-input_text_color text-right p-0 m-0 font-albert_sans font-normal text-base">
+                                            <span class="font-normal text-input_text_color pl-1">Yr</span>
                                         </div>
                                     </div>
-                                    <input type="range" id="loanAmountSlider" value="5000000" min="100000" max="50000000" step="100000" class="w-full max-w-[330px] mt-[18px]">
+                                    <input type="range" id="loanTenureSlider" value="30" min="1" max="30" class="w-full mt-[18px]">
+                                </div>
+                                <div class="flex items-center justify-between w-full">
+                                    <label class="block text-sm font-normal text-textlight font-albert_sans">Monthly EMI</label>
+                                    <div class="w-[114px] h-[29px] p-2 rounded-[2px] bg-card shadow-custom-input flex items-center justify-end">
+                                        <p id="emiResult" class="w-full bg-transparent text-right p-0 m-0 font-albert_sans font-normal text-base text-emi_purple">₹ 0</p>
+                                    </div>
                                 </div>
                             </div>
-                            <!-- Column 2: Budget Details -->
+
+                            <!-- Column 2: Investment Parameters -->
                             <div class="space-y-5">
-                                <div>
-                                    <div class="flex items-center justify-between w-full max-w-[330px]">
-                                        <label for="monthlyBudget" class="block text-sm font-normal text-textlight font-albert_sans">Monthly Budget</label>
-                                        <div class="w-[114px] h-[29px] p-2 rounded-[2px] bg-input_box_fill bg-opacity-10 shadow-custom-input flex items-center">
-                                            <span class="font-normal text-input_text_color pl-1">₹</span>
-                                            <input type="number" id="monthlyBudget" value="70000" min="10000" max="1000000" step="1000" class="w-full bg-transparent border-none focus:ring-0 text-input_text_color text-right p-0 m-0 font-albert_sans font-normal text-base">
+                                <div id="investmentTenureContainer">
+                                    <div class="flex items-center justify-between w-full">
+                                        <label for="investmentTenureDisplay" class="block text-sm font-normal text-textlight font-albert_sans">Investment Tenure</label>
+                                        <div class="w-[114px] h-[29px] p-2 rounded-[2px] bg-card shadow-custom-input flex items-center">
+                                            <input type="number" id="investmentTenureDisplay" value="30" min="1" max="30" class="w-full bg-transparent border-none focus:ring-0 text-input_text_color text-right p-0 m-0 font-albert_sans font-normal text-base">
+                                            <span class="font-normal text-input_text_color pl-1">Yr</span>
                                         </div>
                                     </div>
-                                    <input type="range" id="monthlyBudgetSlider" value="70000" min="10000" max="1000000" step="1000" class="w-full max-w-[330px] mt-[18px]">
+                                    <input type="range" id="investmentTenureSlider" value="30" min="1" max="30" class="w-full mt-[18px]">
                                 </div>
-                            </div>
-                        </div>
-
-                        <!-- Strategy Box -->
-                        <div class="relative mt-12">
-                            <!-- Goal Buttons Positioned on Top Edge -->
-                            <div class="absolute -top-5 left-1/2 transform -translate-x-1/2 z-10">
-                                <div class="flex flex-nowrap justify-center gap-4 bg-card p-2 rounded-[30px] shadow-md">
-                                    <button type="button" id="btnPlanner" data-goal="planner" class="goal-button selected flex flex-col items-center justify-center py-2 px-4 rounded-[25px] cursor-pointer transition-all duration-200 text-sm font-bold text-center shadow-sm font-albert_sans uppercase">Manual<br>Planner</button>
-                                    <button type="button" id="btnMinTime" data-goal="min-time" class="goal-button flex flex-col items-center justify-center py-2 px-4 rounded-[25px] cursor-pointer transition-all duration-200 text-sm font-bold text-center shadow-sm font-albert_sans uppercase">Minimum Time<br>to Offset</button>
-                                    <button type="button" id="btnOptimalStrategy" data-goal="optimal-strategy" class="goal-button flex flex-col items-center justify-center py-2 px-4 rounded-[25px] cursor-pointer transition-all duration-200 text-sm font-bold text-center shadow-sm font-albert_sans uppercase">Find Optimal<br>Strategy</button>
-                                </div>
-                            </div>
-                            
-                            <!-- Main Strategy Box Content -->
-                            <div class="relative py-6 pt-12 bg-[rgba(234,234,234,0.25)] shadow-lg rounded-lg w-full">
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 px-6 mt-8">
-                                    <!-- Column 1: Loan Parameters -->
-                                    <div class="space-y-5">
-                                        <div>
-                                            <div class="flex items-center justify-between w-full">
-                                                <label for="loanInterestRateDisplay" class="block text-sm font-normal text-textlight font-albert_sans">Loan Interest Rate</label>
-                                                <div class="w-[114px] h-[29px] p-2 rounded-[2px] bg-input_box_fill bg-opacity-10 shadow-custom-input flex items-center">
-                                                    <input type="number" id="loanInterestRateDisplay" value="8.5" min="1" max="20" step="0.1" class="w-full bg-transparent border-none focus:ring-0 text-input_text_color text-right p-0 m-0 font-albert_sans font-normal text-base">
-                                                    <span class="font-normal text-input_text_color pl-1">%</span>
-                                                </div>
-                                            </div>
-                                            <input type="range" id="loanInterestRateSlider" value="8.5" min="1" max="20" step="0.1" class="w-full mt-[18px]">
-                                        </div>
-                                        <div id="loanTenureContainer">
-                                            <div class="flex items-center justify-between w-full">
-                                                <label class="block text-sm font-normal text-textlight font-albert_sans">Loan Tenure</label>
-                                                <div class="w-[114px] h-[29px] p-2 rounded-[2px] bg-input_box_fill bg-opacity-10 shadow-custom-input flex items-center">
-                                                    <input type="number" id="loanTenureDisplay" value="30" min="1" max="30" class="w-full bg-transparent border-none focus:ring-0 text-input_text_color text-right p-0 m-0 font-albert_sans font-normal text-base">
-                                                    <span class="font-normal text-input_text_color pl-1">Yr</span>
-                                                </div>
-                                            </div>
-                                            <input type="range" id="loanTenureSlider" value="30" min="1" max="30" class="w-full mt-[18px]">
-                                        </div>
-                                        <div class="flex items-center justify-between w-full">
-                                            <label class="block text-sm font-normal text-textlight font-albert_sans">Monthly EMI</label>
-                                            <div class="w-[114px] h-[29px] p-2 rounded-[2px] bg-input_box_fill bg-opacity-10 shadow-custom-input flex items-center justify-end">
-                                                <p id="emiResult" class="w-full bg-transparent text-right p-0 m-0 font-albert_sans font-normal text-base text-emi_purple">₹ 0</p>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- Column 2: Investment Parameters -->
-                                    <div class="space-y-5">
-                                        <div>
-                                            <div class="flex items-center justify-between w-full">
-                                                <label for="investmentRateDisplay" class="block text-sm font-normal text-textlight font-albert_sans">Investment Return Rate</label>
-                                                <div class="w-[114px] h-[29px] p-2 rounded-[2px] bg-input_box_fill bg-opacity-10 shadow-custom-input flex items-center">
-                                                    <input type="number" id="investmentRateDisplay" value="12" min="1" max="30" step="0.1" class="w-full bg-transparent border-none focus:ring-0 text-input_text_color text-right p-0 m-0 font-albert_sans font-normal text-base">
-                                                    <span class="font-normal text-input_text_color pl-1">%</span>
-                                                </div>
-                                            </div>
-                                            <input type="range" id="investmentRateSlider" value="12" min="1" max="30" step="0.1" class="w-full mt-[18px]">
-                                        </div>
-                                        <div id="investmentTenureContainer">
-                                            <div class="flex items-center justify-between w-full">
-                                                <label for="investmentTenureDisplay" class="block text-sm font-normal text-textlight font-albert_sans">Investment Tenure</label>
-                                                <div class="w-[114px] h-[29px] p-2 rounded-[2px] bg-input_box_fill bg-opacity-10 shadow-custom-input flex items-center">
-                                                    <input type="number" id="investmentTenureDisplay" value="30" min="1" max="30" class="w-full bg-transparent border-none focus:ring-0 text-input_text_color text-right p-0 m-0 font-albert_sans font-normal text-base">
-                                                    <span class="font-normal text-input_text_color pl-1">Yr</span>
-                                                </div>
-                                            </div>
-                                            <input type="range" id="investmentTenureSlider" value="30" min="1" max="30" class="w-full mt-[18px]">
-                                        </div>
-                                        <div class="flex items-center justify-between w-full">
-                                            <label class="block text-sm font-normal text-textlight font-albert_sans">Monthly Investment</label>
-                                            <div class="w-[114px] h-[29px] p-2 rounded-[2px] bg-input_box_fill bg-opacity-10 shadow-custom-input flex items-center justify-end">
-                                                <p id="monthlyInvestmentResult" class="w-full bg-transparent text-right p-0 m-0 font-albert_sans font-normal text-base text-investment_green">₹ 0</p>
-                                            </div>
-                                        </div>
+                                <div class="flex items-center justify-between w-full">
+                                    <label class="block text-sm font-normal text-textlight font-albert_sans">Monthly Investment</label>
+                                    <div class="w-[114px] h-[29px] p-2 rounded-[2px] bg-card shadow-custom-input flex items-center justify-end">
+                                        <p id="monthlyInvestmentResult" class="w-full bg-transparent text-right p-0 m-0 font-albert_sans font-normal text-base text-investment_green">₹ 0</p>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                    </div>
                 </section>
 
                 <!-- Right Side: Pie Chart & Summary Section (1/4 width) -->
                 <section class="lg:col-span-1 bg-card p-6 flex flex-col items-center justify-center space-y-6">
-                    <div id="chartsContainer" class="w-full max-w-[350px]">
+                    <div id="chartsContainer" class="w-full max-w-[350px] hidden">
                         <div class="w-full h-[200px] relative">
                             <canvas id="monthlyBudgetChart"></canvas>
                             <div id="chartMessage" class="absolute inset-0 flex items-center justify-center text-center text-textlight p-4">
@@ -752,11 +773,11 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         });
 
         // --- ONBOARDING SCRIPT ---
-        const steps = [document.getElementById('step1'), document.getElementById('step2'), document.getElementById('step3')];
+        const steps = [document.getElementById('step1'), document.getElementById('step2'), document.getElementById('step3'), document.getElementById('step4')];
         const progressBar = document.getElementById('progressBar');
         const stepCounter = document.getElementById('stepCounter');
         const onboardingTitle = document.getElementById('onboardingTitle');
-        const titles = ["Your Monthly Income", "Your Lifestyle", "Your Financial Horizon"];
+        const titles = ["Your Monthly Income", "Your Lifestyle", "Your Goal", "Assumptions"];
         let currentStep = 1;
         let globalOnboardingData = {}; // To store data temporarily
 
@@ -805,7 +826,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 monthlyIncome: parseFloat(document.getElementById('ob_monthlyIncome').value),
                 epfVpf: parseFloat(document.getElementById('ob_epfVpf').value),
                 monthlyExpenses: parseFloat(document.getElementById('ob_monthlyExpenses').value),
-                planningYears: parseInt(document.getElementById('ob_planningYears').value)
+                planningYears: parseInt(document.getElementById('ob_planningYears').value),
+                loanAmount: parseFloat(document.getElementById('ob_loanAmount').value),
+                loanROI: parseFloat(document.getElementById('ob_loanROI').value),
+                investmentROI: parseFloat(document.getElementById('ob_investmentROI').value)
             };
             
             document.getElementById('onboardingModal').classList.add('hidden');
@@ -824,26 +848,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             const calculatorWrapper = document.getElementById('calculatorWrapper');
 
 
-            // NEW: Hide calculator by default, show welcome screen if it's the first visit
-            const isFirstVisit = !localStorage.getItem('paiFinanceVisited');
-            if (isFirstVisit) {
-                const welcomeScreen = document.getElementById('welcomeScreen');
-                const startWelcomeBtn = document.getElementById('startWelcomeBtn');
-                
-                welcomeScreen.classList.remove('hidden');
+            // REMOVED WELCOME SCREEN LOGIC
+            calculatorWrapper.classList.remove('hidden');
 
-                startWelcomeBtn.addEventListener('click', () => {
-                    welcomeScreen.classList.add('hidden');
-                    calculatorWrapper.classList.remove('hidden');
-                    localStorage.setItem('paiFinanceVisited', 'true');
-                    // Directly open the onboarding modal after welcome
-                    onboardingModal.classList.remove('hidden');
-                    onboardingModal.classList.add('flex');
-                    showStep(1);
-                });
-            } else {
-                calculatorWrapper.classList.remove('hidden');
-            }
 
             startPlanningBtn.addEventListener('click', () => {
                 summaryModal.classList.add('hidden');
@@ -925,7 +932,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             // Create and dispatch a custom event with the calculated budget and tenure
             const event = new CustomEvent('onboardingComplete', { 
                 detail: {
+                    loanAmount: data.loanAmount,
                     budget: calculateInHandBudget(data).finalBudget,
+                    loanROI: data.loanROI,
+                    investmentROI: data.investmentROI,
                     tenure: data.planningYears
                 }
             });
