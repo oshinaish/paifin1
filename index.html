@@ -324,7 +324,17 @@
                                         </div>
                                         <input type="range" id="investmentRateSlider" value="12" min="1" max="30" step="0.1" class="w-full mt-[18px]">
                                     </div>
-                                    <div id="planningHorizonContainer">
+                                    <div id="investmentTenureContainer">
+                                        <div class="flex items-center justify-between w-full">
+                                            <label for="investmentTenureDisplay" class="block text-sm font-normal text-textlight font-albert_sans">Investment Tenure</label>
+                                            <div class="w-[114px] h-[29px] p-2 rounded-[2px] bg-input_box_fill bg-opacity-10 shadow-custom-input flex items-center">
+                                                <input type="number" id="investmentTenureDisplay" value="30" min="1" max="30" class="w-full bg-transparent border-none focus:ring-0 text-input_text_color text-right p-0 m-0 font-albert_sans font-normal text-base">
+                                                <span class="font-normal text-input_text_color pl-1">Yr</span>
+                                            </div>
+                                        </div>
+                                        <input type="range" id="investmentTenureSlider" value="30" min="1" max="30" class="w-full mt-[18px]">
+                                    </div>
+                                    <div id="planningHorizonContainer" class="hidden">
                                         <div class="flex items-center justify-between w-full">
                                             <label class="block text-sm font-normal text-textlight font-albert_sans">Planning Horizon</label>
                                             <div class="w-[114px] h-[29px] p-2 rounded-[2px] bg-input_box_fill bg-opacity-10 shadow-custom-input flex items-center">
@@ -360,7 +370,7 @@
                         <button id="connectExpertBtn" class="hidden w-full bg-transparent border-2 border-investment_green text-investment_green font-semibold py-3 px-4 rounded-lg hover:bg-investment_green hover:text-white transition-colors duration-300">Connect to an Expert</button>
                     </div>
                 </section>
-                </div>
+            </div>
 
                        <section id="finalResultsSection" class="bg-background p-6 hidden">
             <div id="mainResultsContainer" class="max-w-7xl mx-auto">
