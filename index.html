@@ -366,8 +366,286 @@
         </div>
     
     <script>
-        // --- INLINE SCRIPT FOR ONBOARDING AND PAGE INIT ---
-        // (This entire script block remains the same, no changes needed here)
+       document.addEventListener('DOMContentLoaded', () => {
+            const faqItems = document.querySelectorAll('.faq-item');
+            faqItems.forEach(item => {
+                const question = item.querySelector('.faq-question');
+                const answer = item.querySelector('.faq-answer');
+                question.addEventListener('click', () => {
+                    answer.style.display = answer.style.display === 'block' ? 'none' : 'block';
+                    question.classList.toggle('open');
+                });
+            });
+        });
+
+        // --- ONBOARDING SCRIPT ---
+        const steps = [document.getElementById('step1'), document.getElementById('step2'), document.getElementById('step3')];
+        const progressBar = document.getElementById('progressBar');
+        const stepCounter = document.getElementById('stepCounter');
+        const onboardingTitle = document.getElementById('onboardingTitle');
+        const titles = ["Your Monthly Income", "Your Lifestyle", "Your Financial Goal"]; // UPDATED TITLE
+        let currentStep = 1;
+        let globalOnboardingData = {}; // To store data temporarily
+
+        function showStep(stepNumber) {
+            steps.forEach((step, index) => {
+                step.classList.toggle('active', index + 1 === stepNumber);
+            });
+            const progress = (stepNumber / steps.length) * 100;
+            progressBar.style.width = `${progress}%`;
+            stepCounter.textContent = `Step ${stepNumber} of ${steps.length}`;
+            onboardingTitle.textContent = titles[stepNumber - 1];
+            currentStep = stepNumber;
+        }
+
+        function nextStep(stepNumber) {
+            const inputs = steps[currentStep - 1].querySelectorAll('input');
+            for (let input of inputs) {
+                if (!input.value) {
+                    input.focus();
+                    input.classList.add('border-red-500');
+                    return;
+                }
+                input.classList.remove('border-red-500');
+            }
+            if (stepNumber > steps.length) return;
+            showStep(stepNumber);
+        }
+
+        function prevStep(stepNumber) {
+            if (stepNumber < 1) return;
+            showStep(stepNumber);
+        }
+
+        function finishOnboarding() {
+            const inputs = steps[currentStep - 1].querySelectorAll('input');
+            for (let input of inputs) {
+                if (!input.value) {
+                    input.focus();
+                    input.classList.add('border-red-500');
+                    return;
+                }
+            }
+
+            // Store data globally to be used by the summary modal's button (UPDATED)
+            globalOnboardingData = {
+                monthlyIncome: parseFloat(document.getElementById('ob_monthlyIncome').value),
+                epfVpf: parseFloat(document.getElementById('ob_epfVpf').value),
+                monthlyExpenses: parseFloat(document.getElementById('ob_monthlyExpenses').value),
+                loanAmount: parseFloat(document.getElementById('ob_loanAmount').value),
+                planningYears: parseInt(document.getElementById('ob_planningYears').value)
+            };
+            
+            document.getElementById('onboardingModal').classList.add('hidden');
+            document.getElementById('onboardingModal').classList.remove('flex');
+            
+            showSummaryAndCalculate(globalOnboardingData);
+        }
+        
+        // --- PAGE INITIALIZATION SCRIPT ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const onboardingModal = document.getElementById('onboardingModal');
+            const summaryModal = document.getElementById('postOnboardingSummaryModal');
+            const startPlanningBtn = document.getElementById('startPlanningBtn');
+            const closeOnboardingModalBtn = document.getElementById('closeOnboardingModal');
+            const closeSummaryModalBtn = document.getElementById('closeSummaryModal');
+            const calculatorWrapper = document.getElementById('calculatorWrapper');
+
+
+            // NEW: Hide calculator by default, show welcome screen if it's the first visit
+            const isFirstVisit = !localStorage.getItem('paiFinanceVisited');
+            if (isFirstVisit) {
+                const welcomeScreen = document.getElementById('welcomeScreen');
+                const startWelcomeBtn = document.getElementById('startWelcomeBtn');
+                
+                welcomeScreen.classList.remove('hidden');
+
+                startWelcomeBtn.addEventListener('click', () => {
+                    welcomeScreen.classList.add('hidden');
+                    calculatorWrapper.classList.remove('hidden');
+                    localStorage.setItem('paiFinanceVisited', 'true');
+                    // Directly open the onboarding modal after welcome
+                    onboardingModal.classList.remove('hidden');
+                    onboardingModal.classList.add('flex');
+                    showStep(1);
+                });
+            } else {
+                calculatorWrapper.classList.remove('hidden');
+            }
+
+            startPlanningBtn.addEventListener('click', () => {
+                summaryModal.classList.add('hidden');
+                summaryModal.classList.remove('flex');
+                populateCalculatorAndRun(globalOnboardingData);
+            });
+
+            closeOnboardingModalBtn.addEventListener('click', () => {
+                onboardingModal.classList.add('hidden');
+                onboardingModal.classList.remove('flex');
+            });
+
+            closeSummaryModalBtn.addEventListener('click', () => {
+                summaryModal.classList.add('hidden');
+                summaryModal.classList.remove('flex');
+            });
+        });
+        
+        // --- NEW: More Accurate Budget Calculation ---
+        function calculateInHandBudget(data) {
+            const annualGross = data.monthlyIncome * 12;
+            const epfContribution = annualGross * (data.epfVpf / 100);
+            
+            // Assuming Old Tax Regime with standard deduction
+            const standardDeduction = 50000;
+            // Assuming EPF is under Section 80C, capped at 1.5 Lakhs
+            const epfDeduction = Math.min(epfContribution, 150000);
+            
+            let taxableIncome = annualGross - standardDeduction - epfDeduction;
+            
+            let annualTax = 0;
+            if (taxableIncome > 1000000) {
+                annualTax = 112500 + (taxableIncome - 1000000) * 0.30;
+            } else if (taxableIncome > 500000) {
+                annualTax = 12500 + (taxableIncome - 500000) * 0.20;
+            } else if (taxableIncome > 250000) {
+                annualTax = (taxableIncome - 250000) * 0.05;
+            }
+            // Add 4% cess
+            annualTax *= 1.04;
+
+            const monthlyTax = annualTax / 12;
+            const monthlyEpf = epfContribution / 12;
+            
+            const inHandMonthly = data.monthlyIncome - monthlyTax - monthlyEpf;
+            const finalBudget = inHandMonthly - data.monthlyExpenses;
+
+            return {
+                gross: data.monthlyIncome,
+                tax: Math.round(monthlyTax),
+                epf: Math.round(monthlyEpf),
+                inHand: Math.round(inHandMonthly),
+                expenses: data.monthlyExpenses,
+                finalBudget: Math.max(0, Math.round(finalBudget)),
+                planningYears: data.planningYears,
+                loanAmount: data.loanAmount // Pass loan amount through
+            };
+        }
+
+        function showSummaryAndCalculate(data) {
+            console.log("Onboarding complete! Preparing summary with data:", data);
+            
+            const budgetDetails = calculateInHandBudget(data);
+
+            // Populate summary modal
+            document.getElementById('summaryGross').textContent = `₹${budgetDetails.gross.toLocaleString('en-IN')}`;
+            document.getElementById('summaryTax').textContent = `- ₹${budgetDetails.tax.toLocaleString('en-IN')}`;
+            document.getElementById('summaryEpf').textContent = `- ₹${budgetDetails.epf.toLocaleString('en-IN')}`;
+            document.getElementById('summaryInHand').textContent = `₹${budgetDetails.inHand.toLocaleString('en-IN')}`;
+            document.getElementById('summaryExpenses').textContent = `- ₹${budgetDetails.expenses.toLocaleString('en-IN')}`;
+            document.getElementById('summaryBudget').textContent = `₹${budgetDetails.finalBudget.toLocaleString('en-IN')}`;
+            
+            // Show the modal
+            const summaryModal = document.getElementById('postOnboardingSummaryModal');
+            summaryModal.classList.remove('hidden');
+            summaryModal.classList.add('flex');
+        }
+
+        function populateCalculatorAndRun(data) {
+            // Create and dispatch a custom event with the calculated budget and tenure (UPDATED)
+            const details = calculateInHandBudget(data);
+            const event = new CustomEvent('onboardingComplete', { 
+                detail: {
+                    budget: details.finalBudget,
+                    tenure: details.planningYears,
+                    loanAmount: details.loanAmount
+                }
+            });
+            document.dispatchEvent(event);
+        }
+
+        // --- CHATBOT SCRIPT ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const chatbotIcon = document.getElementById('chatbot-icon-button');
+            const chatbotWindow = document.getElementById('chatbot-window');
+            const closeChatbotBtn = document.getElementById('close-chatbot');
+            const startOnboardingFromChatbot = document.getElementById('startOnboardingFromChatbot');
+            const onboardingModal = document.getElementById('onboardingModal');
+            
+            const connectExpertBtn = document.getElementById('connectExpertBtn');
+            const expertModal = document.getElementById('expertModal');
+            const closeExpertModalBtn = document.getElementById('closeExpertModal');
+            const expertForm = document.getElementById('expertForm');
+            const expertModalContent = document.getElementById('expertModalContent');
+
+            // Show chatbot icon after a delay
+            setTimeout(() => {
+                chatbotIcon.classList.add('visible');
+            }, 3000);
+
+            // Open/Close chat window
+            chatbotIcon.addEventListener('click', () => {
+                chatbotIcon.classList.remove('visible');
+                chatbotWindow.classList.remove('hidden');
+                setTimeout(() => {
+                    chatbotWindow.classList.add('opacity-100', 'scale-100');
+                }, 10);
+            });
+
+            closeChatbotBtn.addEventListener('click', () => {
+                chatbotWindow.classList.remove('opacity-100', 'scale-100');
+                setTimeout(() => {
+                    chatbotWindow.classList.add('hidden');
+                    chatbotIcon.classList.add('visible');
+                }, 300);
+            });
+
+            // Handle start onboarding click
+            startOnboardingFromChatbot.addEventListener('click', () => {
+                chatbotWindow.classList.remove('opacity-100', 'scale-100');
+                 setTimeout(() => {
+                    chatbotWindow.classList.add('hidden');
+                    onboardingModal.classList.remove('hidden');
+                    onboardingModal.classList.add('flex');
+                    showStep(1);
+                 }, 300);
+            });
+            
+            // --- EXPERT MODAL LOGIC ---
+            connectExpertBtn.addEventListener('click', () => {
+                expertModal.classList.remove('hidden');
+                expertModal.classList.add('flex');
+            });
+
+            closeExpertModalBtn.addEventListener('click', () => {
+                expertModal.classList.add('hidden');
+                expertModal.classList.remove('flex');
+            });
+
+            expertForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                expertModalContent.innerHTML = `<h2 class="text-2xl font-bold text-center mb-4 text-textdark">Thank You!</h2><p class="text-center text-textlight">Your request has been submitted. An expert will be in touch with you shortly.</p>`;
+            });
+
+
+            // Observe summary box to show the "Connect" button
+            const summaryBox = document.getElementById('summaryResultsContainer');
+            const observer = new MutationObserver((mutations) => {
+                mutations.forEach((mutation) => {
+                    if (mutation.attributeName === 'class') {
+                        const isHidden = summaryBox.classList.contains('hidden');
+                        if (isHidden) {
+                            connectExpertBtn.classList.add('hidden');
+                        } else {
+                            connectExpertBtn.classList.remove('hidden');
+                        }
+                    }
+                });
+            });
+            if (summaryBox) {
+                observer.observe(summaryBox, { attributes: true });
+            }
+        });
+
     </script>
     <script src="script.js"></script>
 </body>
