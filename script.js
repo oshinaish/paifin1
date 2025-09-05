@@ -1,7 +1,8 @@
 /**
  * PaiFinance - Interactive Script
- * Version: 21.0 - Restored Full UI (Separated)
- * Last updated: September 7, 2025, 11:00 PM IST
+ * Version: 15.0 - FINAL SUMMARY BOX FIX
+ * Last updated: August 22, 2025, 12:30 AM IST
+ * Built by the Bros.
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -24,8 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const emiResultElement = document.getElementById('emiResult');
     const monthlyInvestmentResult = document.getElementById('monthlyInvestmentResult');
     
-    // Result Containers & UI sections
-    const strategyBox = document.getElementById('strategyBox');
+    // Result Containers
     const finalResultsSection = document.getElementById('finalResultsSection');
     const mainResultsContainer = document.getElementById('mainResultsContainer');
     const comparisonChartContainer = document.getElementById('comparisonChartContainer');
@@ -36,16 +36,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const paiVsTraditionalContainer = document.getElementById('paiVsTraditionalContainer');
     const paiVsTraditionalExplanation = document.getElementById('paiVsTraditionalExplanation');
     const summaryResultsContainer = document.getElementById('summaryResultsContainer');
+
     const chartsContainer = document.getElementById('chartsContainer');
     const goalButtons = document.querySelectorAll('.goal-button');
     const chartCanvas = document.getElementById('monthlyBudgetChart');
     const chartMessage = document.getElementById('chartMessage');
     const comparisonChartCanvas = document.getElementById('comparisonChart');
     const paiVsTraditionalChartCanvas = document.getElementById('paiVsTraditionalChart');
-    const warningToast = document.getElementById('warningToast');
-    const warningMessage = document.getElementById('warningMessage');
-    let warningTimeout;
-
     let monthlyBudgetChart = null;
     let comparisonChart = null;
     let loanWidgetChart = null;
@@ -53,7 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let paiVsTraditionalChart = null;
     let calculationTimeout;
 
-    // --- 2. CORE FINANCIAL ENGINE ---
+    // --- 2. CORE FINANCIAL ENGINE (Sealed and Final) ---
     function calculateEMI(principal, annualRate, tenureYears) {
         if (principal <= 0 || annualRate <= 0 || tenureYears <= 0) return 0;
         const monthlyRate = (annualRate / 100) / 12;
@@ -74,12 +71,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- 3. GOAL-BASED CALCULATION STRATEGIES ---
     function runPlannerMode() {
-        showResultSections();
+        finalResultsSection.classList.remove('hidden');
+        comparisonChartContainer.classList.remove('hidden');
+        amortizationContainer.classList.remove('hidden');
+        paiVsTraditionalContainer.classList.add('hidden');
         updatePlannerResults();
     }
 
     function findOptimalStrategy() {
-        showResultSections();
+        finalResultsSection.classList.remove('hidden');
+        comparisonChartContainer.classList.remove('hidden');
+        amortizationContainer.classList.remove('hidden');
+        paiVsTraditionalContainer.classList.remove('hidden');
         mainResultsContainer.innerHTML = `<div class="text-center p-4">Calculating...</div>`;
         
         clearTimeout(calculationTimeout);
@@ -110,7 +113,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function findMinimumTime() {
-        showResultSections();
+        finalResultsSection.classList.remove('hidden');
+        comparisonChartContainer.classList.remove('hidden');
+        amortizationContainer.classList.remove('hidden');
+        paiVsTraditionalContainer.classList.remove('hidden');
         mainResultsContainer.innerHTML = `<div class="text-center p-4">Calculating...</div>`;
 
         clearTimeout(calculationTimeout);
@@ -145,26 +151,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- 4. UI INTERACTIVITY & DISPLAY FUNCTIONS ---
-
-    function showResultSections() {
-        strategyBox.classList.remove('hidden');
-        chartsContainer.classList.remove('hidden');
-        finalResultsSection.classList.remove('hidden');
-    }
-
-    function showWarning(message) {
-        if (!warningToast || !warningMessage) return;
-        warningMessage.textContent = message;
-        warningToast.classList.remove('hidden', 'opacity-0');
-        
-        clearTimeout(warningTimeout);
-        warningTimeout = setTimeout(() => {
-            warningToast.classList.add('opacity-0');
-            // Wait for transition to finish before hiding
-            setTimeout(() => warningToast.classList.add('hidden'), 300);
-        }, 3000);
-    }
-
     function updatePlannerResults() {
         const principal = parseFloat(loanAmountInput.value);
         const annualRate = parseFloat(loanInterestRateInput.value);
@@ -182,7 +168,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function displayResults(scenario, title, tenureString = null) {
-        mainResultsContainer.classList.remove('hidden');
         const displayTenure = tenureString || `${scenario.tenure} Years`;
         emiResultElement.textContent = `₹ ${scenario.emi.toLocaleString('en-IN')}`;
         monthlyInvestmentResult.textContent = `₹ ${scenario.monthlyInvestment.toLocaleString('en-IN')}`;
@@ -233,22 +218,13 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
 
         if (title !== 'Your Strategy Visualised') {
-            const fullBudget = parseFloat(monthlyBudgetInput.value);
-            paiVsTraditionalContainer.classList.remove('hidden');
-            const paiVsTraditionalData = generatePaiVsTraditionalData(scenario, fullBudget);
+            const paiVsTraditionalData = generatePaiVsTraditionalData(scenario);
             renderPaiVsTraditionalChart(paiVsTraditionalData);
-
-            const traditionalResultText = `₹${Math.round(paiVsTraditionalData.finalTraditionalNetWealth).toLocaleString('en-IN')}`;
-            const traditionalResultColor = paiVsTraditionalData.finalTraditionalNetWealth >= 0 ? 'text-investment_green' : 'text-danger';
-
             paiVsTraditionalExplanation.innerHTML = `
-                <h4 class="text-lg font-bold text-textdark mb-2 pt-4">PaiFinance vs. Smart Traditional</h4>
-                <p>This chart compares two strategies using the same monthly budget.</p>
-                <p class="mt-2">The <span class="font-semibold text-danger">red line</span> shows a smart traditional strategy: using your entire budget to pay off the loan first, then investing for the remaining years. This results in a final net wealth of <strong class="font-bold ${traditionalResultColor}">${traditionalResultText}</strong>.</p>
-                <p class="mt-2">The <span class="font-semibold text-investment_green">green line</span> shows the PaiFinance strategy of paying the loan and investing simultaneously. This results in a final net wealth of <strong class="text-investment_green">₹${scenario.netWealth.toLocaleString('en-IN')}</strong>.</p>
+                <h4 class="text-lg font-bold text-textdark mb-2 pt-4">PaiFinance vs. Traditional Loans</h4>
+                <p>This chart shows the power of the PaiFinance approach. The same monthly budget, when properly allocated across the right investing channels, can produce a more fruitful result. The <span class="font-semibold text-danger">red line</span> shows how your net financial position gets worse over time with a traditional loan, ending at <strong class="text-danger">-₹${scenario.totalInterestPaid.toLocaleString('en-IN')}</strong>.</p>
+                <p class="mt-2">The <span class="font-semibold text-investment_green">green line</span> shows how the PaiFinance strategy helps you build positive net wealth, ending at <strong class="text-investment_green">₹${scenario.netWealth.toLocaleString('en-IN')}</strong>. This is the financial advantage of using PaiFinance.</p>
             `;
-        } else {
-             paiVsTraditionalContainer.classList.add('hidden');
         }
         
         updateSummaryBox(scenario, title, displayTenure, chartData.crossoverYear);
@@ -296,7 +272,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 </table>
             `;
             canvasId = 'loanWidgetChart';
-            percentage = (scenario.principal + scenario.totalInterestPaid) > 0 ? Math.round((scenario.totalInterestPaid / (scenario.principal + scenario.totalInterestPaid)) * 100) : 0;
+            percentage = Math.round((scenario.totalInterestPaid / (scenario.principal + scenario.totalInterestPaid)) * 100);
             percentageColor = 'text-textdark';
         } else {
             content = `
@@ -309,7 +285,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 </table>
             `;
             canvasId = 'investmentWidgetChart';
-            percentage = scenario.futureValue > 0 ? Math.round((totalGains / scenario.futureValue) * 100) : 0;
+            percentage = Math.round((totalGains / scenario.futureValue) * 100);
             percentageColor = 'text-textdark';
         }
 
@@ -366,24 +342,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function updatePieChart(emi, investment) {
-        const total = emi + investment;
-        if (total === 0) {
-            chartMessage.style.display = 'flex';
-            if(monthlyBudgetChart) monthlyBudgetChart.destroy();
-            monthlyBudgetChart = null;
-            return;
-        }
-
         chartMessage.style.display = 'none';
-        const data = { 
-            labels: ['EMI', 'Investment'], 
-            datasets: [{ 
-                data: [emi, investment], 
-                backgroundColor: ['rgba(154, 133, 225, 0.75)', 'rgba(27, 146, 114, 0.75)'], 
-                borderColor: '#F9FAFB', 
-                borderWidth: 2 
-            }] 
-        };
+        const data = { labels: ['EMI', 'Investment'], datasets: [{ data: [emi, investment], backgroundColor: ['rgba(154, 133, 225, 0.75)', 'rgba(27, 146, 114, 0.75)'], borderColor: '#F9FAFB', borderWidth: 2 }] };
         if (monthlyBudgetChart) {
             monthlyBudgetChart.data = data;
             monthlyBudgetChart.update();
@@ -393,82 +353,38 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     function syncAndStyle(inputElement, sliderElement) {
-        // Store the last valid value on the element itself for easy access
-        sliderElement.dataset.lastValidValue = sliderElement.value;
-        inputElement.dataset.lastValidValue = inputElement.value;
-
-        const updateVisuals = (value) => {
+        const updateSlider = () => {
             const min = parseFloat(sliderElement.min);
             const max = parseFloat(sliderElement.max);
+            const value = parseFloat(sliderElement.value);
             const progress = ((value - min) / (max - min)) * 100;
             sliderElement.style.setProperty('--range-progress', `${progress}%`);
         };
-
-        const eventHandler = (e) => {
-            const isLoanControl = ['loanTenureSlider', 'loanTenureDisplay', 'loanInterestRateSlider', 'loanInterestRateDisplay'].includes(e.target.id);
-            const isPlannerMode = document.querySelector('.goal-button.selected').dataset.goal === 'planner';
-            let newValue = parseFloat(e.target.value);
-             if (isNaN(newValue)) {
-                newValue = parseFloat(e.target.dataset.lastValidValue) || 0;
-             }
-
-            // Perform validation only for specific controls in planner mode
-            if (isPlannerMode && isLoanControl) {
-                const principal = parseFloat(loanAmountInput.value);
-                const budget = parseFloat(monthlyBudgetInput.value);
-                const prospectiveTenure = (e.target.id.includes('Tenure')) ? newValue : parseFloat(loanTenureInput.value);
-                const prospectiveRate = (e.target.id.includes('InterestRate')) ? newValue : parseFloat(loanInterestRateInput.value);
-
-                const previewEmi = calculateEMI(principal, prospectiveRate, prospectiveTenure);
-
-                if (previewEmi > budget) {
-                    showWarning('Monthly EMI cannot exceed your budget!');
-                    // Revert to last valid value
-                    const lastValue = e.target.type === 'range' ? sliderElement.dataset.lastValidValue : inputElement.dataset.lastValidValue;
-                    e.target.value = lastValue;
-                    // If it was the slider, also revert the input box and vice-versa
-                    if (e.target.type === 'range') {
-                        inputElement.value = lastValue;
-                    } else {
-                        sliderElement.value = lastValue;
-                    }
-                    updateVisuals(lastValue);
-                    return; // Stop the update
-                }
-            }
-
-            // If valid, update the other element and the "last valid" value
-            if (e.target.type === 'range') {
-                inputElement.value = newValue;
-            } else {
-                sliderElement.value = newValue;
-            }
-            
-            sliderElement.dataset.lastValidValue = newValue;
-            inputElement.dataset.lastValidValue = newValue;
-            
-            updateVisuals(newValue);
-            triggerCalculation();
-        };
-
-        sliderElement.addEventListener('input', eventHandler);
-        inputElement.addEventListener('change', eventHandler); // Use change to avoid firing on every keystroke
         
-        updateVisuals(sliderElement.value);
+        sliderElement.addEventListener('input', () => { 
+            inputElement.value = sliderElement.value; 
+            updateSlider(); 
+            triggerCalculation();
+        });
+        inputElement.addEventListener('input', () => {
+            if (parseFloat(inputElement.value) >= parseFloat(sliderElement.min) && parseFloat(inputElement.value) <= parseFloat(sliderElement.max)) {
+                sliderElement.value = inputElement.value;
+                updateSlider();
+                triggerCalculation();
+            }
+        });
+        updateSlider();
     }
     
     function triggerCalculation() {
-        clearTimeout(calculationTimeout);
-        calculationTimeout = setTimeout(() => {
-             const selectedGoal = document.querySelector('.goal-button.selected').dataset.goal;
-            if (selectedGoal === 'planner') {
-                runPlannerMode();
-            } else if (selectedGoal === 'min-time') {
-                findMinimumTime();
-            } else if (selectedGoal === 'optimal-strategy') {
-                findOptimalStrategy();
-            }
-        }, 250); // Debounce calculation
+        const selectedGoal = document.querySelector('.goal-button.selected').dataset.goal;
+        if (selectedGoal === 'planner') {
+            runPlannerMode();
+        } else if (selectedGoal === 'min-time') {
+            findMinimumTime();
+        } else if (selectedGoal === 'optimal-strategy') {
+            findOptimalStrategy();
+        }
     }
     
     function updateSliderProgress(slider, value) {
@@ -611,80 +527,33 @@ document.addEventListener('DOMContentLoaded', () => {
         amortizationTableContainer.innerHTML = tableHTML;
     }
     
-    /**
-     * NEW REALISTIC TRADITIONAL WEALTH CALCULATION
-     * This function calculates two scenarios:
-     * 1. Pai Strategy: Simultaneous loan payment and investment.
-     * 2. Traditional Strategy: Pay off loan first with the entire budget, then invest the budget for the remaining tenure.
-     */
-    function generatePaiVsTraditionalData(scenario, fullBudget) {
-        const totalMonths = Math.ceil((scenario.investmentTenure || scenario.tenure) * 12);
-        const labels = Array.from({ length: Math.ceil(totalMonths / 12) + 1 }, (_, i) => `Yr ${i}`);
-        
-        const monthlyLoanRate = scenario.loanAnnualRate / 100 / 12;
+    function generatePaiVsTraditionalData(scenario) {
+        const labels = [];
+        const paiData = [];
+        const traditionalData = [];
+        let investmentValue = 0;
+        let cumulativeInterest = 0;
         const monthlyInvestmentRate = scenario.investmentAnnualRate / 100 / 12;
+        const monthlyLoanRate = scenario.loanAnnualRate / 100 / 12;
+        let remainingLoan = scenario.principal;
 
-        // --- PAI STRATEGY (SIMULTANEOUS) ---
-        const paiData = [0];
-        let paiInvestmentValue = 0;
-        let paiCumulativeInterest = 0;
-        let paiRemainingLoan = scenario.principal;
-        for (let month = 1; month <= totalMonths; month++) {
-            if (paiRemainingLoan > 0) {
-                const interest = paiRemainingLoan * monthlyLoanRate;
-                paiCumulativeInterest += interest;
-                const principalPaid = scenario.emi - interest;
-                paiRemainingLoan -= principalPaid;
-            }
-            if (scenario.monthlyInvestment > 0) {
-               paiInvestmentValue = (paiInvestmentValue + scenario.monthlyInvestment) * (1 + monthlyInvestmentRate);
-            }
-            if (month % 12 === 0) {
-                paiData.push(paiInvestmentValue - paiCumulativeInterest);
-            }
-        }
-         if (totalMonths % 12 !== 0) {
-            paiData.push(paiInvestmentValue - paiCumulativeInterest);
-        }
+        for (let year = 0; year <= Math.ceil(scenario.tenure); year++) {
+            labels.push(`Yr ${year}`);
+            paiData.push(investmentValue - cumulativeInterest);
+            traditionalData.push(-cumulativeInterest);
 
-        // --- TRADITIONAL STRATEGY (DEBT-FIRST) ---
-        const traditionalData = [0];
-        let traditionalRemainingLoan = scenario.principal;
-        let traditionalCumulativeInterest = 0;
-        let traditionalInvestmentValue = 0;
-        for (let month = 1; month <= totalMonths; month++) {
-            // Phase 1: Pay off loan aggressively
-            if (traditionalRemainingLoan > 0) {
-                const interest = traditionalRemainingLoan * monthlyLoanRate;
-                traditionalCumulativeInterest += interest;
-                let principalPaid = fullBudget - interest;
-
-                if (principalPaid < 0) principalPaid = 0; // In case budget is less than interest
-
-                // If the payment is more than the remaining balance, pay only what's left
-                if ((principalPaid + interest) > (traditionalRemainingLoan + interest) ) {
-                    principalPaid = traditionalRemainingLoan;
+            for (let month = 1; month <= 12; month++) {
+                if (remainingLoan > 0) {
+                    const interest = remainingLoan * monthlyLoanRate;
+                    cumulativeInterest += interest;
+                    const principalPaid = scenario.emi - interest;
+                    remainingLoan -= principalPaid;
                 }
-                 traditionalRemainingLoan -= principalPaid;
-            }
-            // Phase 2: Once loan is paid, invest the full budget
-            else {
-                 traditionalInvestmentValue = (traditionalInvestmentValue + fullBudget) * (1 + monthlyInvestmentRate);
-            }
-
-            if (month % 12 === 0) {
-                traditionalData.push(traditionalInvestmentValue - traditionalCumulativeInterest);
+                investmentValue = (investmentValue + scenario.monthlyInvestment) * (1 + monthlyInvestmentRate);
             }
         }
-         if (totalMonths % 12 !== 0) {
-            traditionalData.push(traditionalInvestmentValue - traditionalCumulativeInterest);
-        }
-
-        const finalTraditionalNetWealth = traditionalInvestmentValue - traditionalCumulativeInterest;
-
-        return { labels, paiData, traditionalData, finalTraditionalNetWealth };
+        return { labels, paiData, traditionalData };
     }
-
 
     function renderPaiVsTraditionalChart(data) {
         if (paiVsTraditionalChart) {
@@ -743,14 +612,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 <p class="text-xs text-center mt-1">You can become debt-free in <strong>Year ${crossoverYear}</strong>.</p>
             `;
         } else if (title === 'Winning the Financial Race') {
-            const fullBudget = parseFloat(monthlyBudgetInput.value);
-            const traditionalData = generatePaiVsTraditionalData(scenario, fullBudget);
-            const traditionalNetWealth = traditionalData.finalTraditionalNetWealth;
+            const traditionalNetWealth = -scenario.totalInterestPaid;
             const advantage = scenario.netWealth - traditionalNetWealth;
             summaryHTML = `
-                <h4 class="text-sm font-bold text-center mb-2">Optimal Strategy Found!</h4>
-                <p class="text-xs text-center">With a tenure of <strong class="text-investment_green">${displayTenure}</strong>, your net wealth is <strong class="text-investment_green">₹${scenario.netWealth.toLocaleString('en-IN')}</strong>.</p>
-                 <p class="text-xs text-center mt-1">This is a <strong class="text-success">₹${advantage.toLocaleString('en-IN')}</strong> advantage over the smart traditional method.</p>
+                <h4 class="text-sm font-bold text-center mb-2">Result Summary</h4>
+                <p class="text-xs text-center">By using the PaiFinance strategy, you can generate a net wealth of <strong class="text-investment_green">₹${scenario.netWealth.toLocaleString('en-IN')}</strong>, as opposed to a net negative of <strong class="text-danger">-₹${scenario.totalInterestPaid.toLocaleString('en-IN')}</strong> with a traditional loan.</p>
             `;
         }
         summaryResultsContainer.innerHTML = summaryHTML;
@@ -759,59 +625,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- 5. INITIALIZATION ---
     function initializeApp() {
         ['loanAmount', 'monthlyBudget', 'loanInterestRateDisplay', 'investmentRateDisplay', 'loanTenureDisplay', 'investmentTenureDisplay'].forEach(id => {
-            const input = document.getElementById(id);
-            const slider = document.getElementById(id.replace('Display', '') + 'Slider');
-            if (input && slider) {
-                 syncAndStyle(input, slider);
-            }
+            syncAndStyle(document.getElementById(id), document.getElementById(id.replace('Display', '') + 'Slider'));
         });
         goalButtons.forEach(button => { button.addEventListener('click', () => handleGoalSelection(button)); });
-        
-        // Initially hide the results and secondary inputs
-        strategyBox.classList.add('hidden');
         finalResultsSection.classList.add('hidden');
-        chartsContainer.classList.add('hidden');
-
-        // Listen for changes on primary inputs to show the strategy box
-        [loanAmountInput, monthlyBudgetInput, loanInterestRateInput, investmentRateInput].forEach(input => {
-            input.addEventListener('input', () => {
-                const allFilled = ['loanAmount', 'monthlyBudget', 'loanInterestRateDisplay', 'investmentRateDisplay'].every(id => parseFloat(document.getElementById(id).value) > 0);
-                if(allFilled) {
-                    chartsContainer.classList.remove('hidden');
-                    updatePieChart(0, parseFloat(monthlyBudgetInput.value)); // Show initial pie chart
-                }
-            });
-        });
+        handleGoalSelection(document.querySelector('.goal-button.selected'));
     }
-
-    // --- NEW: EVENT LISTENER FOR ONBOARDING COMPLETION ---
-    document.addEventListener('onboardingComplete', (e) => {
-        const { loanAmount, budget, loanROI, investmentROI, tenure } = e.detail;
-        
-        // 1. Populate all the primary calculator's input fields with data from onboarding
-        loanAmountInput.value = loanAmount;
-        monthlyBudgetInput.value = budget;
-        loanInterestRateInput.value = loanROI;
-        investmentRateInput.value = investmentROI;
-        loanTenureInput.value = tenure;
-        investmentTenureInput.value = tenure;
-        
-        // 2. Manually trigger 'input' events to sync sliders and UI
-        const inputEvent = new Event('input', { bubbles: true });
-        loanAmountInput.dispatchEvent(inputEvent);
-        monthlyBudgetInput.dispatchEvent(inputEvent);
-        loanInterestRateInput.dispatchEvent(inputEvent);
-        investmentRateInput.dispatchEvent(inputEvent);
-        loanTenureInput.dispatchEvent(inputEvent);
-        investmentTenureInput.dispatchEvent(inputEvent);
-
-        // 3. Programmatically "click" the Optimal Strategy button
-        const optimalButton = document.getElementById('btnOptimalStrategy');
-        if (optimalButton) {
-            handleGoalSelection(optimalButton);
-        }
-    });
 
     initializeApp();
 });
-
