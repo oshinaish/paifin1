@@ -309,7 +309,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     
                     <!-- NEW: Primary Inputs Container -->
                     <div id="primaryInputsContainer" class="bg-background p-6 rounded-lg">
-                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
                              <!-- Loan Amount -->
                             <div>
                                 <div class="flex items-center justify-between w-full">
@@ -369,7 +369,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                         </div>
 
                         <!-- NEW: Secondary/Result Inputs Container -->
-                        <div id="strategyBox" class="bg-[rgba(234,234,234,0.25)] shadow-lg rounded-lg w-full p-6 pt-12">
+                        <div id="strategyBox" class="bg-background shadow-lg rounded-lg w-full p-6 pt-16">
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12">
                                 <!-- Column 1: Loan Parameters -->
                                 <div class="space-y-5">
@@ -425,8 +425,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                             </div>
                         </div>
                     </div>
-                    <div id="summaryResultsContainer" class="w-full max-w-[350px] bg-background p-4 rounded-lg shadow-inner hidden">
-                        <!-- Summary results will be injected here -->
+                    <div id="summaryResultsContainer" class="w-full max-w-[350px] bg-white p-4 rounded-lg shadow-default hidden">
+                       <div class="bg-background p-4 rounded-lg">
+                         <!-- Summary results will be injected here -->
+                       </div>
                     </div>
                     <!-- NEW: Connect to Expert Button -->
                     <button id="connectExpertBtn" class="hidden w-full max-w-[350px] mt-4 bg-transparent border-2 border-investment_green text-investment_green font-semibold py-3 px-4 rounded-lg hover:bg-investment_green hover:text-white transition-colors duration-300">Connect to an Expert</button>
@@ -434,8 +436,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             </div>
 
             <!-- Bottom Section: Full-Width Final Results -->
-        <section id="finalResultsSection" class="bg-background p-6 hidden">
-            <div id="mainResultsContainer" class="max-w-7xl mx-auto">
+        <section id="finalResultsSection" class="bg-white p-6">
+            <div id="mainResultsContainer" class="max-w-7xl mx-auto hidden">
                 <!-- Result widgets will be injected here by JavaScript -->
             </div>
             
