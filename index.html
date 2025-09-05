@@ -84,6 +84,7 @@
         .faq-answer { display: none; }
         .faq-question.open .chevron { transform: rotate(180deg); }
         
+        /* --- NEW: Animation for the summary box border --- */
         @keyframes gradient-border {
             0% { border-color: #1B9272; }
             50% { border-color: #59e6ce; }
@@ -174,9 +175,13 @@
                     </div>
                 </div>
                 <div id="step3" class="onboarding-step">
-                    <h3 class="text-2xl font-semibold text-textdark mb-2">Your Financial Horizon</h3>
-                    <p class="text-textlight mb-6">How many years are you planning for? This helps in projecting long-term growth.</p>
+                    <h3 class="text-2xl font-semibold text-textdark mb-2">Your Financial Goal</h3>
+                    <p class="text-textlight mb-6">What are you planning for? This helps set up the main calculator for you.</p>
                     <div class="space-y-4">
+                        <div>
+                            <label for="ob_loanAmount" class="block text-sm font-medium text-textlight">Desired Loan Amount (₹)</label>
+                            <input type="number" id="ob_loanAmount" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-investment_green focus:border-investment_green" placeholder="e.g., 5000000">
+                        </div>
                         <div>
                             <label for="ob_planningYears" class="block text-sm font-medium text-textlight">Planning Horizon (Years)</label>
                             <input type="number" id="ob_planningYears" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-investment_green focus:border-investment_green" placeholder="e.g., 20">
@@ -363,18 +368,20 @@
                     </div>
                 </section>
 
-                <section class="lg:col-span-1 bg-card p-6 flex flex-col items-center justify-center space-y-6">
-                    <div id="chartsContainer" class="w-full max-w-[350px]">
-                        <div class="w-full h-[200px] relative">
-                            <canvas id="monthlyBudgetChart"></canvas>
-                            <div id="chartMessage" class="absolute inset-0 flex items-center justify-center text-center text-textlight p-4">
-                                Your budget breakdown will appear here.
+                <section class="lg:col-span-1 bg-card p-6 flex flex-col items-center justify-center">
+                    <div class="w-full max-w-[350px] space-y-6">
+                        <div id="chartsContainer" class="w-full">
+                            <div class="w-full h-[200px] relative">
+                                <canvas id="monthlyBudgetChart"></canvas>
+                                <div id="chartMessage" class="absolute inset-0 flex items-center justify-center text-center text-textlight p-4">
+                                    Your budget breakdown will appear here.
+                                </div>
                             </div>
                         </div>
+                        <div id="summaryResultsContainer" class="w-full bg-background p-4 rounded-lg shadow-inner hidden animated-border">
+                            </div>
+                        <button id="connectExpertBtn" class="hidden w-full bg-transparent border-2 border-investment_green text-investment_green font-semibold py-3 px-4 rounded-lg hover:bg-investment_green hover:text-white transition-colors duration-300">Connect to an Expert</button>
                     </div>
-                    <div id="summaryResultsContainer" class="w-full max-w-[350px] bg-background p-4 rounded-lg shadow-inner hidden">
-                        </div>
-                    <button id="connectExpertBtn" class="hidden w-full max-w-[350px] mt-4 bg-transparent border-2 border-investment_green text-investment_green font-semibold py-3 px-4 rounded-lg hover:bg-investment_green hover:text-white transition-colors duration-300">Connect to an Expert</button>
                 </section>
             </div>
 
@@ -707,7 +714,7 @@
         const progressBar = document.getElementById('progressBar');
         const stepCounter = document.getElementById('stepCounter');
         const onboardingTitle = document.getElementById('onboardingTitle');
-        const titles = ["Your Monthly Income", "Your Lifestyle", "Your Financial Horizon"];
+        const titles = ["Your Monthly Income", "Your Lifestyle", "Your Financial Goal"]; // UPDATED TITLE
         let currentStep = 1;
         let globalOnboardingData = {}; // To store data temporarily
 
@@ -751,11 +758,12 @@
                 }
             }
 
-            // Store data globally to be used by the summary modal's button
+            // Store data globally to be used by the summary modal's button (UPDATED)
             globalOnboardingData = {
                 monthlyIncome: parseFloat(document.getElementById('ob_monthlyIncome').value),
                 epfVpf: parseFloat(document.getElementById('ob_epfVpf').value),
                 monthlyExpenses: parseFloat(document.getElementById('ob_monthlyExpenses').value),
+                loanAmount: parseFloat(document.getElementById('ob_loanAmount').value),
                 planningYears: parseInt(document.getElementById('ob_planningYears').value)
             };
             
@@ -849,7 +857,8 @@
                 inHand: Math.round(inHandMonthly),
                 expenses: data.monthlyExpenses,
                 finalBudget: Math.max(0, Math.round(finalBudget)),
-                planningYears: data.planningYears
+                planningYears: data.planningYears,
+                loanAmount: data.loanAmount // Pass loan amount through
             };
         }
 
@@ -873,11 +882,13 @@
         }
 
         function populateCalculatorAndRun(data) {
-            // Create and dispatch a custom event with the calculated budget and tenure
+            // Create and dispatch a custom event with the calculated budget and tenure (UPDATED)
+            const details = calculateInHandBudget(data);
             const event = new CustomEvent('onboardingComplete', { 
                 detail: {
-                    budget: calculateInHandBudget(data).finalBudget,
-                    tenure: data.planningYears
+                    budget: details.finalBudget,
+                    tenure: details.planningYears,
+                    loanAmount: details.loanAmount
                 }
             });
             document.dispatchEvent(event);
