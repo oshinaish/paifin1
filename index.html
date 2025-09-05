@@ -390,12 +390,75 @@
             
             <section class="bg-white p-6 md:p-12">
                 <div class="w-full md:w-3/5 space-y-12">
-                     </div>
+                    <div>
+                        <h2 class="text-[21px] font-normal text-textdark font-albert_sans mb-4">How to Use the PaiFinance Calculator</h2>
+                        <p class="text-textlight">Using our tool is simple. Just follow these steps to get a clear picture of your financial future:</p>
+                        <ol class="list-decimal list-inside text-textlight space-y-2 mt-2">
+                            <li>Enter your desired <strong>Loan Amount</strong> and your total <strong>Monthly Budget</strong> for both loan and investment payments.</li>
+                            <li>Select one of the three goals: <strong>Manual Planner</strong>, <strong>Minimum Time to Offset</strong>, or <strong>Find Optimal Strategy</strong>.</li>
+                            <li>Adjust the sliders for the <strong>Loan Interest Rate</strong> and your expected <strong>Investment Return Rate</strong>.</li>
+                            <li>Instantly see your results, including a detailed breakdown of your payments, charts, and a full amortization schedule.</li>
+                        </ol>
+                    </div>
+
+                    <div>
+                        <h2 class="text-[21px] font-normal text-textdark font-albert_sans mb-4">FAQs</h2>
+                        <div class="space-y-4">
+                            <div class="faq-item">
+                                <div class="faq-question cursor-pointer flex justify-between items-center">
+                                    <h3 class="font-normal text-textdark">What sort of loans can I use the EMI calculator for?</h3>
+                                    <svg class="chevron w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                </div>
+                                <div class="faq-answer mt-2 text-textlight">
+                                    <p>You can use the PaiFinance calculator for a variety of loans, including home loans, car loans, personal loans, education loans, and loans against property. The tool is flexible enough to handle any type of loan that has a fixed interest rate and tenure.</p>
+                                </div>
+                            </div>
+                            <div class="faq-item">
+                                <div class="faq-question cursor-pointer flex justify-between items-center">
+                                    <h3 class="font-normal text-textdark">How does the debt-to-income ratio affect my chances of availing of a loan?</h3>
+                                    <div class="chevron w-4 h-4 transition-transform"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></div>
+                                </div>
+                                <div class="faq-answer mt-2 text-textlight">
+                                    <p>Your debt-to-income (DTI) ratio is a key factor that lenders use to assess your ability to repay a loan. A lower DTI ratio indicates that you have a good balance between your debt and income, which can improve your chances of getting approved for a loan with favorable terms.</p>
+                                </div>
+                            </div>
+                            <div class="faq-item">
+                                <div class="faq-question cursor-pointer flex justify-between items-center">
+                                    <h3 class="font-normal text-textdark">What does an EMI consist of?</h3>
+                                    <div class="chevron w-4 h-4 transition-transform"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></div>
+                                </div>
+                                <div class="faq-answer mt-2 text-textlight">
+                                    <p>An Equated Monthly Installment (EMI) consists of two main components: the principal amount and the interest. In the initial years of your loan, a larger portion of your EMI goes towards paying off the interest. As the loan matures, a larger portion goes towards paying down the principal.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </section>
         </main>
 
         <footer class="bg-textdark text-gray-300 py-8 px-6 md:px-12">
-            </footer>
+            <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div>
+                    <div class="flex items-center mb-4">
+                        <img src="loogo.svg" alt="Pai Logo" class="h-8 w-auto">
+                        <h2 class="text-xl font-bold ml-4">Pai Finance</h2>
+                    </div>
+                    <p class="text-sm">AX Building, Sector-23, Gurgaon, 122017</p>
+                </div> 
+                <div>
+                    <h3 class="font-semibold mb-4">Contact Us</h3>
+                    <p class="text-sm">paifinance.ai@gmail.com</p>
+                </div>
+                <div>
+                    <h3 class="font-semibold mb-4">Legal</h3>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#" class="hover:underline">Privacy Policy</a></li>
+                        <li><a href="#" class="hover:underline">Terms & Conditions</a></li>
+                    </ul>
+                </div>
+            </div>
+        </footer>
 
         <div id="warningToast" class="hidden fixed bottom-5 right-5 bg-danger text-white py-3 px-5 rounded-lg shadow-lg text-sm opacity-0 transition-opacity duration-300 z-50">
             <span id="warningMessage"></span>
@@ -407,7 +470,23 @@
     </button>
     
     <div id="chatbot-window" class="hidden fixed bottom-24 right-4 z-40 w-80 bg-white rounded-xl shadow-2xl border border-gray-200 opacity-0 scale-95">
+        <div class="bg-investment_green text-white p-4 rounded-t-xl flex justify-between items-center">
+            <h3 class="font-bold text-lg">Funda Chachi</h3>
+            <button id="close-chatbot" class="text-white hover:text-gray-200">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
         </div>
+        <div id="chatbot-messages" class="p-4 h-auto overflow-y-auto space-y-4">
+            <div class="flex">
+                <div class="bg-gray-200 text-textdark p-3 rounded-lg max-w-xs">
+                    <p>First time here? Let's get you set up for the best results!</p>
+                </div>
+            </div>
+        </div>
+        <div id="chatbot-input-area" class="p-4 border-t border-gray-200">
+            <button id="startOnboardingFromChatbot" class="w-full bg-investment_green text-white font-semibold py-3 px-4 rounded-lg hover:bg-opacity-90 transition">Let's Get Started!</button>
+        </div>
+    </div>
 
     <script>
         // --- INLINE SCRIPT FOR ONBOARDING AND PAGE INIT ---
@@ -572,7 +651,81 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            // Chatbot and Expert Modal Logic can go here
+            const chatbotIcon = document.getElementById('chatbot-icon-button');
+            const chatbotWindow = document.getElementById('chatbot-window');
+            const closeChatbotBtn = document.getElementById('close-chatbot');
+            const startOnboardingFromChatbot = document.getElementById('startOnboardingFromChatbot');
+            const onboardingModal = document.getElementById('onboardingModal');
+            
+            const connectExpertBtn = document.getElementById('connectExpertBtn');
+            const expertModal = document.getElementById('expertModal');
+            const closeExpertModalBtn = document.getElementById('closeExpertModal');
+            const expertForm = document.getElementById('expertForm');
+            const expertModalContent = document.getElementById('expertModalContent');
+
+            if (chatbotIcon) {
+                setTimeout(() => {
+                    chatbotIcon.classList.add('visible');
+                }, 3000);
+
+                chatbotIcon.addEventListener('click', () => {
+                    chatbotIcon.classList.remove('visible');
+                    chatbotWindow.classList.remove('hidden');
+                    setTimeout(() => {
+                        chatbotWindow.classList.add('opacity-100', 'scale-100');
+                    }, 10);
+                });
+            }
+
+            if(closeChatbotBtn) closeChatbotBtn.addEventListener('click', () => {
+                chatbotWindow.classList.remove('opacity-100', 'scale-100');
+                setTimeout(() => {
+                    chatbotWindow.classList.add('hidden');
+                    chatbotIcon.classList.add('visible');
+                }, 300);
+            });
+
+            if(startOnboardingFromChatbot) startOnboardingFromChatbot.addEventListener('click', () => {
+                chatbotWindow.classList.remove('opacity-100', 'scale-100');
+                 setTimeout(() => {
+                    chatbotWindow.classList.add('hidden');
+                    onboardingModal.classList.remove('hidden');
+                    onboardingModal.classList.add('flex');
+                    showStep(1);
+                 }, 300);
+            });
+            
+            if(connectExpertBtn) connectExpertBtn.addEventListener('click', () => {
+                expertModal.classList.remove('hidden');
+                expertModal.classList.add('flex');
+            });
+
+            if(closeExpertModalBtn) closeExpertModalBtn.addEventListener('click', () => {
+                expertModal.classList.add('hidden');
+                expertModal.classList.remove('flex');
+            });
+
+            if(expertForm) expertForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                expertModalContent.innerHTML = `<h2 class="text-2xl font-bold text-center mb-4 text-textdark">Thank You!</h2><p class="text-center text-textlight">Your request has been submitted. An expert will be in touch with you shortly.</p>`;
+            });
+
+            const summaryBox = document.getElementById('summaryResultsContainer');
+            if (summaryBox && connectExpertBtn) {
+                const observer = new MutationObserver((mutations) => {
+                    mutations.forEach((mutation) => {
+                        if (mutation.attributeName === 'class') {
+                            const isHidden = summaryBox.classList.contains('hidden');
+                            if (isHidden) {
+                                connectExpertBtn.classList.add('hidden');
+                            } else {
+                                connectExpertBtn.classList.remove('hidden');
+                            }
+                        }
+                    });
+                });
+                observer.observe(summaryBox, { attributes: true });
+            }
         });
     </script>
     <script src="script.js"></script>
