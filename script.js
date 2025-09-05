@@ -1,7 +1,7 @@
 /**
  * PaiFinance - Interactive Script
- * Version: 19.0 - EMI Budget Validation
- * Last updated: September 6, 2025, 01:00 AM IST
+ * Version: 21.0 - Restored Full UI (Separated)
+ * Last updated: September 7, 2025, 11:00 PM IST
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -24,7 +24,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const emiResultElement = document.getElementById('emiResult');
     const monthlyInvestmentResult = document.getElementById('monthlyInvestmentResult');
     
-    // Result Containers
+    // Result Containers & UI sections
+    const strategyBox = document.getElementById('strategyBox');
     const finalResultsSection = document.getElementById('finalResultsSection');
     const mainResultsContainer = document.getElementById('mainResultsContainer');
     const comparisonChartContainer = document.getElementById('comparisonChartContainer');
@@ -35,7 +36,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const paiVsTraditionalContainer = document.getElementById('paiVsTraditionalContainer');
     const paiVsTraditionalExplanation = document.getElementById('paiVsTraditionalExplanation');
     const summaryResultsContainer = document.getElementById('summaryResultsContainer');
-
     const chartsContainer = document.getElementById('chartsContainer');
     const goalButtons = document.querySelectorAll('.goal-button');
     const chartCanvas = document.getElementById('monthlyBudgetChart');
@@ -74,18 +74,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- 3. GOAL-BASED CALCULATION STRATEGIES ---
     function runPlannerMode() {
-        finalResultsSection.classList.remove('hidden');
-        comparisonChartContainer.classList.remove('hidden');
-        amortizationContainer.classList.remove('hidden');
-        paiVsTraditionalContainer.classList.add('hidden');
+        showResultSections();
         updatePlannerResults();
     }
 
     function findOptimalStrategy() {
-        finalResultsSection.classList.remove('hidden');
-        comparisonChartContainer.classList.remove('hidden');
-        amortizationContainer.classList.remove('hidden');
-        paiVsTraditionalContainer.classList.remove('hidden');
+        showResultSections();
         mainResultsContainer.innerHTML = `<div class="text-center p-4">Calculating...</div>`;
         
         clearTimeout(calculationTimeout);
@@ -116,10 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function findMinimumTime() {
-        finalResultsSection.classList.remove('hidden');
-        comparisonChartContainer.classList.remove('hidden');
-        amortizationContainer.classList.remove('hidden');
-        paiVsTraditionalContainer.classList.remove('hidden');
+        showResultSections();
         mainResultsContainer.innerHTML = `<div class="text-center p-4">Calculating...</div>`;
 
         clearTimeout(calculationTimeout);
@@ -155,6 +146,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- 4. UI INTERACTIVITY & DISPLAY FUNCTIONS ---
 
+    function showResultSections() {
+        strategyBox.classList.remove('hidden');
+        chartsContainer.classList.remove('hidden');
+        finalResultsSection.classList.remove('hidden');
+    }
+
     function showWarning(message) {
         if (!warningToast || !warningMessage) return;
         warningMessage.textContent = message;
@@ -185,6 +182,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function displayResults(scenario, title, tenureString = null) {
+        mainResultsContainer.classList.remove('hidden');
         const displayTenure = tenureString || `${scenario.tenure} Years`;
         emiResultElement.textContent = `₹ ${scenario.emi.toLocaleString('en-IN')}`;
         monthlyInvestmentResult.textContent = `₹ ${scenario.monthlyInvestment.toLocaleString('en-IN')}`;
@@ -236,6 +234,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (title !== 'Your Strategy Visualised') {
             const fullBudget = parseFloat(monthlyBudgetInput.value);
+            paiVsTraditionalContainer.classList.remove('hidden');
             const paiVsTraditionalData = generatePaiVsTraditionalData(scenario, fullBudget);
             renderPaiVsTraditionalChart(paiVsTraditionalData);
 
@@ -248,6 +247,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 <p class="mt-2">The <span class="font-semibold text-danger">red line</span> shows a smart traditional strategy: using your entire budget to pay off the loan first, then investing for the remaining years. This results in a final net wealth of <strong class="font-bold ${traditionalResultColor}">${traditionalResultText}</strong>.</p>
                 <p class="mt-2">The <span class="font-semibold text-investment_green">green line</span> shows the PaiFinance strategy of paying the loan and investing simultaneously. This results in a final net wealth of <strong class="text-investment_green">₹${scenario.netWealth.toLocaleString('en-IN')}</strong>.</p>
             `;
+        } else {
+             paiVsTraditionalContainer.classList.add('hidden');
         }
         
         updateSummaryBox(scenario, title, displayTenure, chartData.crossoverYear);
@@ -765,23 +766,42 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
         goalButtons.forEach(button => { button.addEventListener('click', () => handleGoalSelection(button)); });
+        
+        // Initially hide the results and secondary inputs
+        strategyBox.classList.add('hidden');
         finalResultsSection.classList.add('hidden');
-        handleGoalSelection(document.querySelector('.goal-button.selected'));
+        chartsContainer.classList.add('hidden');
+
+        // Listen for changes on primary inputs to show the strategy box
+        [loanAmountInput, monthlyBudgetInput, loanInterestRateInput, investmentRateInput].forEach(input => {
+            input.addEventListener('input', () => {
+                const allFilled = ['loanAmount', 'monthlyBudget', 'loanInterestRateDisplay', 'investmentRateDisplay'].every(id => parseFloat(document.getElementById(id).value) > 0);
+                if(allFilled) {
+                    chartsContainer.classList.remove('hidden');
+                    updatePieChart(0, parseFloat(monthlyBudgetInput.value)); // Show initial pie chart
+                }
+            });
+        });
     }
 
     // --- NEW: EVENT LISTENER FOR ONBOARDING COMPLETION ---
     document.addEventListener('onboardingComplete', (e) => {
-        const { budget, tenure } = e.detail;
+        const { loanAmount, budget, loanROI, investmentROI, tenure } = e.detail;
         
-        // 1. Populate the calculator's input fields with data from onboarding
+        // 1. Populate all the primary calculator's input fields with data from onboarding
+        loanAmountInput.value = loanAmount;
         monthlyBudgetInput.value = budget;
+        loanInterestRateInput.value = loanROI;
+        investmentRateInput.value = investmentROI;
         loanTenureInput.value = tenure;
         investmentTenureInput.value = tenure;
         
         // 2. Manually trigger 'input' events to sync sliders and UI
-        // This is crucial for the sliders to visually update to the new values.
         const inputEvent = new Event('input', { bubbles: true });
+        loanAmountInput.dispatchEvent(inputEvent);
         monthlyBudgetInput.dispatchEvent(inputEvent);
+        loanInterestRateInput.dispatchEvent(inputEvent);
+        investmentRateInput.dispatchEvent(inputEvent);
         loanTenureInput.dispatchEvent(inputEvent);
         investmentTenureInput.dispatchEvent(inputEvent);
 
