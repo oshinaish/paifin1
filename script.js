@@ -1,7 +1,7 @@
 /**
  * PaiFinance - Interactive Script
  * Version: 20.0 - Final UI Revisions & Full Code
- * Last updated: September 7, 2025, 1:38 AM IST
+ * Last updated: September 7, 2025
  * Built by the Bros.
  */
 
@@ -521,7 +521,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const schedule = [];
         let remainingLoan = scenario.principal;
         const monthlyLoanRate = scenario.loanAnnualRate / 100 / 12;
-        const emiForSchedule = (scenario.title === 'Fastest Debt Freedom') ? (scenario.emi + (scenario.monthlyInvestment - scenario.emi)) : scenario.emi;
+        const monthlyPayment = (title === 'Fastest Debt Freedom') ? (scenario.emi + (scenario.monthlyInvestment - scenario.emi)) : scenario.emi;
 
 
         for (let year = 1; year <= Math.ceil(scenario.tenure); year++) {
@@ -530,7 +530,7 @@ document.addEventListener('DOMContentLoaded', () => {
             for (let month = 1; month <= 12; month++) {
                 if (remainingLoan > 0) {
                     const interest = remainingLoan * monthlyLoanRate;
-                    const principalPaid = emiForSchedule - interest;
+                    const principalPaid = monthlyPayment - interest;
                     yearlyInterest += interest;
                     yearlyPrincipal += principalPaid;
                     remainingLoan -= principalPaid;
