@@ -320,12 +320,160 @@ document.addEventListener('DOMContentLoaded', () => {
         updateSummaryBox(scenario, title, displayTenure, chartData.crossoverYear);
     }
 
-    function createResultCard(title, scenario, color, totalInvested, totalPaidOrGains) { /* ... same as before ... */ }
-    function createWidgetCard(title, scenario, color, displayTenure, totalInvested, totalGains) { /* ... same as before ... */ }
-    function renderWidgetCharts(scenario, totalInvested, totalGains) { /* ... same as before ... */ }
-    function updatePieChart(emi, investment) { /* ... same as before ... */ }
-    function syncAndStyle(inputElement, sliderElement) { /* ... same as before ... */ }
-    function updateSliderProgress(slider, value) { /* ... same as before ... */ }
+    function createResultCard(title, scenario, color, totalInvested, totalPaidOrGains) {
+        let content;
+        if (title === 'Net Money Input') {
+            const totalPaid = totalPaidOrGains;
+            content = `
+                <table class="w-full text-xs">
+                    <tbody>
+                        <tr><td class="text-left py-1">Total EMIs</td><td class="text-right font-semibold">₹${totalPaid.toLocaleString('en-IN')}</td></tr>
+                        <tr><td class="text-left py-1">Total Investments</td><td class="text-right font-semibold">₹${totalInvested.toLocaleString('en-IN')}</td></tr>
+                        <tr class="bg-gray-100 rounded"><td class="text-left font-bold p-1">Total Outflow</td><td class="text-right font-bold p-1">₹${(totalPaid + totalInvested).toLocaleString('en-IN')}</td></tr>
+                    </tbody>
+                </table>
+            `;
+        } else {
+            const totalGains = totalPaidOrGains;
+            content = `
+                <table class="w-full text-xs">
+                    <tbody>
+                        <tr><td class="text-left py-1">Principal Received</td><td class="text-right font-semibold">₹${scenario.principal.toLocaleString('en-IN')}</td></tr>
+                        <tr><td class="text-left py-1">Gains Made</td><td class="text-right font-semibold">₹${totalGains.toLocaleString('en-IN')}</td></tr>
+                        <tr class="bg-gray-100 rounded"><td class="text-left font-bold p-1">Total Return</td><td class="text-right font-bold p-1">₹${(scenario.principal + totalGains).toLocaleString('en-IN')}</td></tr>
+                    </tbody>
+                </table>
+            `;
+        }
+        return `<div class="bg-card p-4 rounded-lg shadow-default"><h3 class="text-sm font-bold text-textdark mb-2 text-center">${title}</h3><div class="text-textlight leading-relaxed text-xs">${content}</div></div>`;
+    }
+    
+    function createWidgetCard(title, scenario, color, displayTenure, totalInvested, totalGains) {
+        let content, canvasId, percentage, percentageColor;
+
+        if (title === 'Loan Details') {
+            content = `
+                <table class="w-full text-xs">
+                    <tbody>
+                        <tr><td class="flex items-center py-1"><span class="w-2 h-2 rounded-full bg-emi_purple mr-2"></span>Principal</td><td class="text-right font-semibold text-textdark">₹${scenario.principal.toLocaleString('en-IN')}</td></tr>
+                        <tr><td class="flex items-center py-1"><span class="w-2 h-2 rounded-full bg-gray-300 mr-2"></span>Interest</td><td class="text-right font-semibold text-emi_purple">₹${scenario.totalInterestPaid.toLocaleString('en-IN')}</td></tr>
+                        <tr><td class="text-left font-bold py-1">Total Paid</td><td class="text-right font-bold text-textdark">₹${(scenario.principal + scenario.totalInterestPaid).toLocaleString('en-IN')}</td></tr>
+                    </tbody>
+                </table>
+            `;
+            canvasId = 'loanWidgetChart';
+            percentage = Math.round((scenario.totalInterestPaid / (scenario.principal + scenario.totalInterestPaid)) * 100);
+            percentageColor = 'text-textdark';
+        } else {
+            content = `
+                <table class="w-full text-xs">
+                    <tbody>
+                        <tr><td class="flex items-center py-1"><span class="w-2 h-2 rounded-full bg-investment_green mr-2"></span>Invested</td><td class="text-right font-semibold text-textdark">₹${totalInvested.toLocaleString('en-IN')}</td></tr>
+                        <tr><td class="flex items-center py-1"><span class="w-2 h-2 rounded-full bg-gray-300 mr-2"></span>Gains</td><td class="text-right font-semibold text-investment_green">₹${totalGains.toLocaleString('en-IN')}</td></tr>
+                        <tr><td class="text-left font-bold py-1">Total Wealth</td><td class="text-right font-bold text-textdark">₹${scenario.futureValue.toLocaleString('en-IN')}</td></tr>
+                    </tbody>
+                </table>
+            `;
+            canvasId = 'investmentWidgetChart';
+            percentage = Math.round((totalGains / scenario.futureValue) * 100);
+            percentageColor = 'text-textdark';
+        }
+
+        return `
+            <div class="bg-card p-4 rounded-lg shadow-default">
+                <h3 class="text-sm font-bold text-textdark mb-2 text-center">${title}</h3>
+                <div class="flex items-center gap-4">
+                    <div class="w-20 h-20 relative flex-shrink-0">
+                        <canvas id="${canvasId}"></canvas>
+                        <div class="absolute inset-0 flex items-center justify-center text-base font-bold ${percentageColor}">
+                            <span>${percentage}%</span>
+                        </div>
+                    </div>
+                    <div class="text-textlight leading-relaxed w-full">
+                        ${content}
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    function renderWidgetCharts(scenario, totalInvested, totalGains) {
+        // Loan Chart
+        const loanCtx = document.getElementById('loanWidgetChart').getContext('2d');
+        if (loanWidgetChart) loanWidgetChart.destroy();
+        loanWidgetChart = new Chart(loanCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Principal', 'Interest'],
+                datasets: [{
+                    data: [scenario.principal, scenario.totalInterestPaid],
+                    backgroundColor: ['rgba(154, 133, 225, 0.5)', '#E5E7EB'],
+                    borderWidth: 0,
+                }]
+            },
+            options: { cutout: '75%', plugins: { legend: { display: false }, tooltip: { enabled: false } } }
+        });
+
+        // Investment Chart
+        const investmentCtx = document.getElementById('investmentWidgetChart').getContext('2d');
+        if (investmentWidgetChart) investmentWidgetChart.destroy();
+        investmentWidgetChart = new Chart(investmentCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Invested', 'Gains'],
+                datasets: [{
+                    data: [totalInvested, totalGains],
+                    backgroundColor: ['rgba(27, 146, 114, 0.5)', '#E5E7EB'],
+                    borderWidth: 0,
+                }]
+            },
+            options: { cutout: '75%', plugins: { legend: { display: false }, tooltip: { enabled: false } } }
+        });
+    }
+
+    function updatePieChart(emi, investment) {
+        chartMessage.style.display = 'none';
+        const data = { labels: ['EMI', 'Investment'], datasets: [{ data: [emi, investment], backgroundColor: ['rgba(154, 133, 225, 0.75)', 'rgba(27, 146, 114, 0.75)'], borderColor: '#F9FAFB', borderWidth: 2 }] };
+        if (monthlyBudgetChart) {
+            monthlyBudgetChart.data = data;
+            monthlyBudgetChart.update();
+        } else {
+            monthlyBudgetChart = new Chart(chartCanvas, { type: 'doughnut', data: data, options: { responsive: true, maintainAspectRatio: true, cutout: '60%', plugins: { title: { display: true, text: 'Monthly Budget Allocation', align: 'center', font: { size: 18, weight: 'normal' }, color: '#1F2937', padding: { bottom: 16 } }, legend: { position: 'bottom', labels: { usePointStyle: true, pointStyle: 'rectRounded' } } } } });
+        }
+    }
+    
+    function syncAndStyle(inputElement, sliderElement) {
+        const updateSlider = () => {
+            const min = parseFloat(sliderElement.min);
+            const max = parseFloat(sliderElement.max);
+            const value = parseFloat(sliderElement.value);
+            const progress = ((value - min) / (max - min)) * 100;
+            sliderElement.style.setProperty('--range-progress', `${progress}%`);
+        };
+        
+        sliderElement.addEventListener('input', () => { 
+            inputElement.value = sliderElement.value; 
+            updateSlider(); 
+            triggerCalculation();
+        });
+        inputElement.addEventListener('input', () => {
+            if (parseFloat(inputElement.value) >= parseFloat(sliderElement.min) && parseFloat(inputElement.value) <= parseFloat(sliderElement.max)) {
+                sliderElement.value = inputElement.value;
+                updateSlider();
+                triggerCalculation();
+            }
+        });
+        updateSlider();
+    }
+    
+    
+    
+    function updateSliderProgress(slider, value) {
+        const min = parseFloat(slider.min);
+        const max = parseFloat(slider.max);
+        const progress = ((value - min) / (max - min)) * 100;
+        slider.style.setProperty('--range-progress', `${progress}%`);
+    }
 
     function handleGoalSelection(selectedButton) {
         goalButtons.forEach(button => button.classList.remove('selected'));
