@@ -301,7 +301,7 @@
                                         <input type="range" id="loanTenureSlider" value="30" min="1" max="30" class="w-full mt-[18px]">
                                     </div>
                                     <div class="flex items-center justify-between w-full">
-                                        <label id="emiLabel" class="block text-sm font-normal text-textlight font-albert_sans">Monthly EMI</label>
+                                        <label class="block text-sm font-normal text-textlight font-albert_sans">Monthly EMI</label>
                                         <div class="w-[114px] h-[29px] p-2 rounded-[2px] bg-input_box_fill bg-opacity-10 shadow-custom-input flex items-center justify-end">
                                             <p id="emiResult" class="w-full bg-transparent text-right p-0 m-0 font-albert_sans font-normal text-base text-emi_purple">₹ 0</p>
                                         </div>
@@ -344,7 +344,7 @@
                                         </div>
                                         <input type="range" id="planningHorizonSlider" value="30" min="1" max="50" class="w-full mt-[18px]">
                                     </div>
-                                    <div id="monthlyInvestmentContainer" class="flex items-center justify-between w-full">
+                                    <div class="flex items-center justify-between w-full">
                                         <div>
                                             <label class="block text-sm font-normal text-textlight font-albert_sans">Monthly Investment</label>
                                             <span id="investmentSubtitle" class="hidden text-xs text-textlight">(Post-Loan Repayment)</span>
@@ -371,72 +371,265 @@
                     </div>
                 </section>
             </div>
-            
-            <section id="finalResultsSection" class="bg-background p-6 hidden">
-                <div id="mainResultsContainer" class="max-w-7xl mx-auto"></div>
-                <div id="paiVsTraditionalContainer" class="max-w-7xl mx-auto mt-8 bg-card p-4 rounded-lg shadow-default hidden grid grid-cols-1 lg:grid-cols-3 gap-12 items-start">
-                    <div class="lg:col-span-2 h-[400px]"><canvas id="paiVsTraditionalChart"></canvas></div>
-                    <div id="paiVsTraditionalExplanation" class="lg:col-span-1 text-base text-textlight leading-relaxed"></div>
-                </div>
-                <div id="comparisonChartContainer" class="max-w-7xl mx-auto mt-8 bg-card p-4 rounded-lg shadow-default hidden grid grid-cols-1 lg:grid-cols-3 gap-12 items-start">
-                    <div id="chartExplanation" class="lg:col-span-1 text-base text-textlight leading-relaxed"></div>
-                    <div class="lg:col-span-2 h-[400px]"><canvas id="comparisonChart"></canvas></div>
-                </div>
-                <div id="amortizationContainer" class="max-w-7xl mx-auto mt-8 bg-card p-4 rounded-lg shadow-default hidden grid grid-cols-1 lg:grid-cols-3 gap-12 items-start">
-                    <div id="amortizationTableContainer" class="lg:col-span-2 h-[400px] overflow-y-auto"></div>
-                    <div id="amortizationExplanation" class="lg:col-span-1 text-base text-textlight leading-relaxed"></div>
-                </div>
-            </section>
-            
-            <section class="bg-white p-6 md:p-12">
-                <div class="w-full md:w-3/5 space-y-12">
-                    <div>
-                        <h2 class="text-[21px] font-normal text-textdark font-albert_sans mb-4">How to Use the PaiFinance Calculator</h2>
-                        <p class="text-textlight">Using our tool is simple. Just follow these steps to get a clear picture of your financial future:</p>
-                        <ol class="list-decimal list-inside text-textlight space-y-2 mt-2">
-                            <li>Enter your desired <strong>Loan Amount</strong> and your total <strong>Monthly Budget</strong> for both loan and investment payments.</li>
-                            <li>Select one of the three goals: <strong>Manual Planner</strong>, <strong>Minimum Time to Offset</strong>, or <strong>Find Optimal Strategy</strong>.</li>
-                            <li>Adjust the sliders for the <strong>Loan Interest Rate</strong> and your expected <strong>Investment Return Rate</strong>.</li>
-                            <li>Instantly see your results, including a detailed breakdown of your payments, charts, and a full amortization schedule.</li>
-                        </ol>
-                    </div>
 
-                    <div>
-                        <h2 class="text-[21px] font-normal text-textdark font-albert_sans mb-4">FAQs</h2>
-                        <div class="space-y-4">
-                            <div class="faq-item">
-                                <div class="faq-question cursor-pointer flex justify-between items-center">
-                                    <h3 class="font-normal text-textdark">What sort of loans can I use the EMI calculator for?</h3>
-                                    <svg class="chevron w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                                </div>
-                                <div class="faq-answer mt-2 text-textlight">
-                                    <p>You can use the PaiFinance calculator for a variety of loans, including home loans, car loans, personal loans, education loans, and loans against property. The tool is flexible enough to handle any type of loan that has a fixed interest rate and tenure.</p>
+                       <section id="finalResultsSection" class="bg-background p-6 hidden">
+            <div id="mainResultsContainer" class="max-w-7xl mx-auto">
+                </div>
+            
+            <div id="paiVsTraditionalContainer" class="max-w-7xl mx-auto mt-8 bg-card p-4 rounded-lg shadow-default hidden grid grid-cols-1 lg:grid-cols-3 gap-12 items-start">
+                <div class="lg:col-span-2 h-[400px]">
+                    <canvas id="paiVsTraditionalChart"></canvas>
+                </div>
+                <div id="paiVsTraditionalExplanation" class="lg:col-span-1 text-base text-textlight leading-relaxed">
+                    </div>
+            </div>
+
+            <div id="comparisonChartContainer" class="max-w-7xl mx-auto mt-8 bg-card p-4 rounded-lg shadow-default hidden grid grid-cols-1 lg:grid-cols-3 gap-12 items-start">
+                <div id="chartExplanation" class="lg:col-span-1 text-base text-textlight leading-relaxed">
+                    </div>
+                <div class="lg:col-span-2 h-[400px]">
+                    <canvas id="comparisonChart"></canvas>
+                </div>
+            </div>
+
+            <div id="amortizationContainer" class="max-w-7xl mx-auto mt-8 bg-card p-4 rounded-lg shadow-default hidden grid grid-cols-1 lg:grid-cols-3 gap-12 items-start">
+                <div id="amortizationTableContainer" class="lg:col-span-2 h-[400px] overflow-y-auto">
+                    </div>
+                <div id="amortizationExplanation" class="lg:col-span-1 text-base text-textlight leading-relaxed">
+                    </div>
+            </div>
+        </section>
+
+        <section class="bg-white p-6 md:p-12">
+            <div class="w-full md:w-3/5 space-y-12">
+                
+                <div>
+                    <h2 class="text-[21px] font-normal text-textdark font-albert_sans mb-4">How to Use the PaiFinance Calculator</h2>
+                    <p class="text-textlight">Using our tool is simple. Just follow these steps to get a clear picture of your financial future:</p>
+                    <ol class="list-decimal list-inside text-textlight space-y-2 mt-2">
+                        <li>Enter your desired <strong>Loan Amount</strong> and your total <strong>Monthly Budget</strong> for both loan and investment payments.</li>
+                        <li>Select one of the three goals: <strong>Manual Planner</strong>, <strong>Minimum Time to Offset</strong>, or <strong>Find Optimal Strategy</strong>.</li>
+                        <li>Adjust the sliders for the <strong>Loan Interest Rate</strong> and your expected <strong>Investment Return Rate</strong>.</li>
+                        <li>Instantly see your results, including a detailed breakdown of your payments, charts, and a full amortization schedule.</li>
+                    </ol>
+                </div>
+
+                <div>
+                    <h2 class="text-[21px] font-normal text-textdark font-albert_sans mb-4">Net Wealth Calculation: Traditional vs PaiFinance Approach</h2>
+                    <p class="text-textlight mb-4">Understanding how net wealth is calculated in both approaches helps you make an informed decision. Here's a detailed breakdown of the mathematical logic behind each strategy over your complete financial planning horizon.</p>
+                    
+                    <h3 class="font-semibold text-investment_green">Traditional Sequential Approach</h3>
+                    <p class="text-textlight mb-4">The conservative debt-first strategy eliminates debt completely, then invests the freed-up budget.</p>
+                    
+                    <p class="text-textlight mb-2"><strong>Phase 1: Accelerated Debt Payoff</strong></p>
+                    <ul class="list-disc list-inside text-textlight space-y-2 mb-4">
+                        <li>Use entire monthly budget as high EMI amount</li>
+                        <li>Loan tenure gets significantly reduced</li>
+                        <li>Total interest paid is minimized</li>
+                    </ul>
+                    <p class="text-textlight mb-2"><strong>Phase 2: Full Investment Phase</strong></p>
+                    <ul class="list-disc list-inside text-textlight space-y-2 mb-4">
+                        <li>Invest full monthly budget after loan completion</li>
+                        <li>Investment period covers remaining years until planning horizon</li>
+                        <li>Start wealth building only after becoming debt-free</li>
+                    </ul>
+                    <p class="text-textlight mb-2">Traditional Net Wealth Formula:</p>
+                    <div class="my-4 text-center text-lg">
+                        <p class="text-textdark">Net Wealth = Investment Returns - Total Interest Paid</p>
+                    </div>
+                    <ul class="list-disc list-inside text-textlight space-y-2 mb-6">
+                        <li>Investment Returns: SIP calculation for remaining years after loan completion</li>
+                        <li>Total Interest Paid: Significantly lower due to accelerated payoff</li>
+                        <li>Investment Period: Majority of planning horizon after debt elimination</li>
+                    </ul>
+
+                    <h3 class="font-semibold text-investment_green">PaiFinance Parallel Approach</h3>
+                    <p class="text-textlight mb-4">The wealth-building strategy manages debt and builds wealth simultaneously from day one.</p>
+                    <p class="text-textlight mb-2"><strong>Phase 1: Dual Strategy</strong></p>
+                    <ul class="list-disc list-inside text-textlight space-y-2 mb-4">
+                        <li>Split budget between standard EMI and monthly investment</li>
+                        <li>Both loan repayment and wealth creation happen together</li>
+                        <li>Start building investment corpus from month one</li>
+                    </ul>
+                    <p class="text-textlight mb-2"><strong>Phase 2: Accelerated Investment</strong></p>
+                    <ul class="list-disc list-inside text-textlight space-y-2 mb-4">
+                        <li>Invest full budget after loan completion</li>
+                        <li>Existing investment corpus continues compound growth</li>
+                        <li>New investments add to the growing wealth base</li>
+                    </ul>
+                    
+                    <p class="text-textlight mb-2">PaiFinance Net Wealth Formula:</p>
+                    <div class="my-4 text-center text-lg">
+                        <p class="text-textdark">Net Wealth = Total Investment Value - Total Interest Paid</p>
+                    </div>
+                    <ul class="list-disc list-inside text-textlight space-y-2 mb-6">
+                        <li>Total Investment Value: Early investments plus their compound growth plus new investments during remaining period</li>
+                        <li>Total Interest Paid: Higher due to standard loan tenure</li>
+                        <li>Investment Period:Full planning horizon with compounding advantage</li>
+                    </ul>
+
+                    <h3 class="font-semibold">Why PaiFinance Strategy Creates Superior Wealth</h3>
+                    <p class="text-textlight mb-4">The mathematical advantage comes from <strong>time arbitrage</strong> - your money has more time to compound when you start investing immediately, even while paying off debt.</p>
+                    <ul class="list-disc list-inside text-textlight space-y-2 mb-6">
+                        <li><strong>Early Compounding:</strong> Monthly investments during loan tenure compound over the full planning horizon</li>
+                        <li><strong>Time Advantage:</strong> Despite paying higher total interest, the early investment growth overcomes this cost</li>
+                        <li><strong>Full Utilization:</strong> Your complete budget works for you from month one, rather than sitting idle during debt payoff</li>
+                        <li><strong>Behavioral Benefit:</strong> Builds wealth discipline from the start rather than deferring gratification</li>
+                    </ul>
+
+                    <h3 class="font-semibold">Critical Conditions for PaiFinance Success</h3>
+                    <p class="text-textlight mb-4">The PaiFinance approach works mathematically only when specific conditions are met. Violating these conditions can make the traditional approach superior.</p>
+                    <ol class="list-decimal list-inside text-textlight space-y-2 mb-4">
+                        <li><strong>Investment Returns Greater Than Loan Interest Rate:</strong> Your expected investment returns must consistently exceed your loan interest rate by a meaningful margin to create substantial advantage.</li>
+                        <li><strong>Consistent Investment Discipline:</strong> You must invest the allocated amount every month without fail. Skipping investments or using the money elsewhere defeats the strategy.</li>
+                        <li><strong>Stable Interest Rates:</strong> Loan interest rates shouldn't fluctuate dramatically upward. Variable rate loans with significant increases can disrupt the calculation.</li>
+                        <li><strong>Long Investment Horizon:</strong> The strategy works best with extended time horizons. Short-term approaches may favor traditional debt elimination.</li>
+                        <li><strong>Risk Tolerance:</strong> You must be comfortable carrying debt while building wealth. Conservative investors may prefer the psychological comfort of debt-free status.</li>
+                    </ol>
+                    
+                    <p class="text-textlight"><strong>Important Disclaimer:</strong> Investment returns are subject to market risks and are not guaranteed. Past performance does not indicate future results. The projections assume consistent returns, which may not reflect actual market conditions.</p>
+                </div>
+
+                <div>
+                    <h2 class="text-[21px] font-normal text-textdark font-albert_sans mb-4">How Does the Calculator Help You Manage Your Finances?</h2>
+                    <p class="text-textlight">The PaiFinance calculator is more than just a tool; it's a strategic partner. It helps you move beyond simply paying off a loan and empowers you to build wealth simultaneously. By visualizing the impact of different strategies, you can make informed decisions that align with your financial goals, whether that's becoming debt-free as fast as possible or maximizing your long-term wealth.</p>
+                </div>
+
+                <div>
+                    <h2 class="text-[21px] font-normal text-textdark font-albert_sans mb-4">Types Of EMI Calculators Offered by Pai Finance</h2>
+                    <div class="space-y-4 text-textlight">
+                        <p>At Pai Finance, we believe that effective loan repayment should be complemented by smart investment planning. Our EMI calculators not only estimate your monthly installments but also help you discover how disciplined parallel investing can reduce your overall interest burden and grow your wealth. Whether you're planning to buy a home, a car, a bike, fund education, or leverage your property, Pai Finance offers tailored EMI calculators for every need.</p>
+                        <br>
+                        <a href="./home-loan-calculator.html">
+                            <h3 class="font-semibold text-investment_green hover:underline">Home Loan EMI Calculator</h3>
+                        </a>
+                        <p>Home loans involve high principal amounts and long repayment periods. The Home Loan EMI Calculator helps you instantly calculate your EMI based on loan amount, tenure, and interest rate. Unlike basic calculators, Pai Finance also guides you on how much you can invest each month to gradually offset your loan interest—making your home loan work smarter for you.</p>
+                        <br>
+                        <a href="./car-loan-calculator.html">
+                            <h3 class="font-semibold text-investment_green hover:underline">Car Loan EMI Calculator</h3>
+                        </a>
+                        <p>Car loans are a popular financing option for a major lifestyle purchase. The Car Loan EMI Calculator allows you to assess your repayment capability with clarity. More importantly, Pai Finance suggests how you can invest a portion of your remaining monthly budget to recover the interest paid over time, making your car an asset, not a liability.</p>
+                        <h3 class="font-semibold text-investment_green">Bike Loan EMI Calculator</h3>
+                        <p>Two-wheelers are one of the most common forms of transport in India, and bike loans are often short-tenured with moderate interest rates. The Bike Loan EMI Calculator helps you calculate the monthly outflow based on the loan amount, interest rate, and tenure. Pai Finance takes it a step further by helping you plan micro-investments alongside your EMIs, ensuring you stay financially efficient while paying off your bike loan.</p>
+                        <h3 class="font-semibold text-investment_green">Personal Loan EMI Calculator</h3>
+                        <p>Personal loans are often taken for weddings, medical needs, or unplanned expenses. The Personal Loan EMI Calculator quickly estimates your monthly repayment while allowing you to explore how parallel investments—even over a short period—can ease your overall financial burden and reduce effective interest costs.</p>
+                        <h3 class="font-semibold text-investment_green">Education Loan EMI Calculator</h3>
+                        <p>Education loans help families finance domestic and international studies. With the Education Loan EMI Calculator, you can plan repayments starting after the moratorium period. Pai Finance helps you take control early by starting investments even before repayment begins—setting you up for a smoother financial transition once the EMIs start.</p>
+                        <h3 class="font-semibold text-investment_green">Loan Against Property EMI Calculator</h3>
+                        <p>Loans against residential, commercial, or land property require precise planning. The Loan Against Property EMI Calculator provides an accurate estimate of your repayment. In addition, Pai Finance shows how to allocate part of your budget to investments that grow over time—ensuring liquidity and stability during repayment.</p>
+                        <h3 class="font-semibold text-investment_green">Why Choose Pai Finance EMI Calculators?</h3>
+                        <p>Most EMI calculators show only what you owe. Pai Finance goes further by helping you plan investments that run in parallel with your repayments. This dual approach empowers you to take loans with confidence—knowing that you're also building wealth alongside.</p>
+                        <p>Whether you're financing a home, car, a bike, education, or personal need, Pai Finance provides clarity, control, and a smarter path toward financial freedom.</p>
+                    </div>
+                </div>
+
+                <div>
+                    <h2 class="text-[21px] font-normal text-textdark font-albert_sans mb-4">Advantages of Using the Pai Calculator</h2>
+                    <ul class="list-disc list-inside text-textlight space-y-2">
+                        <li><strong>Data-Driven Decisions:</strong> Replace financial guesswork with clear, mathematical insights.</li>
+                        <li><strong>Dual-Focus Strategy:</strong> Uniquely designed to help you manage debt and build wealth at the same time.</li>
+                        <li><strong>Instant Visualizations:</strong> Powerful charts and graphs help you understand complex financial scenarios at a glance.</li>
+                        <li><strong>Free and Easy to Use:</strong> No sign-ups, no fees. Just a powerful tool to help you achieve your financial goals.</li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h2 class="text-[21px] font-normal text-textdark font-albert_sans mb-4">FAQs</h2>
+                    <div class="space-y-4">
+                        <div class="faq-item">
+                            <div class="faq-question cursor-pointer flex justify-between items-center">
+                                <h3 class="font-normal text-textdark">What sort of loans can I use the EMI calculator for?</h3>
+                                <svg class="chevron w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                            </div>
+                            <div class="faq-answer mt-2 text-textlight">
+                                <p>You can use the PaiFinance calculator for a variety of loans, including home loans, car loans, personal loans, education loans, and loans against property. The tool is flexible enough to handle any type of loan that has a fixed interest rate and tenure.</p>
+                            </div>
+                        </div>
+                        <div class="faq-item">
+                            <div class="faq-question cursor-pointer flex justify-between items-center">
+                                <h3 class="font-normal text-textdark">How does the debt-to-income ratio affect my chances of availing of a loan?</h3>
+                                <div class="chevron w-4 h-4 transition-transform">
+                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                                 </div>
                             </div>
-                            <div class="faq-item">
-                                <div class="faq-question cursor-pointer flex justify-between items-center">
-                                    <h3 class="font-normal text-textdark">How does the debt-to-income ratio affect my chances of availing of a loan?</h3>
-                                    <div class="chevron w-4 h-4 transition-transform"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></div>
-                                </div>
-                                <div class="faq-answer mt-2 text-textlight">
-                                    <p>Your debt-to-income (DTI) ratio is a key factor that lenders use to assess your ability to repay a loan. A lower DTI ratio indicates that you have a good balance between your debt and income, which can improve your chances of getting approved for a loan with favorable terms.</p>
+                            <div class="faq-answer mt-2 text-textlight">
+                                <p>Your debt-to-income (DTI) ratio is a key factor that lenders use to assess your ability to repay a loan. A lower DTI ratio indicates that you have a good balance between your debt and income, which can improve your chances of getting approved for a loan with favorable terms.</p>
+                            </div>
+                        </div>
+                        <div class="faq-item">
+                            <div class="faq-question cursor-pointer flex justify-between items-center">
+                                <h3 class="font-normal text-textdark">What does an EMI consist of?</h3>
+                                <div class="chevron w-4 h-4 transition-transform">
+                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                                 </div>
                             </div>
-                            <div class="faq-item">
-                                <div class="faq-question cursor-pointer flex justify-between items-center">
-                                    <h3 class="font-normal text-textdark">What does an EMI consist of?</h3>
-                                    <div class="chevron w-4 h-4 transition-transform"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></div>
+                            <div class="faq-answer mt-2 text-textlight">
+                                <p>An Equated Monthly Installment (EMI) consists of two main components: the principal amount and the interest. In the initial years of your loan, a larger portion of your EMI goes towards paying off the interest. As the loan matures, a larger portion goes towards paying down the principal.</p>
+                            </div>
+                        </div>
+                        <div class="faq-item">
+                            <div class="faq-question cursor-pointer flex justify-between items-center">
+                                <h3 class="font-normal text-textdark">What happens if I fail to pay my EMIs?</h3>
+                                <div class="chevron w-4 h-4 transition-transform">
+                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                                 </div>
-                                <div class="faq-answer mt-2 text-textlight">
-                                    <p>An Equated Monthly Installment (EMI) consists of two main components: the principal amount and the interest. In the initial years of your loan, a larger portion of your EMI goes towards paying off the interest. As the loan matures, a larger portion goes towards paying down the principal.</p>
+                            </div>
+                            <div class="faq-answer mt-2 text-textlight">
+                                <p>Failing to pay your EMIs on time can have serious consequences. It can negatively impact your credit score, making it difficult to get loans in the future. Lenders may also charge penalties and, in the case of secured loans like a car or home loan, they can repossess the asset.</p>
+                            </div>
+                        </div>
+                        <div class="faq-item">
+                            <div class="faq-question cursor-pointer flex justify-between items-center">
+                                <h3 class="font-normal text-textdark">Is this calculator free to use?</h3>
+                                <svg class="chevron w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                            </div>
+                            <div class="faq-answer mt-2 text-textlight">
+                                <p>Yes, the PaiFinance calculator is 100% free to use.</p>
+                            </div>
+                        </div>
+                        <div class="faq-item">
+                            <div class="faq-question cursor-pointer flex justify-between items-center">
+                                <h3 class="font-normal text-textdark">Are the investment returns guaranteed?</h3>
+                                <div class="chevron w-4 h-4 transition-transform">
+                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                                 </div>
+                            </div>
+                            <div class="faq-answer mt-2 text-textlight">
+                                <p>No. Investment returns are subject to market risks and are not guaranteed. The projections are based on the expected rate of return you provide.</p>
                             </div>
                         </div>
                     </div>
                 </div>
-            </section>
-        </main>
 
+            </div>
+        </section>
+
+
+        <section class="bg-background py-12">
+            <div class="max-w-7xl mx-auto px-6">
+                <h2 class="text-[21px] font-normal text-textdark font-albert_sans mb-6">From the Blog</h2>
+                <div class="flex space-x-8 overflow-x-auto pb-4">
+                    <div class="flex-shrink-0 w-80 bg-card rounded-lg shadow-md overflow-hidden">
+                        <img src="img1.jpg" alt="Blog post image" class="w-full h-40 object-cover">
+                        <div class="p-4">
+                            <h3 class="font-bold text-lg mb-2">The 1% Loan Strategy</h3>
+                            <p class="text-textlight text-sm mb-4">Discover the disciplined approach that turns your monthly budget into a powerful, dual-purpose tool.</p>
+                            <a href="blog1cent.html" class="text-investment_green font-semibold hover:underline">Read More &rarr;</a>
+                        </div>
+                    </div>
+                    <div class="flex-shrink-0 w-80 bg-card rounded-lg shadow-md overflow-hidden">
+                        <img src="img3.png" alt="Blog post image" class="w-full h-40 object-cover">
+                        <div class="p-4">
+                            <h3 class="font-bold text-lg mb-2">Take a Loan at 0% effective ROI</h3>
+                            <p class="text-textlight text-sm mb-4">With the right strategy, discipline, and tools, your loan can pay for itself. Here’s how.</p>
+                            <a href="blog20cent.html" class="text-investment_green font-semibold hover:underline">Read More &rarr;</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        
         <footer class="bg-textdark text-gray-300 py-8 px-6 md:px-12">
             <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div>
@@ -463,6 +656,7 @@
         <div id="warningToast" class="hidden fixed bottom-5 right-5 bg-danger text-white py-3 px-5 rounded-lg shadow-lg text-sm opacity-0 transition-opacity duration-300 z-50">
             <span id="warningMessage"></span>
         </div>
+        
     </div>
     
     <button id="chatbot-icon-button" class="fixed bottom-4 right-4 z-40 shadow-lg rounded-lg">
@@ -488,37 +682,40 @@
         </div>
     </div>
 
+            </main>
+
+        </div>
+    
     <script>
-        // --- INLINE SCRIPT FOR ONBOARDING AND PAGE INIT ---
-        document.addEventListener('DOMContentLoaded', () => {
+       document.addEventListener('DOMContentLoaded', () => {
             const faqItems = document.querySelectorAll('.faq-item');
             faqItems.forEach(item => {
                 const question = item.querySelector('.faq-question');
                 const answer = item.querySelector('.faq-answer');
-                if(question && answer) {
-                    question.addEventListener('click', () => {
-                        answer.style.display = answer.style.display === 'block' ? 'none' : 'block';
-                        question.classList.toggle('open');
-                    });
-                }
+                question.addEventListener('click', () => {
+                    answer.style.display = answer.style.display === 'block' ? 'none' : 'block';
+                    question.classList.toggle('open');
+                });
             });
         });
 
+        // --- ONBOARDING SCRIPT ---
         const steps = [document.getElementById('step1'), document.getElementById('step2'), document.getElementById('step3')];
         const progressBar = document.getElementById('progressBar');
         const stepCounter = document.getElementById('stepCounter');
         const onboardingTitle = document.getElementById('onboardingTitle');
-        const titles = ["Your Monthly Income", "Your Lifestyle", "Your Financial Goal"];
+        const titles = ["Your Monthly Income", "Your Lifestyle", "Your Financial Goal"]; // UPDATED TITLE
         let currentStep = 1;
-        let globalOnboardingData = {};
+        let globalOnboardingData = {}; // To store data temporarily
 
         function showStep(stepNumber) {
             steps.forEach((step, index) => {
-                if(step) step.classList.toggle('active', index + 1 === stepNumber);
+                step.classList.toggle('active', index + 1 === stepNumber);
             });
-            if(progressBar) progressBar.style.width = `${(stepNumber / steps.length) * 100}%`;
-            if(stepCounter) stepCounter.textContent = `Step ${stepNumber} of ${steps.length}`;
-            if(onboardingTitle) onboardingTitle.textContent = titles[stepNumber - 1];
+            const progress = (stepNumber / steps.length) * 100;
+            progressBar.style.width = `${progress}%`;
+            stepCounter.textContent = `Step ${stepNumber} of ${steps.length}`;
+            onboardingTitle.textContent = titles[stepNumber - 1];
             currentStep = stepNumber;
         }
 
@@ -550,6 +747,8 @@
                     return;
                 }
             }
+
+            // Store data globally to be used by the summary modal's button (UPDATED)
             globalOnboardingData = {
                 monthlyIncome: parseFloat(document.getElementById('ob_monthlyIncome').value),
                 epfVpf: parseFloat(document.getElementById('ob_epfVpf').value),
@@ -557,11 +756,14 @@
                 loanAmount: parseFloat(document.getElementById('ob_loanAmount').value),
                 planningYears: parseInt(document.getElementById('ob_planningYears').value)
             };
+            
             document.getElementById('onboardingModal').classList.add('hidden');
             document.getElementById('onboardingModal').classList.remove('flex');
+            
             showSummaryAndCalculate(globalOnboardingData);
         }
         
+        // --- PAGE INITIALIZATION SCRIPT ---
         document.addEventListener('DOMContentLoaded', () => {
             const onboardingModal = document.getElementById('onboardingModal');
             const summaryModal = document.getElementById('postOnboardingSummaryModal');
@@ -570,15 +772,20 @@
             const closeSummaryModalBtn = document.getElementById('closeSummaryModal');
             const calculatorWrapper = document.getElementById('calculatorWrapper');
 
+
+            // NEW: Hide calculator by default, show welcome screen if it's the first visit
             const isFirstVisit = !localStorage.getItem('paiFinanceVisited');
             if (isFirstVisit) {
                 const welcomeScreen = document.getElementById('welcomeScreen');
                 const startWelcomeBtn = document.getElementById('startWelcomeBtn');
+                
                 welcomeScreen.classList.remove('hidden');
+
                 startWelcomeBtn.addEventListener('click', () => {
                     welcomeScreen.classList.add('hidden');
                     calculatorWrapper.classList.remove('hidden');
                     localStorage.setItem('paiFinanceVisited', 'true');
+                    // Directly open the onboarding modal after welcome
                     onboardingModal.classList.remove('hidden');
                     onboardingModal.classList.add('flex');
                     showStep(1);
@@ -587,69 +794,97 @@
                 calculatorWrapper.classList.remove('hidden');
             }
 
-            if(startPlanningBtn) startPlanningBtn.addEventListener('click', () => {
+            startPlanningBtn.addEventListener('click', () => {
                 summaryModal.classList.add('hidden');
                 summaryModal.classList.remove('flex');
                 populateCalculatorAndRun(globalOnboardingData);
             });
 
-            if(closeOnboardingModalBtn) closeOnboardingModalBtn.addEventListener('click', () => {
+            closeOnboardingModalBtn.addEventListener('click', () => {
                 onboardingModal.classList.add('hidden');
                 onboardingModal.classList.remove('flex');
             });
 
-            if(closeSummaryModalBtn) closeSummaryModalBtn.addEventListener('click', () => {
+            closeSummaryModalBtn.addEventListener('click', () => {
                 summaryModal.classList.add('hidden');
                 summaryModal.classList.remove('flex');
             });
         });
         
+        // --- NEW: More Accurate Budget Calculation ---
         function calculateInHandBudget(data) {
             const annualGross = data.monthlyIncome * 12;
             const epfContribution = annualGross * (data.epfVpf / 100);
+            
+            // Assuming Old Tax Regime with standard deduction
             const standardDeduction = 50000;
+            // Assuming EPF is under Section 80C, capped at 1.5 Lakhs
             const epfDeduction = Math.min(epfContribution, 150000);
+            
             let taxableIncome = annualGross - standardDeduction - epfDeduction;
+            
             let annualTax = 0;
-            if (taxableIncome > 1000000) { annualTax = 112500 + (taxableIncome - 1000000) * 0.30; } 
-            else if (taxableIncome > 500000) { annualTax = 12500 + (taxableIncome - 500000) * 0.20; } 
-            else if (taxableIncome > 250000) { annualTax = (taxableIncome - 250000) * 0.05; }
+            if (taxableIncome > 1000000) {
+                annualTax = 112500 + (taxableIncome - 1000000) * 0.30;
+            } else if (taxableIncome > 500000) {
+                annualTax = 12500 + (taxableIncome - 500000) * 0.20;
+            } else if (taxableIncome > 250000) {
+                annualTax = (taxableIncome - 250000) * 0.05;
+            }
+            // Add 4% cess
             annualTax *= 1.04;
 
             const monthlyTax = annualTax / 12;
             const monthlyEpf = epfContribution / 12;
+            
             const inHandMonthly = data.monthlyIncome - monthlyTax - monthlyEpf;
             const finalBudget = inHandMonthly - data.monthlyExpenses;
 
             return {
-                gross: data.monthlyIncome, tax: Math.round(monthlyTax), epf: Math.round(monthlyEpf),
-                inHand: Math.round(inHandMonthly), expenses: data.monthlyExpenses,
-                finalBudget: Math.max(0, Math.round(finalBudget)), planningYears: data.planningYears,
-                loanAmount: data.loanAmount
+                gross: data.monthlyIncome,
+                tax: Math.round(monthlyTax),
+                epf: Math.round(monthlyEpf),
+                inHand: Math.round(inHandMonthly),
+                expenses: data.monthlyExpenses,
+                finalBudget: Math.max(0, Math.round(finalBudget)),
+                planningYears: data.planningYears,
+                loanAmount: data.loanAmount // Pass loan amount through
             };
         }
 
         function showSummaryAndCalculate(data) {
+            console.log("Onboarding complete! Preparing summary with data:", data);
+            
             const budgetDetails = calculateInHandBudget(data);
+
+            // Populate summary modal
             document.getElementById('summaryGross').textContent = `₹${budgetDetails.gross.toLocaleString('en-IN')}`;
             document.getElementById('summaryTax').textContent = `- ₹${budgetDetails.tax.toLocaleString('en-IN')}`;
             document.getElementById('summaryEpf').textContent = `- ₹${budgetDetails.epf.toLocaleString('en-IN')}`;
             document.getElementById('summaryInHand').textContent = `₹${budgetDetails.inHand.toLocaleString('en-IN')}`;
             document.getElementById('summaryExpenses').textContent = `- ₹${budgetDetails.expenses.toLocaleString('en-IN')}`;
             document.getElementById('summaryBudget').textContent = `₹${budgetDetails.finalBudget.toLocaleString('en-IN')}`;
+            
+            // Show the modal
             const summaryModal = document.getElementById('postOnboardingSummaryModal');
             summaryModal.classList.remove('hidden');
             summaryModal.classList.add('flex');
         }
 
         function populateCalculatorAndRun(data) {
+            // Create and dispatch a custom event with the calculated budget and tenure (UPDATED)
             const details = calculateInHandBudget(data);
             const event = new CustomEvent('onboardingComplete', { 
-                detail: { budget: details.finalBudget, tenure: details.planningYears, loanAmount: details.loanAmount }
+                detail: {
+                    budget: details.finalBudget,
+                    tenure: details.planningYears,
+                    loanAmount: details.loanAmount
+                }
             });
             document.dispatchEvent(event);
         }
 
+        // --- CHATBOT SCRIPT ---
         document.addEventListener('DOMContentLoaded', () => {
             const chatbotIcon = document.getElementById('chatbot-icon-button');
             const chatbotWindow = document.getElementById('chatbot-window');
@@ -663,21 +898,21 @@
             const expertForm = document.getElementById('expertForm');
             const expertModalContent = document.getElementById('expertModalContent');
 
-            if (chatbotIcon) {
+            // Show chatbot icon after a delay
+            setTimeout(() => {
+                chatbotIcon.classList.add('visible');
+            }, 3000);
+
+            // Open/Close chat window
+            chatbotIcon.addEventListener('click', () => {
+                chatbotIcon.classList.remove('visible');
+                chatbotWindow.classList.remove('hidden');
                 setTimeout(() => {
-                    chatbotIcon.classList.add('visible');
-                }, 3000);
+                    chatbotWindow.classList.add('opacity-100', 'scale-100');
+                }, 10);
+            });
 
-                chatbotIcon.addEventListener('click', () => {
-                    chatbotIcon.classList.remove('visible');
-                    chatbotWindow.classList.remove('hidden');
-                    setTimeout(() => {
-                        chatbotWindow.classList.add('opacity-100', 'scale-100');
-                    }, 10);
-                });
-            }
-
-            if(closeChatbotBtn) closeChatbotBtn.addEventListener('click', () => {
+            closeChatbotBtn.addEventListener('click', () => {
                 chatbotWindow.classList.remove('opacity-100', 'scale-100');
                 setTimeout(() => {
                     chatbotWindow.classList.add('hidden');
@@ -685,7 +920,8 @@
                 }, 300);
             });
 
-            if(startOnboardingFromChatbot) startOnboardingFromChatbot.addEventListener('click', () => {
+            // Handle start onboarding click
+            startOnboardingFromChatbot.addEventListener('click', () => {
                 chatbotWindow.classList.remove('opacity-100', 'scale-100');
                  setTimeout(() => {
                     chatbotWindow.classList.add('hidden');
@@ -695,38 +931,42 @@
                  }, 300);
             });
             
-            if(connectExpertBtn) connectExpertBtn.addEventListener('click', () => {
+            // --- EXPERT MODAL LOGIC ---
+            connectExpertBtn.addEventListener('click', () => {
                 expertModal.classList.remove('hidden');
                 expertModal.classList.add('flex');
             });
 
-            if(closeExpertModalBtn) closeExpertModalBtn.addEventListener('click', () => {
+            closeExpertModalBtn.addEventListener('click', () => {
                 expertModal.classList.add('hidden');
                 expertModal.classList.remove('flex');
             });
 
-            if(expertForm) expertForm.addEventListener('submit', (e) => {
+            expertForm.addEventListener('submit', (e) => {
                 e.preventDefault();
                 expertModalContent.innerHTML = `<h2 class="text-2xl font-bold text-center mb-4 text-textdark">Thank You!</h2><p class="text-center text-textlight">Your request has been submitted. An expert will be in touch with you shortly.</p>`;
             });
 
+
+            // Observe summary box to show the "Connect" button
             const summaryBox = document.getElementById('summaryResultsContainer');
-            if (summaryBox && connectExpertBtn) {
-                const observer = new MutationObserver((mutations) => {
-                    mutations.forEach((mutation) => {
-                        if (mutation.attributeName === 'class') {
-                            const isHidden = summaryBox.classList.contains('hidden');
-                            if (isHidden) {
-                                connectExpertBtn.classList.add('hidden');
-                            } else {
-                                connectExpertBtn.classList.remove('hidden');
-                            }
+            const observer = new MutationObserver((mutations) => {
+                mutations.forEach((mutation) => {
+                    if (mutation.attributeName === 'class') {
+                        const isHidden = summaryBox.classList.contains('hidden');
+                        if (isHidden) {
+                            connectExpertBtn.classList.add('hidden');
+                        } else {
+                            connectExpertBtn.classList.remove('hidden');
                         }
-                    });
+                    }
                 });
+            });
+            if (summaryBox) {
                 observer.observe(summaryBox, { attributes: true });
             }
         });
+
     </script>
     <script src="script.js"></script>
 </body>
