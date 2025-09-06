@@ -1,7 +1,7 @@
 /**
  * PaiFinance - Interactive Script
- * Version: 20.0 - Final UI Revisions
- * Last updated: September 6, 2025, 1:30 AM IST
+ * Version: 20.0 - Final UI Revisions & Full Code
+ * Last updated: September 7, 2025, 1:16 AM IST
  * Built by the Bros.
  */
 
@@ -174,9 +174,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const monthlyLoanRate = loanAnnualRate / 100 / 12;
         let acceleratedTenureMonths = 0;
-        if (monthlyLoanRate > 0) {
+        if (monthlyLoanRate > 0 && budget > 0) {
              acceleratedTenureMonths = -Math.log(1 - (principal * monthlyLoanRate) / budget) / Math.log(1 + monthlyLoanRate);
-        } else {
+        } else if (budget > 0) {
             acceleratedTenureMonths = principal / budget;
         }
         
@@ -297,7 +297,7 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
         }
         
-        updateSummaryBox(scenario, title, displayTenure, chartData.crossoverYear);
+        updateSummaryBox(scenario, title, displayTenure, crossoverYear);
     }
 
     function createResultCard(title, scenario, color, totalInvested, totalPaidOrGains) {
@@ -471,7 +471,7 @@ document.addEventListener('DOMContentLoaded', () => {
             else if (selectedGoal === 'min-time-repay') { calculateFastestRepayment(); }
         }, 250);
     }
-
+    
     function generateComparisonData(scenario) {
         const labels = [];
         const loanData = [];
