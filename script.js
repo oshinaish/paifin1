@@ -661,30 +661,28 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function updateSummaryBox(scenario, title, displayTenure, crossoverYear) {
-        summaryResultsContainer.classList.remove('hidden');
-        let summaryHTML = '';
+    summaryResultsContainer.classList.remove('hidden');
+    let summaryHTML = '';
 
-        if (title === 'Your Strategy Visualised') {
-            summaryHTML = `
-                <h4 class="text-sm font-bold text-center mb-2">Result Summary</h4>
-                <p class="text-xs text-center">Net Wealth after ${displayTenure}: <strong class="text-investment_green">₹${scenario.netWealth.toLocaleString('en-IN')}</strong></p>
-            `;
-        } else if (title === 'The Race to Zero Debt') {
-            summaryHTML = `
-                <h4 class="text-sm font-bold text-center mb-2">Result Summary</h4>
-                <p class="text-xs text-center">You can offset your loan interest in just <strong class="text-investment_green">${displayTenure}</strong>.</p>
-                <p class="text-xs text-center mt-1">You can become debt-free in <strong>Year ${crossoverYear}</strong>.</p>
-            `;
-        } else if (title === 'Winning the Financial Race') {
-            const traditionalNetWealth = -scenario.totalInterestPaid;
-            const advantage = scenario.netWealth - traditionalNetWealth;
-            summaryHTML = `
-                <h4 class="text-sm font-bold text-center mb-2">Result Summary</h4>
-                <p class="text-xs text-center">By using the PaiFinance strategy, you can generate a net wealth of <strong class="text-investment_green">₹${scenario.netWealth.toLocaleString('en-IN')}</strong>, as opposed to a net negative of <strong class="text-danger">-₹${scenario.totalInterestPaid.toLocaleString('en-IN')}</strong> with a traditional loan.</p>
-            `;
-        }
-        summaryResultsContainer.innerHTML = summaryHTML;
+    if (title === 'Your Strategy Visualised') {
+        summaryHTML = `<h4 class="text-sm font-bold text-center mb-2">Result Summary</h4><p class="text-xs text-center">Net Wealth after ${displayTenure}: <strong class="text-investment_green">₹${Math.round(scenario.netWealth).toLocaleString('en-IN')}</strong></p>`;
+    } else if (title === 'The Race to Zero Debt') {
+        summaryHTML = `<h4 class="text-sm font-bold text-center mb-2">Result Summary</h4><p class="text-xs text-center">You can offset your loan interest in just <strong class="text-investment_green">${displayTenure}</strong>.</p><p class="text-xs text-center mt-1">You can become debt-free in <strong>Year ${crossoverYear}</strong>.</p>`;
+    } else if (title === 'Winning the Financial Race') {
+        summaryHTML = `<h4 class="text-sm font-bold text-center mb-2">Result Summary</h4><p class="text-xs text-center">This strategy gives a net wealth of <strong class="text-investment_green">₹${Math.round(scenario.netWealth).toLocaleString('en-IN')}</strong> in <strong class="text-investment_green">${displayTenure}</strong>.</p>`;
+    } else if (title === 'Fastest Debt Freedom') {
+        const prepayment = scenario.monthlyInvestment - scenario.emi; // In this mode, monthlyInvestment holds the full budget
+        summaryHTML = `
+            <h4 class="text-sm font-bold text-center mb-2">Fastest Repayment Strategy</h4>
+            <p class="text-xs text-center leading-relaxed">
+                By paying your minimum EMI of <strong class="text-emi_purple">₹${scenario.emi.toLocaleString('en-IN')}</strong> and making an extra prepayment of <strong class="text-emi_purple">₹${prepayment.toLocaleString('en-IN')}</strong> each month, you can be debt-free in just <strong class="text-investment_green">${displayTenure}</strong>.
+                <br><br>
+                After that, by investing your entire budget for the remaining time, you can build a final corpus of <strong class="text-investment_green">₹${scenario.futureValue.toLocaleString('en-IN')}</strong>.
+            </p>
+        `;
     }
+    summaryResultsContainer.innerHTML = summaryHTML;
+}
 
     // --- 5. INITIALIZATION ---
     document.addEventListener('onboardingComplete', (e) => {
