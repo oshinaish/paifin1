@@ -1,6 +1,6 @@
 /**
  * PaiFinance - Interactive Script
- * Version: 21.0 - Min Time to Repay Logic & Display Fix (Complete)
+ * Version: 22.0 - Syntax Error Fix
  * Last updated: September 7, 2025
  * Built by the Bros.
  */
@@ -348,7 +348,6 @@ document.addEventListener('DOMContentLoaded', () => {
     
     function createWidgetCard(title, scenario, color, displayTenure, totalInvested, totalGains) {
         let content, canvasId, percentage, percentageColor;
-
         if (title === 'Loan Details') {
             content = `
                 <table class="w-full text-xs">
@@ -511,19 +510,18 @@ document.addEventListener('DOMContentLoaded', () => {
             let investmentForYear = 0;
 
             if (title === 'Fastest Debt Freedom') {
-                if (year < scenario.tenure) { // Still paying loan
+                if (year < scenario.tenure) { 
                     paymentForYear = scenario.monthlyInvestment * 12;
                     investmentForYear = 0;
-                } else { // Loan is paid, now investing
+                } else { 
                     paymentForYear = 0;
                     investmentForYear = scenario.monthlyInvestment * 12;
                 }
-            } else { // Other modes
+            } else { 
                 paymentForYear = scenario.emi * 12;
                 investmentForYear = scenario.monthlyInvestment * 12;
             }
 
-            // Calculate next year's values
             let nextYearRemainingLoan = remainingLoan;
             for(let month = 1; month <= 12; month++) {
                 if(nextYearRemainingLoan > 0) {
@@ -660,7 +658,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } else if (title === 'Winning the Financial Race') {
             summaryHTML = `<h4 class="text-sm font-bold text-center mb-2">Result Summary</h4><p class="text-xs text-center">This strategy gives a net wealth of <strong class="text-investment_green">₹${Math.round(scenario.netWealth).toLocaleString('en-IN')}</strong> in <strong class="text-investment_green">${displayTenure}</strong>.</p>`;
         } else if (title === 'Fastest Debt Freedom') {
-            const prepayment = scenario.monthlyInvestment - scenario.emi; // In this mode, monthlyInvestment holds the full budget
+            const prepayment = scenario.monthlyInvestment - scenario.emi;
             summaryHTML = `
                 <h4 class="text-sm font-bold text-center mb-2">Fastest Repayment Strategy</h4>
                 <p class="text-xs text-center leading-relaxed">
