@@ -471,13 +471,221 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 250);
     }
     
-    function generateComparisonData(scenario) { /* ... same as before ... */ }
-    function renderComparisonChart(data) { /* ... same as before ... */ }
-    function generateAmortizationSchedule(scenario) { /* ... same as before ... */ }
-    function renderAmortizationTable(data) { /* ... same as before ... */ }
-    function generatePaiVsTraditionalData(scenario) { /* ... same as before ... */ }
-    function renderPaiVsTraditionalChart(data) { /* ... same as before ... */ }
-    function updateSummaryBox(scenario, title, displayTenure, crossoverYear) { /* ... same as before ... */ }
+    function generateComparisonData(scenario) {
+        const labels = [];
+        const loanData = [];
+        const investmentData = [];
+        let remainingLoan = scenario.principal;
+        let investmentValue = 0;
+        let crossoverYear = null;
+        const monthlyLoanRate = scenario.loanAnnualRate / 100 / 12;
+        const monthlyInvestmentRate = scenario.investmentAnnualRate / 100 / 12;
+        for (let year = 0; year <= Math.ceil(scenario.tenure); year++) {
+            labels.push(`Yr ${year}`);
+            loanData.push(remainingLoan > 0 ? remainingLoan : 0);
+            investmentData.push(investmentValue);
+
+            if (investmentValue > remainingLoan && crossoverYear === null) {
+                crossoverYear = year;
+            }
+
+            for (let month = 1; month <= 12; month++) {
+                if (remainingLoan > 0) {
+                    const interest = remainingLoan * monthlyLoanRate;
+                    const principalPaid = scenario.emi - interest;
+                    remainingLoan -= principalPaid;
+                }
+                investmentValue = (investmentValue + scenario.monthlyInvestment) * (1 + monthlyInvestmentRate);
+            }
+        }
+        return { labels, loanData, investmentData, crossoverYear };
+    }
+function renderComparisonChart(data) {
+        if (comparisonChart) {
+            comparisonChart.destroy();
+        }
+        comparisonChart = new Chart(comparisonChartCanvas, {
+            type: 'line',
+            data: {
+                labels: data.labels,
+                datasets: [
+                    {
+                        label: 'Loan Balance',
+                        data: data.loanData,
+                        borderColor: '#9a85e1',
+                        backgroundColor: 'rgba(154, 133, 225, 0.1)',
+                        fill: true,
+                        tension: 0.3,
+                    },
+                    {
+                        label: 'Investment Value',
+                        data: data.investmentData,
+                        borderColor: '#1B9272',
+                        backgroundColor: 'rgba(27, 146, 114, 0.1)',
+                        fill: true,
+                        tension: 0.3,
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: { ticks: { callback: function(value) { return `₹${(value / 100000).toFixed(0)}L`; } } }
+                }
+            }
+        });
+    }
+
+    function generateAmortizationSchedule(scenario) {
+        const schedule = [];
+        let remainingLoan = scenario.principal;
+        const monthlyLoanRate = scenario.loanAnnualRate / 100 / 12;
+
+        for (let year = 1; year <= Math.ceil(scenario.tenure); year++) {
+            let yearlyInterest = 0;
+            let yearlyPrincipal = 0;
+            for (let month = 1; month <= 12; month++) {
+                if (remainingLoan > 0) {
+                    const interest = remainingLoan * monthlyLoanRate;
+                    const principalPaid = scenario.emi - interest;
+                    yearlyInterest += interest;
+                    yearlyPrincipal += principalPaid;
+                    remainingLoan -= principalPaid;
+                }
+            }
+            schedule.push({
+                year,
+                principal: Math.round(yearlyPrincipal),
+                interest: Math.round(yearlyInterest),
+                balance: Math.round(remainingLoan > 0 ? remainingLoan : 0)
+            });
+        }
+        return schedule;
+    }
+
+    function renderAmortizationTable(data) {
+        let tableHTML = `
+            <table class="w-full text-sm text-left">
+                <thead class="text-xs text-textdark uppercase bg-gray-50 sticky top-0">
+                    <tr>
+                        <th scope="col" class="px-6 py-3">Year</th>
+                        <th scope="col" class="px-6 py-3">Principal Paid</th>
+                        <th scope="col" class="px-6 py-3">Interest Paid</th>
+                        <th scope="col" class="px-6 py-3">Ending Balance</th>
+                    </tr>
+                </thead>
+                <tbody>
+        `;
+        data.forEach(row => {
+            tableHTML += `
+                <tr class="bg-white border-b">
+                    <td class="px-6 py-4 font-semibold">${row.year}</td>
+                    <td class="px-6 py-4 font-semibold">₹${row.principal.toLocaleString('en-IN')}</td>
+                    <td class="px-6 py-4 font-semibold">₹${row.interest.toLocaleString('en-IN')}</td>
+                    <td class="px-6 py-4 font-semibold">₹${row.balance.toLocaleString('en-IN')}</td>
+                </tr>
+            `;
+        });
+        tableHTML += `</tbody></table>`;
+        amortizationTableContainer.innerHTML = tableHTML;
+    }
+    function generatePaiVsTraditionalData(scenario) {
+        const labels = [];
+        const paiData = [];
+        const traditionalData = [];
+        let investmentValue = 0;
+        let cumulativeInterest = 0;
+        const monthlyInvestmentRate = scenario.investmentAnnualRate / 100 / 12;
+        const monthlyLoanRate = scenario.loanAnnualRate / 100 / 12;
+        let remainingLoan = scenario.principal;
+
+        for (let year = 0; year <= Math.ceil(scenario.tenure); year++) {
+            labels.push(`Yr ${year}`);
+            paiData.push(investmentValue - cumulativeInterest);
+            traditionalData.push(-cumulativeInterest);
+
+            for (let month = 1; month <= 12; month++) {
+                if (remainingLoan > 0) {
+                    const interest = remainingLoan * monthlyLoanRate;
+                    cumulativeInterest += interest;
+                    const principalPaid = scenario.emi - interest;
+                    remainingLoan -= principalPaid;
+                }
+                investmentValue = (investmentValue + scenario.monthlyInvestment) * (1 + monthlyInvestmentRate);
+            }
+        }
+        return { labels, paiData, traditionalData };
+    }
+
+    function renderPaiVsTraditionalChart(data) {
+        if (paiVsTraditionalChart) {
+            paiVsTraditionalChart.destroy();
+        }
+        paiVsTraditionalChart = new Chart(paiVsTraditionalChartCanvas, {
+            type: 'line',
+            data: {
+                labels: data.labels,
+                datasets: [
+                    {
+                        label: 'PaiFinance Net Wealth',
+                        data: data.paiData,
+                        borderColor: '#1B9272',
+                        backgroundColor: 'rgba(27, 146, 114, 0.1)',
+                        fill: true,
+                        tension: 0.3,
+                    },
+                    {
+                        label: 'Traditional Net Wealth',
+                        data: data.traditionalData,
+                        borderColor: '#EF4444',
+                        backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                        fill: true,
+                        tension: 0.3,
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        ticks: {
+                            callback: function(value) { return `₹${(value / 100000).toFixed(0)}L`; }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    function updateSummaryBox(scenario, title, displayTenure, crossoverYear) {
+        summaryResultsContainer.classList.remove('hidden');
+        let summaryHTML = '';
+
+        if (title === 'Your Strategy Visualised') {
+            summaryHTML = `
+                <h4 class="text-sm font-bold text-center mb-2">Result Summary</h4>
+                <p class="text-xs text-center">Net Wealth after ${displayTenure}: <strong class="text-investment_green">₹${scenario.netWealth.toLocaleString('en-IN')}</strong></p>
+            `;
+        } else if (title === 'The Race to Zero Debt') {
+            summaryHTML = `
+                <h4 class="text-sm font-bold text-center mb-2">Result Summary</h4>
+                <p class="text-xs text-center">You can offset your loan interest in just <strong class="text-investment_green">${displayTenure}</strong>.</p>
+                <p class="text-xs text-center mt-1">You can become debt-free in <strong>Year ${crossoverYear}</strong>.</p>
+            `;
+        } else if (title === 'Winning the Financial Race') {
+            const traditionalNetWealth = -scenario.totalInterestPaid;
+            const advantage = scenario.netWealth - traditionalNetWealth;
+            summaryHTML = `
+                <h4 class="text-sm font-bold text-center mb-2">Result Summary</h4>
+                <p class="text-xs text-center">By using the PaiFinance strategy, you can generate a net wealth of <strong class="text-investment_green">₹${scenario.netWealth.toLocaleString('en-IN')}</strong>, as opposed to a net negative of <strong class="text-danger">-₹${scenario.totalInterestPaid.toLocaleString('en-IN')}</strong> with a traditional loan.</p>
+            `;
+        }
+        summaryResultsContainer.innerHTML = summaryHTML;
+    }
+
+   
 
     // --- 5. INITIALIZATION ---
     document.addEventListener('onboardingComplete', (e) => {
