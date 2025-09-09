@@ -375,9 +375,162 @@ document.addEventListener('DOMContentLoaded', () => {
         updateSummaryBox(scenario, title, displayTenure, chartData.crossoverYear);
     }
 
-    // ... All other display and chart functions like createWidgetCard, renderComparisonChart, etc. are here ...
-    // NOTE: For brevity, they are not repeated. The versions from the previous step are correct.
-    // The functions below are the ones with the most critical logic updates.
+    function createResultCard(title, scenario, color, totalInvested, totalPaidOrGains) {
+        let content;
+        if (title === 'Net Money Input') {
+            const totalPaid = totalPaidOrGains;
+            const totalOutflow = (scenario.postLoanMonthlyInvestment ? (scenario.postLoanMonthlyInvestment * scenario.investmentTenure * 12) : totalInvested) + totalPaid;
+            content = `
+                <table class="w-full text-xs">
+                    <tbody>
+                        <tr><td class="text-left py-1">Total EMIs</td><td class="text-right font-semibold">₹${totalPaid.toLocaleString('en-IN')}</td></tr>
+                        <tr><td class="text-left py-1">Total Investments</td><td class="text-right font-semibold">₹${((scenario.postLoanMonthlyInvestment * scenario.investmentTenure * 12) || totalInvested).toLocaleString('en-IN')}</td></tr>
+                        <tr class="bg-gray-100 rounded"><td class="text-left font-bold p-1">Total Outflow</td><td class="text-right font-bold p-1">₹${totalOutflow.toLocaleString('en-IN')}</td></tr>
+                    </tbody>
+                </table>
+            `;
+        } else {
+            const totalGains = totalPaidOrGains;
+             const totalReturn = scenario.principal + totalGains;
+            content = `
+                <table class="w-full text-xs">
+                    <tbody>
+                        <tr><td class="text-left py-1">Principal Received</td><td class="text-right font-semibold">₹${scenario.principal.toLocaleString('en-IN')}</td></tr>
+                        <tr><td class="text-left py-1">Gains Made</td><td class="text-right font-semibold">₹${totalGains.toLocaleString('en-IN')}</td></tr>
+                        <tr class="bg-gray-100 rounded"><td class="text-left font-bold p-1">Total Return</td><td class="text-right font-bold p-1">₹${totalReturn.toLocaleString('en-IN')}</td></tr>
+                    </tbody>
+                </table>
+            `;
+        }
+        return `<div class="bg-card p-4 rounded-lg shadow-default"><h3 class="text-sm font-bold text-textdark mb-2 text-center">${title}</h3><div class="text-textlight leading-relaxed text-xs">${content}</div></div>`;
+    }
+    
+    function createWidgetCard(title, scenario, color, displayTenure, totalInvested, totalGains) {
+        let content, canvasId, percentage, percentageColor;
+        if (title === 'Loan Details') {
+            content = `
+                <table class="w-full text-xs">
+                    <tbody>
+                        <tr><td class="flex items-center py-1"><span class="w-2 h-2 rounded-full bg-emi_purple mr-2"></span>Principal</td><td class="text-right font-semibold text-textdark">₹${scenario.principal.toLocaleString('en-IN')}</td></tr>
+                        <tr><td class="flex items-center py-1"><span class="w-2 h-2 rounded-full bg-gray-300 mr-2"></span>Interest</td><td class="text-right font-semibold text-emi_purple">₹${scenario.totalInterestPaid.toLocaleString('en-IN')}</td></tr>
+                        <tr><td class="text-left font-bold py-1">Paid Off In</td><td class="text-right font-bold text-textdark">${displayTenure}</td></tr>
+                    </tbody>
+                </table>
+            `;
+            canvasId = 'loanWidgetChart';
+            percentage = Math.round((scenario.totalInterestPaid / (scenario.principal + scenario.totalInterestPaid)) * 100);
+            percentageColor = 'text-textdark';
+        } else {
+             const totalInvestmentAmount = scenario.postLoanMonthlyInvestment ? (scenario.postLoanMonthlyInvestment * scenario.investmentTenure * 12) : totalInvested;
+            content = `
+                <table class="w-full text-xs">
+                    <tbody>
+                        <tr><td class="flex items-center py-1"><span class="w-2 h-2 rounded-full bg-investment_green mr-2"></span>Invested</td><td class="text-right font-semibold text-textdark">₹${totalInvestmentAmount.toLocaleString('en-IN')}</td></tr>
+                        <tr><td class="flex items-center py-1"><span class="w-2 h-2 rounded-full bg-gray-300 mr-2"></span>Gains</td><td class="text-right font-semibold text-investment_green">₹${totalGains.toLocaleString('en-IN')}</td></tr>
+                        <tr><td class="text-left font-bold py-1">Horizon</td><td class="text-right font-bold text-textdark">${displayTenure}</td></tr>
+                    </tbody>
+                </table>
+            `;
+            canvasId = 'investmentWidgetChart';
+            percentage = scenario.futureValue > 0 ? Math.round((totalGains / scenario.futureValue) * 100) : 0;
+            percentageColor = 'text-textdark';
+        }
+
+        return `
+            <div class="bg-card p-4 rounded-lg shadow-default">
+                <h3 class="text-sm font-bold text-textdark mb-2 text-center">${title}</h3>
+                <div class="flex items-center gap-4">
+                    <div class="w-20 h-20 relative flex-shrink-0">
+                        <canvas id="${canvasId}"></canvas>
+                        <div class="absolute inset-0 flex items-center justify-center text-base font-bold ${percentageColor}">
+                            <span>${percentage}%</span>
+                        </div>
+                    </div>
+                    <div class="text-textlight leading-relaxed w-full">
+                        ${content}
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    function renderWidgetCharts(scenario, totalInvested, totalGains) {
+        const loanCtx = document.getElementById('loanWidgetChart').getContext('2d');
+        if (loanWidgetChart) loanWidgetChart.destroy();
+        loanWidgetChart = new Chart(loanCtx, {
+            type: 'doughnut',
+            data: { labels: ['Principal', 'Interest'], datasets: [{ data: [scenario.principal, scenario.totalInterestPaid], backgroundColor: ['rgba(154, 133, 225, 0.5)', '#E5E7EB'], borderWidth: 0, }] },
+            options: { cutout: '75%', plugins: { legend: { display: false }, tooltip: { enabled: false } } }
+        });
+
+        const investmentCtx = document.getElementById('investmentWidgetChart').getContext('2d');
+        if (investmentWidgetChart) investmentWidgetChart.destroy();
+        const totalInvestmentAmount = scenario.postLoanMonthlyInvestment ? (scenario.postLoanMonthlyInvestment * scenario.investmentTenure * 12) : totalInvested;
+        investmentWidgetChart = new Chart(investmentCtx, {
+            type: 'doughnut',
+            data: { labels: ['Invested', 'Gains'], datasets: [{ data: [totalInvestmentAmount, totalGains], backgroundColor: ['rgba(27, 146, 114, 0.5)', '#E5E7EB'], borderWidth: 0, }] },
+            options: { cutout: '75%', plugins: { legend: { display: false }, tooltip: { enabled: false } } }
+        });
+    }
+
+    function updatePieChart(emi, investment) {
+        chartMessage.style.display = 'none';
+        const data = { labels: ['EMI', 'Investment'], datasets: [{ data: [emi, investment], backgroundColor: ['rgba(154, 133, 225, 0.75)', 'rgba(27, 146, 114, 0.75)'], borderColor: '#F9FAFB', borderWidth: 2 }] };
+        if (monthlyBudgetChart) {
+            monthlyBudgetChart.data = data;
+            monthlyBudgetChart.update();
+        } else {
+            monthlyBudgetChart = new Chart(chartCanvas, { type: 'doughnut', data: data, options: { responsive: true, maintainAspectRatio: true, cutout: '60%', plugins: { title: { display: true, text: 'Monthly Budget Allocation', align: 'center', font: { size: 18, weight: 'normal' }, color: '#1F2937', padding: { bottom: 16 } }, legend: { position: 'bottom', labels: { usePointStyle: true, pointStyle: 'rectRounded' } } } } });
+        }
+    }
+    
+    function syncAndStyle(inputElement, sliderElement) {
+        const updateSliderVisuals = () => {
+            if (!sliderElement) return;
+            const min = parseFloat(sliderElement.min);
+            const max = parseFloat(sliderElement.max);
+            const value = parseFloat(sliderElement.value);
+            const progress = ((value - min) / (max - min)) * 100;
+            sliderElement.style.setProperty('--range-progress', `${progress}%`);
+        };
+        
+        sliderElement.addEventListener('input', () => { 
+            inputElement.value = sliderElement.value; 
+            updateSliderVisuals(); 
+            triggerCalculation();
+        });
+        inputElement.addEventListener('input', () => {
+            const val = parseFloat(inputElement.value);
+            if (!isNaN(val) && val >= parseFloat(sliderElement.min) && val <= parseFloat(sliderElement.max)) {
+                sliderElement.value = inputElement.value;
+                updateSliderVisuals();
+                triggerCalculation();
+            }
+        });
+        updateSliderVisuals();
+    }
+    
+    function triggerCalculation() {
+        const selectedGoal = document.querySelector('.goal-button.selected').dataset.goal;
+        if (selectedGoal === 'planner') {
+            runPlannerMode();
+        } else if (selectedGoal === 'min-time-repay') {
+            findMinTimeToRepay();
+        } else if (selectedGoal === 'min-time') {
+            findMinimumTime();
+        } else if (selectedGoal === 'optimal-strategy') {
+            findOptimalStrategy();
+        }
+    }
+    
+    function updateSliderProgress(slider) {
+        if (!slider) return;
+        const min = parseFloat(slider.min);
+        const max = parseFloat(slider.max);
+        const value = parseFloat(slider.value)
+        const progress = ((value - min) / (max - min)) * 100;
+        slider.style.setProperty('--range-progress', `${progress}%`);
+    }
 
     function handleGoalSelection(selectedButton) {
         goalButtons.forEach(button => button.classList.remove('selected'));
@@ -402,7 +555,163 @@ document.addEventListener('DOMContentLoaded', () => {
 
         triggerCalculation();
     }
+
+    function generateComparisonData(scenario) {
+        const labels = [];
+        const loanData = [];
+        const investmentData = [];
+        let remainingLoan = scenario.principal;
+        let investmentValue = 0;
+        let crossoverYear = null;
+        const monthlyLoanRate = scenario.loanAnnualRate / 100 / 12;
+        const monthlyInvestmentRate = scenario.investmentAnnualRate / 100 / 12;
+        const totalHorizonMonths = (scenario.tenure + (scenario.investmentTenure || 0)) * 12;
+
+        for (let year = 0; year <= Math.ceil(totalHorizonMonths/12); year++) {
+            labels.push(`Yr ${year}`);
+            loanData.push(remainingLoan > 0 ? remainingLoan : 0);
+            investmentData.push(investmentValue);
+
+            if (investmentValue > remainingLoan && crossoverYear === null && remainingLoan > 0) {
+                crossoverYear = year;
+            }
+
+            for (let month = 1; month <= 12; month++) {
+                const currentMonth = (year * 12) + month;
+                if (remainingLoan > 0) {
+                    const interest = remainingLoan * monthlyLoanRate;
+                    const principalPaid = scenario.emi - interest;
+                    remainingLoan -= principalPaid;
+                }
+                
+                let currentMonthlyInvestment = 0;
+                if (scenario.postLoanMonthlyInvestment) {
+                    if (currentMonth > (scenario.tenure * 12)) {
+                        currentMonthlyInvestment = scenario.postLoanMonthlyInvestment;
+                    }
+                } else {
+                    currentMonthlyInvestment = scenario.monthlyInvestment || 0;
+                }
+                investmentValue = (investmentValue + currentMonthlyInvestment) * (1 + monthlyInvestmentRate);
+            }
+        }
+        return { labels, loanData, investmentData, crossoverYear };
+    }
+
+    function renderComparisonChart(data) {
+        if (comparisonChart) comparisonChart.destroy();
+        comparisonChart = new Chart(comparisonChartCanvas, {
+            type: 'line',
+            data: {
+                labels: data.labels,
+                datasets: [
+                    { label: 'Loan Balance', data: data.loanData, borderColor: '#9a85e1', backgroundColor: 'rgba(154, 133, 225, 0.1)', fill: true, tension: 0.3 },
+                    { label: 'Investment Value', data: data.investmentData, borderColor: '#1B9272', backgroundColor: 'rgba(27, 146, 114, 0.1)', fill: true, tension: 0.3 }
+                ]
+            },
+            options: { responsive: true, maintainAspectRatio: false, scales: { y: { ticks: { callback: function(value) { return `₹${(value / 100000).toFixed(0)}L`; } } } } }
+        });
+    }
+
+    function generateAmortizationSchedule(scenario) {
+        const schedule = [];
+        let remainingLoan = scenario.principal;
+        const monthlyLoanRate = scenario.loanAnnualRate / 100 / 12;
+
+        for (let year = 1; year <= Math.ceil(scenario.tenure); year++) {
+            let yearlyInterest = 0;
+            let yearlyPrincipal = 0;
+            for (let month = 1; month <= 12; month++) {
+                if (remainingLoan > 0) {
+                    const interest = remainingLoan * monthlyLoanRate;
+                    const emiForThisMonth = Math.min(scenario.emi, remainingLoan + interest);
+                    const principalPaid = emiForThisMonth - interest;
+                    yearlyInterest += interest;
+                    yearlyPrincipal += principalPaid;
+                    remainingLoan -= principalPaid;
+                }
+            }
+            schedule.push({ year, principal: Math.round(yearlyPrincipal), interest: Math.round(yearlyInterest), balance: Math.round(remainingLoan > 0 ? remainingLoan : 0) });
+        }
+        return schedule;
+    }
+
+    function renderAmortizationTable(data) {
+        let tableHTML = `<table class="w-full text-sm text-left"><thead class="text-xs text-textdark uppercase bg-gray-50 sticky top-0"><tr><th scope="col" class="px-6 py-3">Year</th><th scope="col" class="px-6 py-3">Principal Paid</th><th scope="col" class="px-6 py-3">Interest Paid</th><th scope="col" class="px-6 py-3">Ending Balance</th></tr></thead><tbody>`;
+        data.forEach(row => {
+            tableHTML += `<tr class="bg-white border-b"><td class="px-6 py-4 font-semibold">${row.year}</td><td class="px-6 py-4 font-semibold">₹${row.principal.toLocaleString('en-IN')}</td><td class="px-6 py-4 font-semibold">₹${row.interest.toLocaleString('en-IN')}</td><td class="px-6 py-4 font-semibold">₹${row.balance.toLocaleString('en-IN')}</td></tr>`;
+        });
+        tableHTML += `</tbody></table>`;
+        amortizationTableContainer.innerHTML = tableHTML;
+    }
     
+    function generatePaiVsTraditionalData(scenario) {
+        const labels = [];
+        const paiData = [];
+        const traditionalData = [];
+        let investmentValue = 0;
+        let cumulativeInterest = 0;
+        const monthlyInvestmentRate = scenario.investmentAnnualRate / 100 / 12;
+        const monthlyLoanRate = scenario.loanAnnualRate / 100 / 12;
+        let remainingLoan = scenario.principal;
+        const totalHorizonMonths = (scenario.tenure + (scenario.investmentTenure || 0)) * 12;
+
+        for (let year = 0; year <= Math.ceil(totalHorizonMonths / 12); year++) {
+            labels.push(`Yr ${year}`);
+            paiData.push(investmentValue - cumulativeInterest);
+            traditionalData.push(-cumulativeInterest);
+            for (let month = 1; month <= 12; month++) {
+                const currentMonth = (year * 12) + month;
+                 if (remainingLoan > 0) {
+                    const interest = remainingLoan * monthlyLoanRate;
+                    cumulativeInterest += interest;
+                    const principalPaid = scenario.emi - interest;
+                    remainingLoan -= principalPaid;
+                }
+                let currentMonthlyInvestment = 0;
+                 if (scenario.postLoanMonthlyInvestment) {
+                    if (currentMonth > (scenario.tenure * 12)) {
+                        currentMonthlyInvestment = scenario.postLoanMonthlyInvestment;
+                    }
+                } else {
+                    currentMonthlyInvestment = scenario.monthlyInvestment || 0;
+                }
+                investmentValue = (investmentValue + currentMonthlyInvestment) * (1 + monthlyInvestmentRate);
+            }
+        }
+        return { labels, paiData, traditionalData };
+    }
+
+    function renderPaiVsTraditionalChart(data) {
+        if (paiVsTraditionalChart) paiVsTraditionalChart.destroy();
+        paiVsTraditionalChart = new Chart(paiVsTraditionalChartCanvas, {
+            type: 'line',
+            data: {
+                labels: data.labels,
+                datasets: [
+                    { label: 'PaiFinance Net Wealth', data: data.paiData, borderColor: '#1B9272', backgroundColor: 'rgba(27, 146, 114, 0.1)', fill: true, tension: 0.3 },
+                    { label: 'Traditional Net Wealth', data: data.traditionalData, borderColor: '#EF4444', backgroundColor: 'rgba(239, 68, 68, 0.1)', fill: true, tension: 0.3 }
+                ]
+            },
+            options: { responsive: true, maintainAspectRatio: false, scales: { y: { ticks: { callback: function(value) { return `₹${(value / 100000).toFixed(0)}L`; } } } } }
+        });
+    }
+
+    function updateSummaryBox(scenario, title, displayTenure, crossoverYear) {
+        summaryResultsContainer.classList.remove('hidden');
+        let summaryHTML = '';
+        if (title === 'Your Strategy Visualised') {
+            summaryHTML = `<h4 class="text-sm font-bold text-center mb-2">Result Summary</h4><p class="text-xs text-center">Net Wealth after ${displayTenure}: <strong class="text-investment_green">₹${scenario.netWealth.toLocaleString('en-IN')}</strong></p>`;
+        } else if (title === 'The Race to Zero Debt') {
+            summaryHTML = `<h4 class="text-sm font-bold text-center mb-2">Result Summary</h4><p class="text-xs text-center">You can offset your loan interest in just <strong class="text-investment_green">${displayTenure}</strong>.</p><p class="text-xs text-center mt-1">You can become debt-free in <strong>Year ${crossoverYear}</strong>.</p>`;
+        } else if (title === 'Winning the Financial Race') {
+            summaryHTML = `<h4 class="text-sm font-bold text-center mb-2">Result Summary</h4><p class="text-xs text-center">This optimal strategy generates a net wealth of <strong class="text-investment_green">₹${scenario.netWealth.toLocaleString('en-IN')}</strong>.</p>`;
+        } else if (title === 'Min Time To Repay') {
+             summaryHTML = `<h4 class="text-sm font-bold text-center mb-2">Result Summary</h4><p class="text-xs text-center">Loan will be paid off in <strong class="text-investment_green">${displayTenure}</strong>.</p><p class="text-xs text-center mt-1">Total wealth after horizon: <strong class="text-investment_green">₹${scenario.futureValue.toLocaleString('en-IN')}</strong>.</p>`;
+        }
+        summaryResultsContainer.innerHTML = summaryHTML;
+    }
+
     // --- 5. INITIALIZATION ---
     function initializeApp() {
         ['loanAmount', 'monthlyBudget', 'loanInterestRateDisplay', 'investmentRateDisplay'].forEach(id => {
@@ -411,7 +720,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if(inputEl && sliderEl) syncAndStyle(inputEl, sliderEl);
         });
 
-        // Special handling for tenure inputs which can be text or number
         [loanTenureSlider, investmentTenureSlider].forEach(slider => {
             slider.addEventListener('input', () => {
                 if (!slider.disabled) {
@@ -427,7 +735,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (!input.readOnly) {
                     const correspondingSlider = input.id === 'loanTenureDisplay' ? loanTenureSlider : investmentTenureSlider;
                     const val = parseFloat(input.value);
-                    if (!isNaN(val) && val >= correspondingSlider.min && val <= correspondingSlider.max) {
+                    if (!isNaN(val) && val >= parseFloat(correspondingSlider.min) && val <= parseFloat(correspondingSlider.max)) {
                         correspondingSlider.value = val;
                         updateSliderProgress(correspondingSlider);
                         triggerCalculation();
@@ -436,7 +744,6 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
         
-        // Listener for onboarding completion
         document.addEventListener('onboardingComplete', (e) => {
             const { budget, tenure } = e.detail;
             monthlyBudgetInput.value = budget;
@@ -451,7 +758,4 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     initializeApp();
-
-    // Make sure all other functions (createResultCard, renderWidgetCharts, generateAmortizationSchedule, etc.) are included below.
-    // The previous full file contains the correct versions of them.
 });
