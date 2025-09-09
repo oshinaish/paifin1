@@ -271,7 +271,10 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
         `;
 
+        setTimeout(() => {
         renderWidgetCharts(scenario, totalInvested, totalGains);
+    }, 0);
+        
         const chartData = generateComparisonData(scenario);
         renderComparisonChart(chartData);
 
