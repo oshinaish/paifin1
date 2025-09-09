@@ -180,7 +180,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     <div class="space-y-4">
                         <div>
                             <label for="ob_planningYears" class="block text-sm font-medium text-textlight">Planning Horizon (Years)</label>
-                            <input type="number" id="ob_planningYears" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-investment_green focus:border-investment_green" placeholder="e.g., 20">
+                            <input type="number" id="ob_planningYears" value="20" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-investment_green focus:border-investment_green" placeholder="e.g., 20">
                         </div>
                     </div>
                     <div class="flex justify-between mt-8 space-x-4">
@@ -268,14 +268,22 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <div class="grid grid-cols-1 lg:grid-cols-4">
                 
                 <section class="lg:col-span-3 bg-card p-6">
-                    <h2 class="text-[21px] font-normal text-textdark font-albert_sans mb-6">Smart Loan & Investment Planner</h2>
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-[21px] font-normal text-textdark font-albert_sans">Smart Loan & Investment Planner</h2>
+                        <div class="flex items-center gap-2">
+                             <label for="planningHorizon" class="block text-sm font-normal text-textlight font-albert_sans">Planning Horizon</label>
+                             <input type="number" id="planningHorizon" value="20" min="1" max="50" class="w-20 p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-investment_green focus:border-investment_green">
+                             <span class="text-sm text-textlight">Years</span>
+                        </div>
+                    </div>
                     
                     <div class="relative mt-12 px-10">
                         <div class="absolute -top-5 left-1/2 transform -translate-x-1/2 z-10">
-                            <div class="flex flex-nowrap justify-center gap-4 bg-card p-2 rounded-[30px] shadow-md">
-                                <button type="button" id="btnPlanner" data-goal="planner" class="goal-button selected flex flex-col items-center justify-center py-2 px-4 rounded-[25px] cursor-pointer transition-all duration-200 text-sm font-bold text-center shadow-sm font-albert_sans uppercase">Manual<br>Planner</button>
-                                <button type="button" id="btnMinTime" data-goal="min-time" class="goal-button flex flex-col items-center justify-center py-2 px-4 rounded-[25px] cursor-pointer transition-all duration-200 text-sm font-bold text-center shadow-sm font-albert_sans uppercase">Minimum Time<br>to Offset</button>
-                                <button type="button" id="btnOptimalStrategy" data-goal="optimal-strategy" class="goal-button flex flex-col items-center justify-center py-2 px-4 rounded-[25px] cursor-pointer transition-all duration-200 text-sm font-bold text-center shadow-sm font-albert_sans uppercase">Find Optimal<br>Strategy</button>
+                            <div class="flex flex-nowrap justify-center gap-2 bg-card p-2 rounded-[30px] shadow-md">
+                                <button type="button" data-goal="planner" class="goal-button selected flex-col items-center justify-center py-2 px-4 rounded-[25px] cursor-pointer transition-all duration-200 text-sm font-bold text-center shadow-sm font-albert_sans uppercase">Manual<br>Planner</button>
+                                <button type="button" data-goal="fast-prepay" class="goal-button flex-col items-center justify-center py-2 px-4 rounded-[25px] cursor-pointer transition-all duration-200 text-sm font-bold text-center shadow-sm font-albert_sans uppercase">Prepay Loan<br>Fast</button>
+                                <button type="button" data-goal="min-time" class="goal-button flex-col items-center justify-center py-2 px-4 rounded-[25px] cursor-pointer transition-all duration-200 text-sm font-bold text-center shadow-sm font-albert_sans uppercase">Minimum Time<br>to Offset</button>
+                                <button type="button" data-goal="optimal-strategy" class="goal-button flex-col items-center justify-center py-2 px-4 rounded-[25px] cursor-pointer transition-all duration-200 text-sm font-bold text-center shadow-sm font-albert_sans uppercase">Find Optimal<br>Strategy</button>
                             </div>
                         </div>
                         
@@ -343,7 +351,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                                     </div>
                                     <div id="investmentTenureContainer">
                                         <div class="flex items-center justify-between w-full">
-                                            <label for="investmentTenureDisplay" class="block text-sm font-normal text-textlight font-albert_sans">Investment Tenure</label>
+                                            <label id="investmentTenureLabel" for="investmentTenureDisplay" class="block text-sm font-normal text-textlight font-albert_sans">Investment Tenure</label>
                                             <div class="w-[114px] h-[29px] p-2 rounded-[2px] bg-input_box_fill bg-opacity-10 shadow-custom-input flex items-center">
                                                 <input type="number" id="investmentTenureDisplay" value="30" min="1" max="30" class="w-full bg-transparent border-none focus:ring-0 text-input_text_color text-right p-0 m-0 font-albert_sans font-normal text-base">
                                                 <span class="font-normal text-input_text_color pl-1">Yr</span>
@@ -362,6 +370,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                         </div>
                     </div>
                 </section>
+
                 <section class="lg:col-span-1 bg-card p-6 flex flex-col items-center justify-center space-y-6">
                     <div id="chartsContainer" class="w-full max-w-[350px]">
                         <div class="w-full h-[200px] relative">
