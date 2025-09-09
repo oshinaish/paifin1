@@ -109,68 +109,72 @@ document.addEventListener('DOMContentLoaded', () => {
         updatePlannerResults();
     }
 
-    function findMinTimeToRepay() {
-        finalResultsSection.classList.remove('hidden');
-        comparisonChartContainer.classList.add('hidden');
-        amortizationContainer.classList.remove('hidden');
-        paiVsTraditionalContainer.classList.remove('hidden');
-        mainResultsContainer.innerHTML = `<div class="text-center p-4">Calculating...</div>`;
+    // --- (REPLACE THIS FUNCTION) ---
+function findMinTimeToRepay() { // Renamed
+    finalResultsSection.classList.remove('hidden');
+    comparisonChartContainer.classList.add('hidden');
+    amortizationContainer.classList.remove('hidden');
+    paiVsTraditionalContainer.classList.remove('hidden');
+    mainResultsContainer.innerHTML = `<div class="text-center p-4">Calculating...</div>`;
 
-        clearTimeout(calculationTimeout);
-        calculationTimeout = setTimeout(() => {
-            const principal = parseFloat(loanAmountInput.value);
-            const budget = parseFloat(monthlyBudgetInput.value);
-            const loanAnnualRate = parseFloat(loanInterestRateInput.value);
-            const investmentAnnualRate = parseFloat(investmentRateInput.value);
-            const totalPlanningHorizon = parseFloat(planningHorizonInput.value);
+    clearTimeout(calculationTimeout);
+    calculationTimeout = setTimeout(() => {
+        const principal = parseFloat(loanAmountInput.value);
+        const budget = parseFloat(monthlyBudgetInput.value);
+        const loanAnnualRate = parseFloat(loanInterestRateInput.value);
+        const investmentAnnualRate = parseFloat(investmentRateInput.value);
+        const totalPlanningHorizon = parseFloat(planningHorizonInput.value);
 
-            if (budget <= (principal * (loanAnnualRate / 100 / 12))) {
-                showWarningToast("Budget is too low to cover even the first month's interest.");
-                mainResultsContainer.innerHTML = `<div class="text-center p-4 text-danger">Budget is insufficient to pay off the loan.</div>`;
-                return;
-            }
+        if (budget <= (principal * (loanAnnualRate / 100 / 12))) {
+            showWarningToast("Budget is too low to cover even the first month's interest.");
+            mainResultsContainer.innerHTML = `<div class="text-center p-4 text-danger">Budget is insufficient to pay off the loan.</div>`;
+            return;
+        }
 
-            const tenureMonths = calculateTenureMonths(principal, loanAnnualRate, budget);
-            const loanTenureYears = tenureMonths / 12;
+        const tenureMonths = calculateTenureMonths(principal, loanAnnualRate, budget);
+        const loanTenureYears = tenureMonths / 12;
 
-            if (loanTenureYears > totalPlanningHorizon) {
-                 showWarningToast("Loan cannot be paid off within your planning horizon.");
-                 mainResultsContainer.innerHTML = `<div class="text-center p-4 text-danger">Payoff time exceeds your planning horizon.</div>`;
-                 return;
-            }
-            
-            const remainingHorizon = totalPlanningHorizon - loanTenureYears;
-            const futureValue = calculateFutureValue(budget, investmentAnnualRate, remainingHorizon);
-            const totalInterestPaid = (budget * tenureMonths) - principal;
-            const netWealth = futureValue - totalInterestPaid;
+        if (loanTenureYears > totalPlanningHorizon) {
+             showWarningToast("Loan cannot be paid off within your planning horizon.");
+             mainResultsContainer.innerHTML = `<div class="text-center p-4 text-danger">Payoff time exceeds your planning horizon.</div>`;
+             // Even if it fails, show the calculated short tenure
+             loanTenureInput.value = loanTenureYears.toFixed(2);
+             return;
+        }
+        
+        const remainingHorizon = totalPlanningHorizon - loanTenureYears;
+        const futureValue = calculateFutureValue(budget, investmentAnnualRate, remainingHorizon);
+        const totalInterestPaid = (budget * tenureMonths) - principal;
+        const netWealth = futureValue - totalInterestPaid;
 
-            // *** UI FREEZE & UPDATE LOGIC ***
-            loanTenureInput.value = loanTenureYears.toFixed(2);
-            loanTenureSlider.value = loanTenureYears;
-            updateSliderProgress(loanTenureSlider);
+        // *** FIX: Update UI values before displaying results ***
+        loanTenureInput.value = loanTenureYears.toFixed(2);
+        loanTenureSlider.value = loanTenureYears;
+        updateSliderProgress(loanTenureSlider);
 
-            investmentTenureInput.value = remainingHorizon.toFixed(2);
-            investmentTenureSlider.value = remainingHorizon;
-            updateSliderProgress(investmentTenureSlider);
+        investmentTenureInput.value = remainingHorizon.toFixed(2);
+        investmentTenureSlider.value = remainingHorizon;
+        updateSliderProgress(investmentTenureSlider);
 
-            const scenario = {
-                tenure: loanTenureYears,
-                investmentTenure: remainingHorizon,
-                emi: budget,
-                monthlyInvestment: 0, // During loan payoff
-                postLoanMonthlyInvestment: budget, // After loan is paid
-                totalInterestPaid,
-                futureValue,
-                netWealth,
-                principal,
-                loanAnnualRate,
-                investmentAnnualRate
-            };
+        const scenario = {
+            tenure: loanTenureYears,
+            investmentTenure: remainingHorizon,
+            emi: budget,
+            monthlyInvestment: 0, // During loan payoff
+            postLoanMonthlyInvestment: budget, // After loan is paid
+            totalInterestPaid,
+            futureValue,
+            netWealth,
+            principal,
+            loanAnnualRate,
+            investmentAnnualRate
+        };
 
-            displayResults(scenario, 'Min Time To Repay');
+        displayResults(scenario, 'Min Time To Repay'); // Renamed
 
-        }, 500);
-    }
+    }, 500);
+}
+
 
     function findOptimalStrategy() {
         finalResultsSection.classList.remove('hidden');
@@ -514,19 +518,25 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function handleGoalSelection(selectedButton) {
-        goalButtons.forEach(button => button.classList.remove('selected'));
-        selectedButton.classList.add('selected');
-        const goal = selectedButton.dataset.goal;
+    goalButtons.forEach(button => button.classList.remove('selected'));
+    selectedButton.classList.add('selected');
+    const goal = selectedButton.dataset.goal;
 
-        const isPlannerMode = goal === 'planner';
-        [loanTenureInput, loanTenureSlider, investmentTenureInput, investmentTenureSlider].forEach(field => { field.disabled = !isPlannerMode; });
-        loanTenureContainer.style.opacity = isPlannerMode ? '1' : '0.5';
-        investmentTenureContainer.style.opacity = isPlannerMode ? '1' : '0.5';
-        
-        investmentTenureLabel.textContent = (goal === 'min-time-repay') ? 'Remaining Planning Horizon' : 'Investment Tenure';
-        
-        triggerCalculation();
-    }
+    const isPlannerMode = goal === 'planner';
+
+    // *** FIX: Use readOnly for inputs, disabled for sliders ***
+    loanTenureInput.readOnly = !isPlannerMode;
+    investmentTenureInput.readOnly = !isPlannerMode;
+    loanTenureSlider.disabled = !isPlannerMode;
+    investmentTenureSlider.disabled = !isPlannerMode;
+    
+    loanTenureContainer.style.opacity = isPlannerMode ? '1' : '0.5';
+    investmentTenureContainer.style.opacity = isPlannerMode ? '1' : '0.5';
+    
+    investmentTenureLabel.textContent = (goal === 'min-time-repay') ? 'Remaining Planning Horizon' : 'Investment Tenure';
+    
+    triggerCalculation();
+}
 
     function generateComparisonData(scenario) {
         const labels = [];
