@@ -51,6 +51,24 @@ document.addEventListener('DOMContentLoaded', () => {
     let calculationTimeout;
 
     // --- 2. CORE FINANCIAL ENGINE (Sealed and Final) ---
+    function showWarningToast(message) {
+    const warningToast = document.getElementById('warningToast');
+    const warningMessage = document.getElementById('warningMessage');
+    let toastTimeout;
+
+    clearTimeout(toastTimeout);
+    warningMessage.textContent = message;
+    warningToast.classList.remove('hidden', 'opacity-0');
+    warningToast.classList.add('opacity-100');
+
+    toastTimeout = setTimeout(() => {
+        warningToast.classList.remove('opacity-100');
+        warningToast.classList.add('opacity-0');
+        setTimeout(() => {
+            warningToast.classList.add('hidden');
+        }, 300); // Corresponds to transition duration
+    }, 3000);
+     } 
     function calculateEMI(principal, annualRate, tenureYears) {
         if (principal <= 0 || annualRate <= 0 || tenureYears <= 0) return 0;
         const monthlyRate = (annualRate / 100) / 12;
@@ -151,21 +169,64 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- 4. UI INTERACTIVITY & DISPLAY FUNCTIONS ---
-    function updatePlannerResults() {
-        const principal = parseFloat(loanAmountInput.value);
-        const annualRate = parseFloat(loanInterestRateInput.value);
-        const tenureYears = parseFloat(loanTenureInput.value);
-        const budget = parseFloat(monthlyBudgetInput.value);
-        const investmentRate = parseFloat(investmentRateInput.value);
-        const investmentTenureYears = parseFloat(investmentTenureInput.value);
-        const emi = calculateEMI(principal, annualRate, tenureYears);
-        const investment = (budget >= emi) ? budget - emi : 0;
-        const totalInterestPaid = (emi * tenureYears * 12) - principal;
-        const futureValue = calculateFutureValue(investment, investmentRate, investmentTenureYears);
-        const netWealth = futureValue - totalInterestPaid;
-        const scenario = { tenure: tenureYears, investmentTenure: investmentTenureYears, emi, monthlyInvestment: investment, totalInterestPaid, futureValue, netWealth, principal, loanAnnualRate: annualRate, investmentAnnualRate: investmentRate };
-        displayResults(scenario, 'Your Strategy Visualised');
+    // --- (REPLACE THE EXISTING FUNCTION WITH THIS) ---
+function updatePlannerResults() {
+    const principal = parseFloat(loanAmountInput.value);
+    const annualRate = parseFloat(loanInterestRateInput.value);
+    const tenureYears = parseFloat(loanTenureInput.value);
+    const budget = parseFloat(monthlyBudgetInput.value);
+    const investmentRate = parseFloat(investmentRateInput.value);
+    const investmentTenureYears = parseFloat(investmentTenureInput.value);
+
+    const emi = calculateEMI(principal, annualRate, tenureYears);
+
+    // --- VALIDATION LOGIC STARTS HERE ---
+    // First, clear any previous warning styles
+    monthlyBudgetInput.parentElement.classList.remove('animated-border');
+    emiResultElement.parentElement.classList.remove('animated-border');
+
+    // Now, check if the EMI is unaffordable
+    if (budget < emi && emi > 0) {
+        showWarningToast('Monthly EMI cannot exceed your total budget.');
+        
+        // Highlight the problematic inputs
+        monthlyBudgetInput.parentElement.classList.add('animated-border');
+        emiResultElement.parentElement.classList.add('animated-border');
+
+        // Update the UI to show the invalid state but don't calculate full results
+        emiResultElement.textContent = `₹ ${emi.toLocaleString('en-IN')}`;
+        monthlyInvestmentResult.textContent = '₹ 0'; // No budget left for investment
+        updatePieChart(emi, 0); // Update pie chart to reflect the invalid state
+        
+        // Block the rest of the function from running
+        finalResultsSection.classList.add('hidden'); // Hide the detailed results
+        summaryResultsContainer.classList.add('hidden'); // Hide the summary box
+        return; 
     }
+    // --- VALIDATION LOGIC ENDS HERE ---
+
+    const investment = (budget >= emi) ? budget - emi : 0;
+    const totalInterestPaid = (emi * tenureYears * 12) - principal;
+    const futureValue = calculateFutureValue(investment, investmentRate, investmentTenureYears);
+    const netWealth = futureValue - totalInterestPaid;
+    
+    const scenario = { 
+        tenure: tenureYears, 
+        investmentTenure: investmentTenureYears, 
+        emi, 
+        monthlyInvestment: investment, 
+        totalInterestPaid, 
+        futureValue, 
+        netWealth, 
+        principal, 
+        loanAnnualRate: annualRate, 
+        investmentAnnualRate: investmentRate 
+    };
+    
+    // If validation passes, show the results
+    finalResultsSection.classList.remove('hidden');
+    displayResults(scenario, 'Your Strategy Visualised');
+}
 
     function displayResults(scenario, title, tenureString = null) {
         const displayTenure = tenureString || `${scenario.tenure} Years`;
