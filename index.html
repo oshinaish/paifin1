@@ -919,23 +919,7 @@
             });
 
 
-            // Observe summary box to show the "Connect" button
-            const summaryBox = document.getElementById('summaryResultsContainer');
-            const observer = new MutationObserver((mutations) => {
-                mutations.forEach((mutation) => {
-                    if (mutation.attributeName === 'class') {
-                        const isHidden = summaryBox.classList.contains('hidden');
-                        if (isHidden) {
-                            connectExpertBtn.classList.add('hidden');
-                        } else {
-                            connectExpertBtn.classList.remove('hidden');
-                        }
-                    }
-                });
-            });
-            if (summaryBox) {
-                observer.observe(summaryBox, { attributes: true });
-            }
+            
         });
 
    
