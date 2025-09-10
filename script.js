@@ -1,7 +1,7 @@
 /**
  * PaiFinance - Interactive Script
- * Version: 20.2 - SUMMARY BOX CONTENT FIX
- * Last updated: September 10, 2025, 1:07 PM IST
+ * Version: 17.0 - MIN TIME TO REPAY UI FIX
+ * Last updated: September 9, 2025, 10:00 PM IST
  * Built by the Bros.
  */
 
@@ -23,13 +23,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const investmentTenureInput = document.getElementById('investmentTenureDisplay');
     const investmentTenureSlider = document.getElementById('investmentTenureSlider');
     const investmentTenureLabel = document.getElementById('investmentTenureLabel');
+    const planningHorizonInput = document.getElementById('planningHorizon');
     const emiResultElement = document.getElementById('emiResult');
     const monthlyInvestmentResult = document.getElementById('monthlyInvestmentResult');
-    const monthlyInvestmentSubtext = document.getElementById('monthlyInvestmentSubtext');
     
-    // Global state
-    let planningHorizon = 20; // Default value, will be updated from onboarding
-
     // Result Containers
     const finalResultsSection = document.getElementById('finalResultsSection');
     const mainResultsContainer = document.getElementById('mainResultsContainer');
@@ -77,7 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function calculateTenureMonths(principal, annualRate, emi) {
         if (principal <= 0 || annualRate <= 0 || emi <= 0) return 0;
         const monthlyRate = (annualRate / 100) / 12;
-        if (emi <= principal * monthlyRate) return Infinity;
+        if (emi <= principal * monthlyRate) return Infinity; // EMI is too low to ever pay off the loan
         const numerator = Math.log(emi / (emi - (principal * monthlyRate)));
         const denominator = Math.log(1 + monthlyRate);
         return numerator / denominator;
@@ -100,7 +97,7 @@ document.addEventListener('DOMContentLoaded', () => {
             warningToast.classList.add('opacity-0');
             setTimeout(() => {
                 warningToast.classList.add('hidden');
-            }, 300);
+            }, 300); // Corresponds to transition duration
         }, 3000);
     }
 
@@ -112,66 +109,72 @@ document.addEventListener('DOMContentLoaded', () => {
         updatePlannerResults();
     }
 
-    function findMinTimeToRepay() {
-        finalResultsSection.classList.remove('hidden');
-        comparisonChartContainer.classList.add('hidden');
-        amortizationContainer.classList.remove('hidden');
-        paiVsTraditionalContainer.classList.remove('hidden');
-        mainResultsContainer.innerHTML = `<div class="text-center p-4">Calculating...</div>`;
+    // --- (REPLACE THIS FUNCTION) ---
+function findMinTimeToRepay() { // Renamed
+    finalResultsSection.classList.remove('hidden');
+    comparisonChartContainer.classList.add('hidden');
+    amortizationContainer.classList.remove('hidden');
+    paiVsTraditionalContainer.classList.remove('hidden');
+    mainResultsContainer.innerHTML = `<div class="text-center p-4">Calculating...</div>`;
 
-        clearTimeout(calculationTimeout);
-        calculationTimeout = setTimeout(() => {
-            const principal = parseFloat(loanAmountInput.value);
-            const budget = parseFloat(monthlyBudgetInput.value);
-            const loanAnnualRate = parseFloat(loanInterestRateInput.value);
-            const investmentAnnualRate = parseFloat(investmentRateInput.value);
-            const totalPlanningHorizon = planningHorizon;
+    clearTimeout(calculationTimeout);
+    calculationTimeout = setTimeout(() => {
+        const principal = parseFloat(loanAmountInput.value);
+        const budget = parseFloat(monthlyBudgetInput.value);
+        const loanAnnualRate = parseFloat(loanInterestRateInput.value);
+        const investmentAnnualRate = parseFloat(investmentRateInput.value);
+        const totalPlanningHorizon = parseFloat(planningHorizonInput.value);
 
-            if (budget <= (principal * (loanAnnualRate / 100 / 12))) {
-                showWarningToast("Budget is too low to cover even the first month's interest.");
-                mainResultsContainer.innerHTML = `<div class="text-center p-4 text-danger">Budget is insufficient to pay off the loan.</div>`;
-                return;
-            }
+        if (budget <= (principal * (loanAnnualRate / 100 / 12))) {
+            showWarningToast("Budget is too low to cover even the first month's interest.");
+            mainResultsContainer.innerHTML = `<div class="text-center p-4 text-danger">Budget is insufficient to pay off the loan.</div>`;
+            return;
+        }
 
-            const tenureMonths = calculateTenureMonths(principal, loanAnnualRate, budget);
-            const loanTenureYears = tenureMonths / 12;
+        const tenureMonths = calculateTenureMonths(principal, loanAnnualRate, budget);
+        const loanTenureYears = tenureMonths / 12;
 
-            if (loanTenureYears > totalPlanningHorizon) {
-                 showWarningToast("Loan cannot be paid off within your planning horizon.");
-                 mainResultsContainer.innerHTML = `<div class="text-center p-4 text-danger">Payoff time (${formatYearsAndMonths(loanTenureYears)}) exceeds your planning horizon.</div>`;
-                 loanTenureInput.value = formatYearsAndMonths(loanTenureYears);
-                 investmentTenureInput.value = "0 Years";
-                 return;
-            }
-            
-            const remainingHorizon = totalPlanningHorizon - loanTenureYears;
-            const futureValue = calculateFutureValue(budget, investmentAnnualRate, remainingHorizon);
-            const totalInterestPaid = (budget * tenureMonths) - principal;
-            const netWealth = futureValue - totalInterestPaid;
+        if (loanTenureYears > totalPlanningHorizon) {
+             showWarningToast("Loan cannot be paid off within your planning horizon.");
+             mainResultsContainer.innerHTML = `<div class="text-center p-4 text-danger">Payoff time exceeds your planning horizon.</div>`;
+             // Even if it fails, show the calculated short tenure
+             loanTenureInput.value = loanTenureYears.toFixed(2);
+             return;
+        }
+        
+        const remainingHorizon = totalPlanningHorizon - loanTenureYears;
+        const futureValue = calculateFutureValue(budget, investmentAnnualRate, remainingHorizon);
+        const totalInterestPaid = (budget * tenureMonths) - principal;
+        const netWealth = futureValue - totalInterestPaid;
 
-            loanTenureInput.value = formatYearsAndMonths(loanTenureYears);
-            investmentTenureInput.value = formatYearsAndMonths(remainingHorizon);
-            loanTenureSlider.value = loanTenureYears;
-            investmentTenureSlider.value = remainingHorizon;
-            updateSliderProgress(loanTenureSlider);
-            updateSliderProgress(investmentTenureSlider);
+        // *** FIX: Update UI values before displaying results ***
+        loanTenureInput.value = loanTenureYears.toFixed(2);
+        loanTenureSlider.value = loanTenureYears;
+        updateSliderProgress(loanTenureSlider);
 
-            const scenario = {
-                tenure: loanTenureYears,
-                investmentTenure: remainingHorizon,
-                emi: budget,
-                monthlyInvestment: 0,
-                postLoanMonthlyInvestment: budget,
-                totalInterestPaid,
-                futureValue,
-                netWealth,
-                principal,
-                loanAnnualRate,
-                investmentAnnualRate
-            };
-            displayResults(scenario, 'Min Time To Repay');
-        }, 500);
-    }
+        investmentTenureInput.value = remainingHorizon.toFixed(2);
+        investmentTenureSlider.value = remainingHorizon;
+        updateSliderProgress(investmentTenureSlider);
+
+        const scenario = {
+            tenure: loanTenureYears,
+            investmentTenure: remainingHorizon,
+            emi: budget,
+            monthlyInvestment: 0, // During loan payoff
+            postLoanMonthlyInvestment: budget, // After loan is paid
+            totalInterestPaid,
+            futureValue,
+            netWealth,
+            principal,
+            loanAnnualRate,
+            investmentAnnualRate
+        };
+
+        displayResults(scenario, 'Min Time To Repay'); // Renamed
+
+    }, 500);
+}
+
 
     function findOptimalStrategy() {
         finalResultsSection.classList.remove('hidden');
@@ -187,7 +190,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const loanAnnualRate = parseFloat(loanInterestRateInput.value);
             const investmentAnnualRate = parseFloat(investmentRateInput.value);
             let bestScenario = null, maxNetWealth = -Infinity;
-
             for (let tenure = 1; tenure <= 30; tenure++) {
                 const emi = calculateEMI(principal, loanAnnualRate, tenure);
                 if (emi > budget) continue;
@@ -200,14 +202,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     bestScenario = { tenure, emi, monthlyInvestment, totalInterestPaid, futureValue, netWealth, principal, loanAnnualRate, investmentAnnualRate };
                 }
             }
-
             if (bestScenario) {
-                loanTenureInput.value = formatYearsAndMonths(bestScenario.tenure);
-                investmentTenureInput.value = formatYearsAndMonths(bestScenario.tenure);
-                loanTenureSlider.value = bestScenario.tenure;
-                investmentTenureSlider.value = bestScenario.tenure;
-                updateSliderProgress(loanTenureSlider);
-                updateSliderProgress(investmentTenureSlider);
                 displayResults(bestScenario, 'Winning the Financial Race');
             } else {
                 mainResultsContainer.innerHTML = `<div class="text-center p-4 text-danger">No viable strategy found. Your budget may be too low for this loan amount and interest rate.</div>`;
@@ -229,7 +224,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const loanAnnualRate = parseFloat(loanInterestRateInput.value);
             const investmentAnnualRate = parseFloat(investmentRateInput.value);
             let foundScenario = null;
-
             for (let months = 1; months <= 360; months++) {
                 const tenureInYears = months / 12;
                 const emi = calculateEMI(principal, loanAnnualRate, tenureInYears);
@@ -243,15 +237,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     break; 
                 }
             }
-
             if (foundScenario) {
-                loanTenureInput.value = formatYearsAndMonths(foundScenario.tenure);
-                investmentTenureInput.value = formatYearsAndMonths(foundScenario.tenure);
-                loanTenureSlider.value = foundScenario.tenure;
-                investmentTenureSlider.value = foundScenario.tenure;
-                updateSliderProgress(loanTenureSlider);
-                updateSliderProgress(investmentTenureSlider);
-                displayResults(foundScenario, 'The Race to Zero Debt', formatYearsAndMonths(foundScenario.tenure));
+                const years = Math.floor(foundScenario.tenure);
+                const remainingMonths = Math.round((foundScenario.tenure - years) * 12);
+                const tenureString = `${years} Years, ${remainingMonths} Months`;
+                displayResults(foundScenario, 'The Race to Zero Debt', tenureString);
             } else {
                 mainResultsContainer.innerHTML = `<div class="text-center p-4 text-danger">Cannot offset interest within 30 years. Try increasing your budget or the investment return rate.</div>`;
             }
@@ -262,14 +252,11 @@ document.addEventListener('DOMContentLoaded', () => {
     function updatePlannerResults() {
         const principal = parseFloat(loanAmountInput.value);
         const annualRate = parseFloat(loanInterestRateInput.value);
-        const tenureYears = parseFloat(loanTenureSlider.value);
+        const tenureYears = parseFloat(loanTenureInput.value);
         const budget = parseFloat(monthlyBudgetInput.value);
         const investmentRate = parseFloat(investmentRateInput.value);
-        const investmentTenureYears = parseFloat(investmentTenureSlider.value);
+        const investmentTenureYears = parseFloat(investmentTenureInput.value);
 
-        loanTenureInput.value = `${tenureYears} Y`;
-        investmentTenureInput.value = `${investmentTenureYears} Y`;
-        
         const emi = calculateEMI(principal, annualRate, tenureYears);
 
         monthlyBudgetInput.parentElement.classList.remove('animated-border');
@@ -298,31 +285,30 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     function formatYearsAndMonths(decimalYears) {
-        if (!decimalYears || decimalYears < 0) return "0 M";
+        if (!decimalYears || decimalYears <= 0) return "0 Years";
         const years = Math.floor(decimalYears);
         const months = Math.round((decimalYears - years) * 12);
         if (years > 0 && months > 0) return `${years} Y, ${months} M`;
-        if (years > 0) return `${years} Y`;
-        if (months > 0) return `${months} M`;
-        return "0 M";
+        if (years > 0) return `${years} Years`;
+        return `${months} Months`;
     }
 
     function displayResults(scenario, title, tenureString = null) {
-        summaryResultsContainer.classList.remove('hidden'); // Ensure summary box is visible
         const displayTenure = tenureString || formatYearsAndMonths(scenario.tenure);
         
         emiResultElement.textContent = `₹ ${scenario.emi.toLocaleString('en-IN')}`;
         
+        // *** UPDATED: Logic for monthly investment display ***
         if (title === 'Min Time To Repay') {
-            monthlyInvestmentResult.textContent = `₹ ${scenario.postLoanMonthlyInvestment.toLocaleString('en-IN')}`;
-            monthlyInvestmentSubtext.textContent = '(after loan)';
-            monthlyInvestmentSubtext.classList.remove('hidden');
+            monthlyInvestmentResult.innerHTML = `₹ ${scenario.postLoanMonthlyInvestment.toLocaleString('en-IN')} <span class="text-xs text-gray-500">(after loan)</span>`;
         } else {
             const investmentAmount = scenario.monthlyInvestment || 0;
-            monthlyInvestmentResult.textContent = `₹ ${investmentAmount.toLocaleString('en-IN')}`;
-            monthlyInvestmentSubtext.classList.add('hidden');
+            monthlyInvestmentResult.innerHTML = `₹ ${investmentAmount.toLocaleString('en-IN')}`;
         }
         updatePieChart(scenario.emi, scenario.monthlyInvestment || 0);
+        
+        // This logic is now handled inside each specific goal function
+        // if (title === 'Winning the Financial Race' || title === 'The Race to Zero Debt') { ... }
         
         const investmentTenureForCalc = scenario.investmentTenure || scenario.tenure;
         const totalInvested = scenario.postLoanMonthlyInvestment 
@@ -359,17 +345,8 @@ document.addEventListener('DOMContentLoaded', () => {
             <h4 class="text-lg font-bold text-textdark mb-2 pt-4">Loan Amortization Schedule</h4>
             <p>This schedule shows how your accelerated payments quickly pay down your loan. You can see how much of your annual payments go towards the principal versus the interest until the loan is fully paid off.</p>
         `;
-        
-        if (title === 'Min Time To Repay') {
-            paiVsTraditionalContainer.classList.remove('hidden');
-            const netWealthData = generateNetWealthData(scenario);
-            renderPaiVsTraditionalChart(netWealthData);
-            paiVsTraditionalExplanation.innerHTML = `
-                <h4 class="text-lg font-bold text-textdark mb-2 pt-4">Your Net Wealth Journey</h4>
-                <p>This chart shows your financial journey. Your net wealth initially decreases as you pay interest. After the loan is paid off in <strong class="text-investment_green">${displayTenure}</strong>, your wealth grows rapidly as the entire budget is invested.</p>
-            `;
-        } else if (title !== 'Your Strategy Visualised') {
-            paiVsTraditionalContainer.classList.remove('hidden');
+
+        if (title !== 'Your Strategy Visualised') {
             const paiVsTraditionalData = generatePaiVsTraditionalData(scenario);
             renderPaiVsTraditionalChart(paiVsTraditionalData);
             paiVsTraditionalExplanation.innerHTML = `
@@ -377,14 +354,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 <p>The <span class="font-semibold text-danger">red line</span> shows your net position with a traditional loan, ending at <strong class="text-danger">-₹${scenario.totalInterestPaid.toLocaleString('en-IN')}</strong>.</p>
                 <p class="mt-2">The <span class="font-semibold text-investment_green">green line</span> shows how this strategy helps you build positive net wealth, ending at <strong class="text-investment_green">₹${scenario.netWealth.toLocaleString('en-IN')}</strong>.</p>
             `;
-        } else {
-             paiVsTraditionalContainer.classList.add('hidden');
         }
         
-        updateSummaryBox(scenario, title, displayTenure, crossoverYear);
+        updateSummaryBox(scenario, title, displayTenure, chartData.crossoverYear);
     }
 
     function createResultCard(title, scenario, color, totalInvested, totalPaidOrGains) {
+        // This function can be simplified as it's less relevant for the new model, but we'll keep it for others
         let content;
         if (title === 'Net Money Input') {
             const totalPaid = totalPaidOrGains;
@@ -416,6 +392,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     function createWidgetCard(title, scenario, color, displayTenure, totalInvested, totalGains) {
         let content, canvasId, percentage, percentageColor;
+
         if (title === 'Loan Details') {
             content = `
                 <table class="w-full text-xs">
@@ -429,7 +406,7 @@ document.addEventListener('DOMContentLoaded', () => {
             canvasId = 'loanWidgetChart';
             percentage = Math.round((scenario.totalInterestPaid / (scenario.principal + scenario.totalInterestPaid)) * 100);
             percentageColor = 'text-textdark';
-        } else {
+        } else { // Investment Details
              const totalInvestmentAmount = scenario.postLoanMonthlyInvestment ? (scenario.postLoanMonthlyInvestment * scenario.investmentTenure * 12) : totalInvested;
             content = `
                 <table class="w-full text-xs">
@@ -509,8 +486,7 @@ document.addEventListener('DOMContentLoaded', () => {
             triggerCalculation();
         });
         inputElement.addEventListener('input', () => {
-            const val = parseFloat(inputElement.value);
-            if (!isNaN(val) && val >= parseFloat(sliderElement.min) && val <= parseFloat(sliderElement.max)) {
+            if (parseFloat(inputElement.value) >= parseFloat(sliderElement.min) && parseFloat(inputElement.value) <= parseFloat(sliderElement.max)) {
                 sliderElement.value = inputElement.value;
                 updateSliderVisuals();
                 triggerCalculation();
@@ -542,28 +518,25 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function handleGoalSelection(selectedButton) {
-        goalButtons.forEach(button => button.classList.remove('selected'));
-        selectedButton.classList.add('selected');
-        const goal = selectedButton.dataset.goal;
-        const isPlannerMode = goal === 'planner';
-    
-        loanTenureInput.readOnly = !isPlannerMode;
-        investmentTenureInput.readOnly = !isPlannerMode;
-        loanTenureSlider.disabled = !isPlannerMode;
-        investmentTenureSlider.disabled = !isPlannerMode;
-    
-        loanTenureContainer.style.opacity = isPlannerMode ? '1' : '0.5';
-        investmentTenureContainer.style.opacity = isPlannerMode ? '1' : '0.5';
-    
-        investmentTenureLabel.textContent = (goal === 'min-time-repay') ? 'Remaining Planning Horizon' : 'Investment Tenure';
-    
-        if(isPlannerMode) {
-            loanTenureInput.value = `${loanTenureSlider.value} Y`;
-            investmentTenureInput.value = `${investmentTenureSlider.value} Y`;
-        }
+    goalButtons.forEach(button => button.classList.remove('selected'));
+    selectedButton.classList.add('selected');
+    const goal = selectedButton.dataset.goal;
 
-        triggerCalculation();
-    }
+    const isPlannerMode = goal === 'planner';
+
+    // *** FIX: Use readOnly for inputs, disabled for sliders ***
+    loanTenureInput.readOnly = !isPlannerMode;
+    investmentTenureInput.readOnly = !isPlannerMode;
+    loanTenureSlider.disabled = !isPlannerMode;
+    investmentTenureSlider.disabled = !isPlannerMode;
+    
+    loanTenureContainer.style.opacity = isPlannerMode ? '1' : '0.5';
+    investmentTenureContainer.style.opacity = isPlannerMode ? '1' : '0.5';
+    
+    investmentTenureLabel.textContent = (goal === 'min-time-repay') ? 'Remaining Planning Horizon' : 'Investment Tenure';
+    
+    triggerCalculation();
+}
 
     function generateComparisonData(scenario) {
         const labels = [];
@@ -654,37 +627,6 @@ document.addEventListener('DOMContentLoaded', () => {
         amortizationTableContainer.innerHTML = tableHTML;
     }
     
-    function generateNetWealthData(scenario) {
-        const labels = [];
-        const netWealthData = [];
-        let cumulativeInterest = 0;
-        let investmentValue = 0;
-        const monthlyLoanRate = scenario.loanAnnualRate / 100 / 12;
-        const monthlyInvestmentRate = scenario.investmentAnnualRate / 100 / 12;
-        let remainingLoan = scenario.principal;
-        const totalHorizonMonths = (scenario.tenure + scenario.investmentTenure) * 12;
-
-        for (let year = 0; year <= Math.ceil(totalHorizonMonths / 12); year++) {
-            labels.push(`Yr ${year}`);
-            netWealthData.push(investmentValue - cumulativeInterest);
-
-            for (let month = 1; month <= 12; month++) {
-                const currentMonth = (year * 12) + month;
-                if (currentMonth <= scenario.tenure * 12) {
-                    if (remainingLoan > 0) {
-                        const interest = remainingLoan * monthlyLoanRate;
-                        cumulativeInterest += interest;
-                        const principalPaid = scenario.emi - interest;
-                        remainingLoan -= principalPaid;
-                    }
-                } else {
-                    investmentValue = (investmentValue + scenario.postLoanMonthlyInvestment) * (1 + monthlyInvestmentRate);
-                }
-            }
-        }
-        return { labels, netWealthData };
-    }
-
     function generatePaiVsTraditionalData(scenario) {
         const labels = [];
         const paiData = [];
@@ -701,13 +643,21 @@ document.addEventListener('DOMContentLoaded', () => {
             paiData.push(investmentValue - cumulativeInterest);
             traditionalData.push(-cumulativeInterest);
             for (let month = 1; month <= 12; month++) {
-                if (remainingLoan > 0) {
+                const currentMonth = (year * 12) + month;
+                 if (remainingLoan > 0) {
                     const interest = remainingLoan * monthlyLoanRate;
                     cumulativeInterest += interest;
                     const principalPaid = scenario.emi - interest;
                     remainingLoan -= principalPaid;
                 }
-                let currentMonthlyInvestment = scenario.monthlyInvestment || 0;
+                let currentMonthlyInvestment = 0;
+                 if (scenario.postLoanMonthlyInvestment) {
+                    if (currentMonth > (scenario.tenure * 12)) {
+                        currentMonthlyInvestment = scenario.postLoanMonthlyInvestment;
+                    }
+                } else {
+                    currentMonthlyInvestment = scenario.monthlyInvestment || 0;
+                }
                 investmentValue = (investmentValue + currentMonthlyInvestment) * (1 + monthlyInvestmentRate);
             }
         }
@@ -716,27 +666,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderPaiVsTraditionalChart(data) {
         if (paiVsTraditionalChart) paiVsTraditionalChart.destroy();
-        
-        let datasets = [];
-        if (data.netWealthData) {
-            datasets.push({
-                label: 'Net Wealth',
-                data: data.netWealthData,
-                borderColor: '#1B9272',
-                backgroundColor: 'rgba(27, 146, 114, 0.1)',
-                fill: true,
-                tension: 0.3,
-            });
-        } else {
-            datasets.push(
-                { label: 'PaiFinance Net Wealth', data: data.paiData, borderColor: '#1B9272', backgroundColor: 'rgba(27, 146, 114, 0.1)', fill: true, tension: 0.3 },
-                { label: 'Traditional Net Wealth', data: data.traditionalData, borderColor: '#EF4444', backgroundColor: 'rgba(239, 68, 68, 0.1)', fill: true, tension: 0.3 }
-            );
-        }
-
         paiVsTraditionalChart = new Chart(paiVsTraditionalChartCanvas, {
             type: 'line',
-            data: { labels: data.labels, datasets: datasets },
+            data: {
+                labels: data.labels,
+                datasets: [
+                    { label: 'PaiFinance Net Wealth', data: data.paiData, borderColor: '#1B9272', backgroundColor: 'rgba(27, 146, 114, 0.1)', fill: true, tension: 0.3 },
+                    { label: 'Traditional Net Wealth', data: data.traditionalData, borderColor: '#EF4444', backgroundColor: 'rgba(239, 68, 68, 0.1)', fill: true, tension: 0.3 }
+                ]
+            },
             options: { responsive: true, maintainAspectRatio: false, scales: { y: { ticks: { callback: function(value) { return `₹${(value / 100000).toFixed(0)}L`; } } } } }
         });
     }
@@ -753,60 +691,23 @@ document.addEventListener('DOMContentLoaded', () => {
         } else if (title === 'Min Time To Repay') {
              summaryHTML = `<h4 class="text-sm font-bold text-center mb-2">Result Summary</h4><p class="text-xs text-center">Loan will be paid off in <strong class="text-investment_green">${displayTenure}</strong>.</p><p class="text-xs text-center mt-1">Total wealth after horizon: <strong class="text-investment_green">₹${scenario.futureValue.toLocaleString('en-IN')}</strong>.</p>`;
         }
-        
-        summaryHTML += `
-            <button id="connectExpertBtn" class="w-full mt-4 bg-investment_green text-white font-semibold py-2 px-4 rounded-lg hover:bg-opacity-90 transition-colors duration-300">
-                Connect to an Expert
-            </button>
-        `;
         summaryResultsContainer.innerHTML = summaryHTML;
-
-        const connectExpertBtn = document.getElementById('connectExpertBtn');
-        const expertModal = document.getElementById('expertModal');
-        if(connectExpertBtn) {
-            connectExpertBtn.addEventListener('click', () => {
-                expertModal.classList.remove('hidden');
-                expertModal.classList.add('flex');
-            });
-        }
     }
 
     // --- 5. INITIALIZATION ---
     function initializeApp() {
-        ['loanAmount', 'monthlyBudget', 'loanInterestRateDisplay', 'investmentRateDisplay'].forEach(id => {
+        ['loanAmount', 'monthlyBudget', 'loanInterestRateDisplay', 'investmentRateDisplay', 'loanTenureDisplay', 'investmentTenureDisplay'].forEach(id => {
             const inputEl = document.getElementById(id);
             const sliderEl = document.getElementById(id.replace('Display', '') + 'Slider');
             if(inputEl && sliderEl) syncAndStyle(inputEl, sliderEl);
         });
-
-        [loanTenureSlider, investmentTenureSlider].forEach(slider => {
-            slider.addEventListener('input', () => {
-                if (!slider.disabled) {
-                    const correspondingInput = slider.id === 'loanTenureSlider' ? loanTenureInput : investmentTenureInput;
-                    correspondingInput.value = `${slider.value} Y`;
-                    triggerCalculation();
-                }
-            });
-        });
-
-        [loanTenureInput, investmentTenureInput].forEach(input => {
-            input.addEventListener('input', () => {
-                if (!input.readOnly) {
-                    const correspondingSlider = input.id === 'loanTenureDisplay' ? loanTenureSlider : investmentTenureSlider;
-                    const val = parseFloat(input.value);
-                    if (!isNaN(val) && val >= parseFloat(correspondingSlider.min) && val <= parseFloat(correspondingSlider.max)) {
-                        correspondingSlider.value = val;
-                        updateSliderProgress(correspondingSlider);
-                        triggerCalculation();
-                    }
-                }
-            });
-        });
         
+        planningHorizonInput.addEventListener('input', triggerCalculation);
+
         document.addEventListener('onboardingComplete', (e) => {
             const { budget, tenure } = e.detail;
             monthlyBudgetInput.value = budget;
-            planningHorizon = tenure;
+            planningHorizonInput.value = tenure;
             updateSliderProgress(monthlyBudgetSlider);
             triggerCalculation();
         });
