@@ -646,42 +646,61 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     function generatePaiVsTraditionalData(scenario) {
-        const labels = [];
-        const paiData = [];
-        const traditionalData = [];
-        let investmentValue = 0;
-        let cumulativeInterest = 0;
-        const monthlyInvestmentRate = scenario.investmentAnnualRate / 100 / 12;
-        const monthlyLoanRate = scenario.loanAnnualRate / 100 / 12;
-        let remainingLoan = scenario.principal;
-        const totalHorizonMonths = (scenario.tenure + (scenario.investmentTenure || 0)) * 12;
+    const labels = [];
+    const paiData = [];
+    const traditionalData = [];
 
-        for (let year = 0; year <= Math.ceil(totalHorizonMonths / 12); year++) {
-            labels.push(`Yr ${year}`);
-            paiData.push(investmentValue - cumulativeInterest);
-            traditionalData.push(-cumulativeInterest);
-            for (let month = 1; month <= 12; month++) {
-                const currentMonth = (year * 12) + month;
-                 if (remainingLoan > 0) {
-                    const interest = remainingLoan * monthlyLoanRate;
-                    cumulativeInterest += interest;
-                    const principalPaid = scenario.emi - interest;
-                    remainingLoan -= principalPaid;
+    // --- PAI (PARALLEL) METHOD VARIABLES ---
+    let paiInvestmentValue = 0;
+    let paiCumulativeInterest = 0;
+    let paiRemainingLoan = scenario.principal;
+
+    // --- TRADITIONAL (SEQUENTIAL) METHOD VARIABLES ---
+    const traditionalLoanPayoffMonths = calculateTenureMonths(scenario.principal, scenario.loanAnnualRate, scenario.emi + (scenario.monthlyInvestment || 0));
+    let traditionalInvestmentValue = 0;
+    let traditionalCumulativeInterest = 0;
+    let traditionalRemainingLoan = scenario.principal;
+    
+    const monthlyLoanRate = scenario.loanAnnualRate / 100 / 12;
+    const monthlyInvestmentRate = scenario.investmentAnnualRate / 100 / 12;
+    const totalHorizonMonths = planningHorizon * 12;
+
+    for (let year = 0; year <= planningHorizon; year++) {
+        labels.push(`Yr ${year}`);
+        paiData.push(paiInvestmentValue - paiCumulativeInterest);
+        traditionalData.push(traditionalInvestmentValue - traditionalCumulativeInterest);
+
+        for (let month = 1; month <= 12; month++) {
+            const currentMonth = (year * 12) + month;
+
+            // --- PAI (PARALLEL) METHOD CALCULATION ---
+            if (paiRemainingLoan > 0) {
+                const interest = paiRemainingLoan * monthlyLoanRate;
+                paiCumulativeInterest += interest;
+                const principalPaid = scenario.emi - interest;
+                paiRemainingLoan -= principalPaid;
+            }
+            paiInvestmentValue = (paiInvestmentValue + (scenario.monthlyInvestment || 0)) * (1 + monthlyInvestmentRate);
+
+            // --- TRADITIONAL (SEQUENTIAL) METHOD CALCULATION ---
+            if (currentMonth <= traditionalLoanPayoffMonths) {
+                // Phase 1: Loan Payoff
+                if (traditionalRemainingLoan > 0) {
+                    const interest = traditionalRemainingLoan * monthlyLoanRate;
+                    traditionalCumulativeInterest += interest;
+                    const principalPaid = (scenario.emi + (scenario.monthlyInvestment || 0)) - interest;
+                    traditionalRemainingLoan -= principalPaid;
                 }
-                let currentMonthlyInvestment = 0;
-                 if (scenario.postLoanMonthlyInvestment) {
-                    if (currentMonth > (scenario.tenure * 12)) {
-                        currentMonthlyInvestment = scenario.postLoanMonthlyInvestment;
-                    }
-                } else {
-                    currentMonthlyInvestment = scenario.monthlyInvestment || 0;
-                }
-                investmentValue = (investmentValue + currentMonthlyInvestment) * (1 + monthlyInvestmentRate);
+            } else {
+                // Phase 2: Investment
+                const totalBudget = scenario.emi + (scenario.monthlyInvestment || 0);
+                traditionalInvestmentValue = (traditionalInvestmentValue + totalBudget) * (1 + monthlyInvestmentRate);
             }
         }
-        return { labels, paiData, traditionalData };
     }
-
+    return { labels, paiData, traditionalData };
+}
+    
     function renderPaiVsTraditionalChart(data) {
         if (paiVsTraditionalChart) paiVsTraditionalChart.destroy();
         paiVsTraditionalChart = new Chart(paiVsTraditionalChartCanvas, {
