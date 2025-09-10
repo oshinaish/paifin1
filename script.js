@@ -414,7 +414,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <tr><td class="flex items-center py-1"><span class="w-2 h-2 rounded-full bg-emi_purple mr-2"></span>Principal</td><td class="text-right font-normal text-textdark">₹${scenario.principal.toLocaleString('en-IN')}</td></tr>
                         <tr><td class="flex items-center py-1"><span class="w-2 h-2 rounded-full bg-gray-300 mr-2"></span>Interest</td><td class="text-right font-normal text-emi_purple">₹${scenario.totalInterestPaid.toLocaleString('en-IN')}</td></tr>
                         <tr class="border-t"><td class="text-left font-semibold py-1">Total Paid</td><td class="text-right font-bold text-textdark">₹${(scenario.principal + scenario.totalInterestPaid).toLocaleString('en-IN')}</td></tr>
-                        <tr><td class="text-left font-semibold py-1">Paid Off In</td><td class="text-right font-bold text-textdark">${displayTenure}</td></tr>
+                        <tr><td class="text-left font-normal py-1">Paid Off In</td><td class="text-right font-semibold text-textdark">${displayTenure}</td></tr>
                     </tbody>
                 </table>
             `;
