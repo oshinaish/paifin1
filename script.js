@@ -1,7 +1,7 @@
 /**
  * PaiFinance - Interactive Script
- * Version: 20.2 - SUMMARY BOX CONTENT FIX
- * Last updated: September 10, 2025, 1:07 PM IST
+ * Version: 20.3 - FINAL SUMMARY BOX FIX
+ * Last updated: September 10, 2025, 1:35 PM IST
  * Built by the Bros.
  */
 
@@ -130,6 +130,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (budget <= (principal * (loanAnnualRate / 100 / 12))) {
                 showWarningToast("Budget is too low to cover even the first month's interest.");
                 mainResultsContainer.innerHTML = `<div class="text-center p-4 text-danger">Budget is insufficient to pay off the loan.</div>`;
+                summaryResultsContainer.classList.add('hidden');
                 return;
             }
 
@@ -141,6 +142,7 @@ document.addEventListener('DOMContentLoaded', () => {
                  mainResultsContainer.innerHTML = `<div class="text-center p-4 text-danger">Payoff time (${formatYearsAndMonths(loanTenureYears)}) exceeds your planning horizon.</div>`;
                  loanTenureInput.value = formatYearsAndMonths(loanTenureYears);
                  investmentTenureInput.value = "0 Years";
+                 summaryResultsContainer.classList.add('hidden');
                  return;
             }
             
@@ -211,6 +213,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 displayResults(bestScenario, 'Winning the Financial Race');
             } else {
                 mainResultsContainer.innerHTML = `<div class="text-center p-4 text-danger">No viable strategy found. Your budget may be too low for this loan amount and interest rate.</div>`;
+                summaryResultsContainer.classList.add('hidden');
             }
         }, 500);
     }
@@ -254,6 +257,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 displayResults(foundScenario, 'The Race to Zero Debt', formatYearsAndMonths(foundScenario.tenure));
             } else {
                 mainResultsContainer.innerHTML = `<div class="text-center p-4 text-danger">Cannot offset interest within 30 years. Try increasing your budget or the investment return rate.</div>`;
+                summaryResultsContainer.classList.add('hidden');
             }
         }, 500);
     }
@@ -307,7 +311,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return "0 M";
     }
 
-     function displayResults(scenario, title, tenureString = null) {
+    function displayResults(scenario, title, tenureString = null) {
         const displayTenure = tenureString || formatYearsAndMonths(scenario.tenure);
         
         emiResultElement.textContent = `₹ ${scenario.emi.toLocaleString('en-IN')}`;
@@ -339,7 +343,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 ${createResultCard('Net Money Output', scenario, 'success', totalInvested, totalGains)}
             </div>
         `;
-
 
         renderWidgetCharts(scenario, totalInvested, totalGains);
         const chartData = generateComparisonData(scenario);
@@ -763,7 +766,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const connectExpertBtn = document.getElementById('connectExpertBtn');
         const expertModal = document.getElementById('expertModal');
-        if(connectExpertBtn) {
+        if(connectExpertBtn && expertModal) {
             connectExpertBtn.addEventListener('click', () => {
                 expertModal.classList.remove('hidden');
                 expertModal.classList.add('flex');
