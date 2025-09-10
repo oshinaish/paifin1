@@ -752,9 +752,10 @@ document.addEventListener('DOMContentLoaded', () => {
 }
 
     function updateSummaryBox(scenario, title, displayTenure, crossoverYear) {
-    summaryResultsContainer.classList.remove('hidden');
+    // *** FIX: This line makes the box visible. It was missing. ***
+    summaryResultsContainer.classList.remove('hidden'); 
+    
     let summaryHTML = '';
-
     if (title === 'Your Strategy Visualised') {
         summaryHTML = `
             <h4 class="text-sm font-bold text-center mb-2">Result Summary</h4>
@@ -778,27 +779,23 @@ document.addEventListener('DOMContentLoaded', () => {
             <p class="text-xs text-center mt-1">Total wealth after horizon: <strong class="text-investment_green">₹${scenario.futureValue.toLocaleString('en-IN')}</strong>.</p>
         `;
     }
-
-    // *** NEW: Add the CTA button to the summary box HTML ***
+    
     summaryHTML += `
         <button id="connectExpertBtn" class="w-full mt-4 bg-investment_green text-white font-semibold py-2 px-4 rounded-lg hover:bg-opacity-90 transition-colors duration-300">
             Connect to an Expert
         </button>
     `;
-    
     summaryResultsContainer.innerHTML = summaryHTML;
 
-    // Re-attach the event listener since we are recreating the button
     const connectExpertBtn = document.getElementById('connectExpertBtn');
     const expertModal = document.getElementById('expertModal');
-    if(connectExpertBtn) {
+    if(connectExpertBtn && expertModal) {
         connectExpertBtn.addEventListener('click', () => {
             expertModal.classList.remove('hidden');
             expertModal.classList.add('flex');
         });
     }
 }
-
     // --- 5. INITIALIZATION ---
     function initializeApp() {
         ['loanAmount', 'monthlyBudget', 'loanInterestRateDisplay', 'investmentRateDisplay'].forEach(id => {
