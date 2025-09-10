@@ -1,7 +1,7 @@
 /**
  * PaiFinance - Interactive Script
- * Version: 20.0 - SINGLE NET WEALTH CHART
- * Last updated: September 10, 2025, 12:47 PM IST
+ * Version: 20.1 - SUMMARY BOX VISIBILITY FIX
+ * Last updated: September 10, 2025, 1:05 PM IST
  * Built by the Bros.
  */
 
@@ -308,6 +308,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function displayResults(scenario, title, tenureString = null) {
+        summaryResultsContainer.classList.remove('hidden'); // *** FIX: Ensure summary box is visible ***
         const displayTenure = tenureString || formatYearsAndMonths(scenario.tenure);
         
         emiResultElement.textContent = `₹ ${scenario.emi.toLocaleString('en-IN')}`;
@@ -359,8 +360,8 @@ document.addEventListener('DOMContentLoaded', () => {
             <p>This schedule shows how your accelerated payments quickly pay down your loan. You can see how much of your annual payments go towards the principal versus the interest until the loan is fully paid off.</p>
         `;
         
-        // *** UPDATED: Logic to choose which chart to show ***
         if (title === 'Min Time To Repay') {
+            paiVsTraditionalContainer.classList.remove('hidden');
             const netWealthData = generateNetWealthData(scenario);
             renderPaiVsTraditionalChart(netWealthData);
             paiVsTraditionalExplanation.innerHTML = `
@@ -368,6 +369,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <p>This chart shows your financial journey. Your net wealth initially decreases as you pay interest. After the loan is paid off in <strong class="text-investment_green">${displayTenure}</strong>, your wealth grows rapidly as the entire budget is invested.</p>
             `;
         } else if (title !== 'Your Strategy Visualised') {
+            paiVsTraditionalContainer.classList.remove('hidden');
             const paiVsTraditionalData = generatePaiVsTraditionalData(scenario);
             renderPaiVsTraditionalChart(paiVsTraditionalData);
             paiVsTraditionalExplanation.innerHTML = `
@@ -652,7 +654,6 @@ document.addEventListener('DOMContentLoaded', () => {
         amortizationTableContainer.innerHTML = tableHTML;
     }
     
-    // *** NEW: Function for Single-Line Net Wealth Chart ***
     function generateNetWealthData(scenario) {
         const labels = [];
         const netWealthData = [];
@@ -670,7 +671,6 @@ document.addEventListener('DOMContentLoaded', () => {
             for (let month = 1; month <= 12; month++) {
                 const currentMonth = (year * 12) + month;
                 if (currentMonth <= scenario.tenure * 12) {
-                    // Loan Payoff Phase
                     if (remainingLoan > 0) {
                         const interest = remainingLoan * monthlyLoanRate;
                         cumulativeInterest += interest;
@@ -678,7 +678,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         remainingLoan -= principalPaid;
                     }
                 } else {
-                    // Investment Phase
                     investmentValue = (investmentValue + scenario.postLoanMonthlyInvestment) * (1 + monthlyInvestmentRate);
                 }
             }
@@ -702,8 +701,7 @@ document.addEventListener('DOMContentLoaded', () => {
             paiData.push(investmentValue - cumulativeInterest);
             traditionalData.push(-cumulativeInterest);
             for (let month = 1; month <= 12; month++) {
-                const currentMonth = (year * 12) + month;
-                 if (remainingLoan > 0) {
+                if (remainingLoan > 0) {
                     const interest = remainingLoan * monthlyLoanRate;
                     cumulativeInterest += interest;
                     const principalPaid = scenario.emi - interest;
@@ -720,7 +718,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (paiVsTraditionalChart) paiVsTraditionalChart.destroy();
         
         let datasets = [];
-        // *** UPDATED: Handle either one or two datasets ***
         if (data.netWealthData) {
             datasets.push({
                 label: 'Net Wealth',
