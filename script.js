@@ -417,15 +417,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     <tr><td class="text-left font-normal py-1">Paid Off In</td><td class="text-right font-normal text-textdark">${displayTenure}</td></tr>
                 </tbody>
             </table>
-        `; // <-- *** FIX: Added the missing backtick here ***
+        `; 
         canvasId = 'loanWidgetChart';
         percentage = Math.round((scenario.totalInterestPaid / (scenario.principal + scenario.totalInterestPaid)) * 100);
         percentageColor = 'text-textdark';
     } else { // Investment Details
         const totalInvestmentAmount = scenario.postLoanMonthlyInvestment ? (scenario.postLoanMonthlyInvestment * scenario.investmentTenure * 12) : totalInvested;
         const investmentHorizonDisplay = formatYearsAndMonths(scenario.investmentTenure);
-        const finalGains = scenario.futureValue - totalInvestmentAmount;
-        
+        const finalGains = scenario.futureValue - totalInvestmentAmount;   
         content = `
             <table class="w-full text-xs">
                 <tbody>
@@ -435,7 +434,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <tr><td class="text-left font-normal py-1">Horizon</td><td class="text-right font-normal text-textdark">${investmentHorizonDisplay}</td></tr>
                 </tbody>
             </table>
-        `; // <-- *** FIX: Used the correct formatted variable here ***
+        `; 
         canvasId = 'investmentWidgetChart';
         percentage = scenario.futureValue > 0 ? Math.round((finalGains / scenario.futureValue) * 100) : 0;
         percentageColor = 'text-textdark';
