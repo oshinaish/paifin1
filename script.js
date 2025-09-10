@@ -307,8 +307,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return "0 M";
     }
 
-    function displayResults(scenario, title, tenureString = null) {
-        
+     function displayResults(scenario, title, tenureString = null) {
         const displayTenure = tenureString || formatYearsAndMonths(scenario.tenure);
         
         emiResultElement.textContent = `₹ ${scenario.emi.toLocaleString('en-IN')}`;
@@ -340,6 +339,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 ${createResultCard('Net Money Output', scenario, 'success', totalInvested, totalGains)}
             </div>
         `;
+
 
         renderWidgetCharts(scenario, totalInvested, totalGains);
         const chartData = generateComparisonData(scenario);
