@@ -648,17 +648,40 @@
                 </div>
             </div>
         </footer>
-
+        
+        <!-- NEW: Warning Toast -->
         <div id="warningToast" class="hidden fixed bottom-5 right-5 bg-danger text-white py-3 px-5 rounded-lg shadow-lg text-sm opacity-0 transition-opacity duration-300 z-50">
             <span id="warningMessage"></span>
         </div>
     </div>
     
+    <!-- NEW: Chatbot Container & Icon - Moved outside of the main wrapper for correct animation -->
     <button id="chatbot-icon-button" class="fixed bottom-4 right-4 z-40 shadow-lg rounded-lg">
         <img src="chatbot_icon.svg" alt="Funda Chachi Icon" class="w-[66px] h-[100px] rounded-lg">
     </button>
     
     <div id="chatbot-window" class="hidden fixed bottom-24 right-4 z-40 w-80 bg-white rounded-xl shadow-2xl border border-gray-200 opacity-0 scale-95">
+      <!-- Header -->
+        <div class="bg-investment_green text-white p-4 rounded-t-xl flex justify-between items-center">
+            <h3 class="font-bold text-lg">Funda Chachi</h3>
+            <button id="close-chatbot" class="text-white hover:text-gray-200">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+        </div>
+        <!-- Messages -->
+        <div id="chatbot-messages" class="p-4 h-auto overflow-y-auto space-y-4">
+            <!-- Initial Messages -->
+            <div class="flex">
+                <div class="bg-gray-200 text-textdark p-3 rounded-lg max-w-xs">
+                    <p>First time here? Let's get you set up for the best results!</p>
+                </div>
+            </div>
+        </div>
+        <!-- Options / Form -->
+        <div id="chatbot-input-area" class="p-4 border-t border-gray-200">
+            <button id="startOnboardingFromChatbot" class="w-full bg-investment_green text-white font-semibold py-3 px-4 rounded-lg hover:bg-opacity-90 transition">Let's Get Started!</button>
+        </div>
+        
         </div>
 
     <script>
