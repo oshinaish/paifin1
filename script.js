@@ -772,7 +772,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <h4 class="text-sm font-bold text-center mb-2">Result Summary</h4>
             <p class="text-xs text-center">This optimal strategy generates a net wealth of <strong class="text-investment_green">₹${scenario.netWealth.toLocaleString('en-IN')}</strong>.</p>
         `;
-    } else if (title === 'Min Time To Repay') {
+    } else {
          summaryHTML = `
             <h4 class="text-sm font-bold text-center mb-2">Result Summary</h4>
             <p class="text-xs text-center">Loan will be paid off in <strong class="text-investment_green">${displayTenure}</strong>.</p>
