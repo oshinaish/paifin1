@@ -308,7 +308,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function displayResults(scenario, title, tenureString = null) {
-        summaryResultsContainer.classList.remove('hidden'); // Ensure summary box is visible
+        
         const displayTenure = tenureString || formatYearsAndMonths(scenario.tenure);
         
         emiResultElement.textContent = `₹ ${scenario.emi.toLocaleString('en-IN')}`;
