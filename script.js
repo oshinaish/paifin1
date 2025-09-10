@@ -422,6 +422,8 @@ document.addEventListener('DOMContentLoaded', () => {
             percentage = Math.round((scenario.totalInterestPaid / (scenario.principal + scenario.totalInterestPaid)) * 100);
             percentageColor = 'text-textdark';
         } else {
+            const totalInvestmentAmount = scenario.postLoanMonthlyInvestment ? (scenario.postLoanMonthlyInvestment * scenario.investmentTenure * 12) : totalInvested;
+         const investmentHorizonDisplay = formatYearsAndMonths(scenario.investmentTenure);
             content = `
                 <table class="w-full text-xs">
                     <tbody>
