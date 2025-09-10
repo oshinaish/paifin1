@@ -406,57 +406,58 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     function createWidgetCard(title, scenario, color, displayTenure, totalInvested, totalGains) {
-        let content, canvasId, percentage, percentageColor;
-        if (title === 'Loan Details') {
-            content = `
-                <table class="w-full text-xs">
-                    <tbody>
-                        <tr><td class="flex items-center py-1"><span class="w-2 h-2 rounded-full bg-gray-300  mr-2"></span>Principal</td><td class="text-right font-normal text-textdark">₹${scenario.principal.toLocaleString('en-IN')}</td></tr>
-                        <tr><td class="flex items-center py-1"><span class="w-2 h-2 rounded-full bg-emi_purple mr-2"></span>Interest</td><td class="text-right font-normal text-emi_purple">₹${scenario.totalInterestPaid.toLocaleString('en-IN')}</td></tr>
-                        <tr class="border-t"><td class="text-left font-semibold py-1">Total Paid</td><td class="text-right font-bold text-textdark">₹${(scenario.principal + scenario.totalInterestPaid).toLocaleString('en-IN')}</td></tr>
-                        <tr><td class="text-left font-normal py-1">Paid Off In</td><td class="text-right font-normal text-textdark">${displayTenure}</td></tr>
-                    </tbody>
-                </table>
-            `;
-            canvasId = 'loanWidgetChart';
-            percentage = Math.round((scenario.totalInterestPaid / (scenario.principal + scenario.totalInterestPaid)) * 100);
-            percentageColor = 'text-textdark';
-        } else {
-            const totalInvestmentAmount = scenario.postLoanMonthlyInvestment ? (scenario.postLoanMonthlyInvestment * scenario.investmentTenure * 12) : totalInvested;
-         const investmentHorizonDisplay = formatYearsAndMonths(scenario.investmentTenure);
-            content = `
-                <table class="w-full text-xs">
-                    <tbody>
-                        <tr><td class="flex items-center py-1"><span class="w-2 h-2 rounded-full bg-gray-300 mr-2"></span>Invested</td><td class="text-right font-normal text-textdark">₹${totalInvestmentAmount.toLocaleString('en-IN')}</td></tr>
-                        <tr><td class="flex items-center py-1"><span class="w-2 h-2 rounded-full bg-investment_green mr-2"></span>Gains</td><td class="text-right font-normal text-investment_green">₹${totalGains.toLocaleString('en-IN')}</td></tr>
-                        <tr class="border-t"><td class="text-left font-bold py-1">Total Wealth</td><td class="text-right font-semibold text-textdark">₹${scenario.futureValue.toLocaleString('en-IN')}</td></tr>
-                        <tr><td class="text-left font-normal py-1">Horizon</td><td class="text-right font-normal text-textdark">${scenario.investmentTenure}</td></tr>
-                    </tbody>
-                </table>
-            `;
-            canvasId = 'investmentWidgetChart';
-            percentage = scenario.futureValue > 0 ? Math.round((totalGains / scenario.futureValue) * 100) : 0;
-            percentageColor = 'text-textdark';
-        }
-
-        return `
-            <div class="bg-card p-4 rounded-lg shadow-default">
-                <h3 class="text-sm font-bold text-textdark mb-2 text-center">${title}</h3>
-                <div class="flex items-center gap-4">
-                    <div class="w-20 h-20 relative flex-shrink-0">
-                        <canvas id="${canvasId}"></canvas>
-                        <div class="absolute inset-0 flex items-center justify-center text-base font-bold ${percentageColor}">
-                            <span>${percentage}%</span>
-                        </div>
-                    </div>
-                    <div class="text-textlight leading-relaxed w-full">
-                        ${content}
-                    </div>
-                </div>
-            </div>
-        `;
+    let content, canvasId, percentage, percentageColor;
+    if (title === 'Loan Details') {
+        content = `
+            <table class="w-full text-xs">
+                <tbody>
+                    <tr><td class="flex items-center py-1"><span class="w-2 h-2 rounded-full bg-gray-300 mr-2"></span>Principal</td><td class="text-right font-normal text-textdark">₹${scenario.principal.toLocaleString('en-IN')}</td></tr>
+                    <tr><td class="flex items-center py-1"><span class="w-2 h-2 rounded-full bg-emi_purple mr-2"></span>Interest</td><td class="text-right font-normal text-emi_purple">₹${scenario.totalInterestPaid.toLocaleString('en-IN')}</td></tr>
+                    <tr class="border-t"><td class="text-left font-semibold py-1">Total Paid</td><td class="text-right font-bold text-textdark">₹${(scenario.principal + scenario.totalInterestPaid).toLocaleString('en-IN')}</td></tr>
+                    <tr><td class="text-left font-normal py-1">Paid Off In</td><td class="text-right font-normal text-textdark">${displayTenure}</td></tr>
+                </tbody>
+            </table>
+        `; // <-- *** FIX: Added the missing backtick here ***
+        canvasId = 'loanWidgetChart';
+        percentage = Math.round((scenario.totalInterestPaid / (scenario.principal + scenario.totalInterestPaid)) * 100);
+        percentageColor = 'text-textdark';
+    } else { // Investment Details
+        const totalInvestmentAmount = scenario.postLoanMonthlyInvestment ? (scenario.postLoanMonthlyInvestment * scenario.investmentTenure * 12) : totalInvested;
+        const investmentHorizonDisplay = formatYearsAndMonths(scenario.investmentTenure);
+        const finalGains = scenario.futureValue - totalInvestmentAmount;
+        
+        content = `
+            <table class="w-full text-xs">
+                <tbody>
+                    <tr><td class="flex items-center py-1"><span class="w-2 h-2 rounded-full bg-gray-300 mr-2"></span>Invested</td><td class="text-right font-normal text-textdark">₹${totalInvestmentAmount.toLocaleString('en-IN')}</td></tr>
+                    <tr><td class="flex items-center py-1"><span class="w-2 h-2 rounded-full bg-investment_green mr-2"></span>Gains</td><td class="text-right font-normal text-investment_green">₹${finalGains.toLocaleString('en-IN')}</td></tr>
+                    <tr class="border-t"><td class="text-left font-bold py-1">Total Wealth</td><td class="text-right font-semibold text-textdark">₹${scenario.futureValue.toLocaleString('en-IN')}</td></tr>
+                    <tr><td class="text-left font-normal py-1">Horizon</td><td class="text-right font-normal text-textdark">${investmentHorizonDisplay}</td></tr>
+                </tbody>
+            </table>
+        `; // <-- *** FIX: Used the correct formatted variable here ***
+        canvasId = 'investmentWidgetChart';
+        percentage = scenario.futureValue > 0 ? Math.round((finalGains / scenario.futureValue) * 100) : 0;
+        percentageColor = 'text-textdark';
     }
 
+    return `
+        <div class="bg-card p-4 rounded-lg shadow-default">
+            <h3 class="text-sm font-bold text-textdark mb-2 text-center">${title}</h3>
+            <div class="flex items-center gap-4">
+                <div class="w-20 h-20 relative flex-shrink-0">
+                    <canvas id="${canvasId}"></canvas>
+                    <div class="absolute inset-0 flex items-center justify-center text-base font-bold ${percentageColor}">
+                        <span>${percentage}%</span>
+                    </div>
+                </div>
+                <div class="text-textlight leading-relaxed w-full">
+                    ${content}
+                </div>
+            </div>
+        </div>
+    `;
+}
     function renderWidgetCharts(scenario, totalInvested, totalGains) {
         const loanCtx = document.getElementById('loanWidgetChart').getContext('2d');
         if (loanWidgetChart) loanWidgetChart.destroy();
