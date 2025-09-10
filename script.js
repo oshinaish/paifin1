@@ -1,7 +1,7 @@
 /**
  * PaiFinance - Interactive Script
- * Version: 19.1 - FINAL STABLE
- * Last updated: September 9, 2025, 11:36 PM IST
+ * Version: 20.0 - SINGLE NET WEALTH CHART
+ * Last updated: September 10, 2025, 12:47 PM IST
  * Built by the Bros.
  */
 
@@ -358,9 +358,16 @@ document.addEventListener('DOMContentLoaded', () => {
             <h4 class="text-lg font-bold text-textdark mb-2 pt-4">Loan Amortization Schedule</h4>
             <p>This schedule shows how your accelerated payments quickly pay down your loan. You can see how much of your annual payments go towards the principal versus the interest until the loan is fully paid off.</p>
         `;
-
-        if (title !== 'Your Strategy Visualised') {
-            paiVsTraditionalContainer.classList.remove('hidden');
+        
+        // *** UPDATED: Logic to choose which chart to show ***
+        if (title === 'Min Time To Repay') {
+            const netWealthData = generateNetWealthData(scenario);
+            renderPaiVsTraditionalChart(netWealthData);
+            paiVsTraditionalExplanation.innerHTML = `
+                <h4 class="text-lg font-bold text-textdark mb-2 pt-4">Your Net Wealth Journey</h4>
+                <p>This chart shows your financial journey. Your net wealth initially decreases as you pay interest. After the loan is paid off in <strong class="text-investment_green">${displayTenure}</strong>, your wealth grows rapidly as the entire budget is invested.</p>
+            `;
+        } else if (title !== 'Your Strategy Visualised') {
             const paiVsTraditionalData = generatePaiVsTraditionalData(scenario);
             renderPaiVsTraditionalChart(paiVsTraditionalData);
             paiVsTraditionalExplanation.innerHTML = `
@@ -372,7 +379,7 @@ document.addEventListener('DOMContentLoaded', () => {
              paiVsTraditionalContainer.classList.add('hidden');
         }
         
-        updateSummaryBox(scenario, title, displayTenure, chartData.crossoverYear);
+        updateSummaryBox(scenario, title, displayTenure, crossoverYear);
     }
 
     function createResultCard(title, scenario, color, totalInvested, totalPaidOrGains) {
@@ -645,6 +652,40 @@ document.addEventListener('DOMContentLoaded', () => {
         amortizationTableContainer.innerHTML = tableHTML;
     }
     
+    // *** NEW: Function for Single-Line Net Wealth Chart ***
+    function generateNetWealthData(scenario) {
+        const labels = [];
+        const netWealthData = [];
+        let cumulativeInterest = 0;
+        let investmentValue = 0;
+        const monthlyLoanRate = scenario.loanAnnualRate / 100 / 12;
+        const monthlyInvestmentRate = scenario.investmentAnnualRate / 100 / 12;
+        let remainingLoan = scenario.principal;
+        const totalHorizonMonths = (scenario.tenure + scenario.investmentTenure) * 12;
+
+        for (let year = 0; year <= Math.ceil(totalHorizonMonths / 12); year++) {
+            labels.push(`Yr ${year}`);
+            netWealthData.push(investmentValue - cumulativeInterest);
+
+            for (let month = 1; month <= 12; month++) {
+                const currentMonth = (year * 12) + month;
+                if (currentMonth <= scenario.tenure * 12) {
+                    // Loan Payoff Phase
+                    if (remainingLoan > 0) {
+                        const interest = remainingLoan * monthlyLoanRate;
+                        cumulativeInterest += interest;
+                        const principalPaid = scenario.emi - interest;
+                        remainingLoan -= principalPaid;
+                    }
+                } else {
+                    // Investment Phase
+                    investmentValue = (investmentValue + scenario.postLoanMonthlyInvestment) * (1 + monthlyInvestmentRate);
+                }
+            }
+        }
+        return { labels, netWealthData };
+    }
+
     function generatePaiVsTraditionalData(scenario) {
         const labels = [];
         const paiData = [];
@@ -668,14 +709,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const principalPaid = scenario.emi - interest;
                     remainingLoan -= principalPaid;
                 }
-                let currentMonthlyInvestment = 0;
-                 if (scenario.postLoanMonthlyInvestment) {
-                    if (currentMonth > (scenario.tenure * 12)) {
-                        currentMonthlyInvestment = scenario.postLoanMonthlyInvestment;
-                    }
-                } else {
-                    currentMonthlyInvestment = scenario.monthlyInvestment || 0;
-                }
+                let currentMonthlyInvestment = scenario.monthlyInvestment || 0;
                 investmentValue = (investmentValue + currentMonthlyInvestment) * (1 + monthlyInvestmentRate);
             }
         }
@@ -684,66 +718,61 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderPaiVsTraditionalChart(data) {
         if (paiVsTraditionalChart) paiVsTraditionalChart.destroy();
+        
+        let datasets = [];
+        // *** UPDATED: Handle either one or two datasets ***
+        if (data.netWealthData) {
+            datasets.push({
+                label: 'Net Wealth',
+                data: data.netWealthData,
+                borderColor: '#1B9272',
+                backgroundColor: 'rgba(27, 146, 114, 0.1)',
+                fill: true,
+                tension: 0.3,
+            });
+        } else {
+            datasets.push(
+                { label: 'PaiFinance Net Wealth', data: data.paiData, borderColor: '#1B9272', backgroundColor: 'rgba(27, 146, 114, 0.1)', fill: true, tension: 0.3 },
+                { label: 'Traditional Net Wealth', data: data.traditionalData, borderColor: '#EF4444', backgroundColor: 'rgba(239, 68, 68, 0.1)', fill: true, tension: 0.3 }
+            );
+        }
+
         paiVsTraditionalChart = new Chart(paiVsTraditionalChartCanvas, {
             type: 'line',
-            data: {
-                labels: data.labels,
-                datasets: [
-                    { label: 'PaiFinance Net Wealth', data: data.paiData, borderColor: '#1B9272', backgroundColor: 'rgba(27, 146, 114, 0.1)', fill: true, tension: 0.3 },
-                    { label: 'Traditional Net Wealth', data: data.traditionalData, borderColor: '#EF4444', backgroundColor: 'rgba(239, 68, 68, 0.1)', fill: true, tension: 0.3 }
-                ]
-            },
+            data: { labels: data.labels, datasets: datasets },
             options: { responsive: true, maintainAspectRatio: false, scales: { y: { ticks: { callback: function(value) { return `₹${(value / 100000).toFixed(0)}L`; } } } } }
         });
     }
 
     function updateSummaryBox(scenario, title, displayTenure, crossoverYear) {
-    summaryResultsContainer.classList.remove('hidden');
-    let summaryHTML = '';
+        summaryResultsContainer.classList.remove('hidden');
+        let summaryHTML = '';
+        if (title === 'Your Strategy Visualised') {
+            summaryHTML = `<h4 class="text-sm font-bold text-center mb-2">Result Summary</h4><p class="text-xs text-center">Net Wealth after ${displayTenure}: <strong class="text-investment_green">₹${scenario.netWealth.toLocaleString('en-IN')}</strong></p>`;
+        } else if (title === 'The Race to Zero Debt') {
+            summaryHTML = `<h4 class="text-sm font-bold text-center mb-2">Result Summary</h4><p class="text-xs text-center">You can offset your loan interest in just <strong class="text-investment_green">${displayTenure}</strong>.</p><p class="text-xs text-center mt-1">You can become debt-free in <strong>Year ${crossoverYear}</strong>.</p>`;
+        } else if (title === 'Winning the Financial Race') {
+            summaryHTML = `<h4 class="text-sm font-bold text-center mb-2">Result Summary</h4><p class="text-xs text-center">This optimal strategy generates a net wealth of <strong class="text-investment_green">₹${scenario.netWealth.toLocaleString('en-IN')}</strong>.</p>`;
+        } else if (title === 'Min Time To Repay') {
+             summaryHTML = `<h4 class="text-sm font-bold text-center mb-2">Result Summary</h4><p class="text-xs text-center">Loan will be paid off in <strong class="text-investment_green">${displayTenure}</strong>.</p><p class="text-xs text-center mt-1">Total wealth after horizon: <strong class="text-investment_green">₹${scenario.futureValue.toLocaleString('en-IN')}</strong>.</p>`;
+        }
+        
+        summaryHTML += `
+            <button id="connectExpertBtn" class="w-full mt-4 bg-investment_green text-white font-semibold py-2 px-4 rounded-lg hover:bg-opacity-90 transition-colors duration-300">
+                Connect to an Expert
+            </button>
+        `;
+        summaryResultsContainer.innerHTML = summaryHTML;
 
-    if (title === 'Your Strategy Visualised') {
-        summaryHTML = `
-            <h4 class="text-sm font-bold text-center mb-2">Result Summary</h4>
-            <p class="text-xs text-center">Net Wealth after ${displayTenure}: <strong class="text-investment_green">₹${scenario.netWealth.toLocaleString('en-IN')}</strong></p>
-        `;
-    } else if (title === 'The Race to Zero Debt') {
-        summaryHTML = `
-            <h4 class="text-sm font-bold text-center mb-2">Result Summary</h4>
-            <p class="text-xs text-center">You can offset your loan interest in just <strong class="text-investment_green">${displayTenure}</strong>.</p>
-            <p class="text-xs text-center mt-1">You can become debt-free in <strong>Year ${crossoverYear}</strong>.</p>
-        `;
-    } else if (title === 'Winning the Financial Race') {
-        summaryHTML = `
-            <h4 class="text-sm font-bold text-center mb-2">Result Summary</h4>
-            <p class="text-xs text-center">This optimal strategy generates a net wealth of <strong class="text-investment_green">₹${scenario.netWealth.toLocaleString('en-IN')}</strong>.</p>
-        `;
-    } else if (title === 'Min Time To Repay') {
-         summaryHTML = `
-            <h4 class="text-sm font-bold text-center mb-2">Result Summary</h4>
-            <p class="text-xs text-center">Loan will be paid off in <strong class="text-investment_green">${displayTenure}</strong>.</p>
-            <p class="text-xs text-center mt-1">Total wealth after horizon: <strong class="text-investment_green">₹${scenario.futureValue.toLocaleString('en-IN')}</strong>.</p>
-        `;
+        const connectExpertBtn = document.getElementById('connectExpertBtn');
+        const expertModal = document.getElementById('expertModal');
+        if(connectExpertBtn) {
+            connectExpertBtn.addEventListener('click', () => {
+                expertModal.classList.remove('hidden');
+                expertModal.classList.add('flex');
+            });
+        }
     }
-
-    // *** NEW: Add the CTA button to the summary box HTML ***
-    summaryHTML += `
-        <button id="connectExpertBtn" class="w-full mt-4 bg-investment_green text-white font-semibold py-2 px-4 rounded-lg hover:bg-opacity-90 transition-colors duration-300">
-            Connect to an Expert
-        </button>
-    `;
-    
-    summaryResultsContainer.innerHTML = summaryHTML;
-
-    // Re-attach the event listener since we are recreating the button
-    const connectExpertBtn = document.getElementById('connectExpertBtn');
-    const expertModal = document.getElementById('expertModal');
-    if(connectExpertBtn) {
-        connectExpertBtn.addEventListener('click', () => {
-            expertModal.classList.remove('hidden');
-            expertModal.classList.add('flex');
-        });
-    }
-}
 
     // --- 5. INITIALIZATION ---
     function initializeApp() {
