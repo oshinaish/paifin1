@@ -422,28 +422,13 @@ document.addEventListener('DOMContentLoaded', () => {
             percentage = Math.round((scenario.totalInterestPaid / (scenario.principal + scenario.totalInterestPaid)) * 100);
             percentageColor = 'text-textdark';
         } else {
-        let investmentHorizonDisplay;
-        if (title === 'Min Time To Repay') {
-            // For this goal, investment tenure is different from loan tenure
-            investmentHorizonDisplay = formatYearsAndMonths(scenario.investmentTenure);
-        } else {
-            // For all other goals (Optimal, Min Time to Offset, Planner), investment tenure is the same as loan tenure
-            investmentHorizonDisplay = formatYearsAndMonths(scenario.tenure);
-        }
-
-        const totalInvestmentAmount = scenario.postLoanMonthlyInvestment 
-            ? (scenario.postLoanMonthlyInvestment * scenario.investmentTenure * 12) 
-            : totalInvested;
-        const finalGains = scenario.futureValue - totalInvestmentAmount;
-
-        
             content = `
                 <table class="w-full text-xs">
                     <tbody>
                         <tr><td class="flex items-center py-1"><span class="w-2 h-2 rounded-full bg-gray-300 mr-2"></span>Invested</td><td class="text-right font-normal text-textdark">₹${totalInvestmentAmount.toLocaleString('en-IN')}</td></tr>
                         <tr><td class="flex items-center py-1"><span class="w-2 h-2 rounded-full bg-investment_green mr-2"></span>Gains</td><td class="text-right font-normal text-investment_green">₹${totalGains.toLocaleString('en-IN')}</td></tr>
                         <tr class="border-t"><td class="text-left font-bold py-1">Total Wealth</td><td class="text-right font-semibold text-textdark">₹${scenario.futureValue.toLocaleString('en-IN')}</td></tr>
-                        <tr><td class="text-left font-normal py-1">Horizon</td><td class="text-right font-normal text-textdark">${investmentHorizonDisplay}</td></tr>
+                        <tr><td class="text-left font-normal py-1">Horizon</td><td class="text-right font-normal text-textdark">${scenario.investmentTenure}</td></tr>
                     </tbody>
                 </table>
             `;
