@@ -1,7 +1,7 @@
 /**
  * PaiFinance - Interactive Script
- * Version: 20.1 - SUMMARY BOX VISIBILITY FIX
- * Last updated: September 10, 2025, 1:05 PM IST
+ * Version: 20.2 - SUMMARY BOX CONTENT FIX
+ * Last updated: September 10, 2025, 1:07 PM IST
  * Built by the Bros.
  */
 
@@ -308,7 +308,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function displayResults(scenario, title, tenureString = null) {
-        summaryResultsContainer.classList.remove('hidden'); // *** FIX: Ensure summary box is visible ***
+        summaryResultsContainer.classList.remove('hidden'); // Ensure summary box is visible
         const displayTenure = tenureString || formatYearsAndMonths(scenario.tenure);
         
         emiResultElement.textContent = `₹ ${scenario.emi.toLocaleString('en-IN')}`;
