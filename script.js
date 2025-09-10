@@ -308,72 +308,81 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function displayResults(scenario, title, tenureString = null) {
-        const displayTenure = tenureString || formatYearsAndMonths(scenario.tenure);
-        
-        emiResultElement.textContent = `₹ ${scenario.emi.toLocaleString('en-IN')}`;
-        
-        if (title === 'Min Time To Repay') {
-            monthlyInvestmentResult.textContent = `₹ ${scenario.postLoanMonthlyInvestment.toLocaleString('en-IN')}`;
-            monthlyInvestmentSubtext.textContent = '(after loan)';
-            monthlyInvestmentSubtext.classList.remove('hidden');
-        } else {
-            const investmentAmount = scenario.monthlyInvestment || 0;
-            monthlyInvestmentResult.textContent = `₹ ${investmentAmount.toLocaleString('en-IN')}`;
-            monthlyInvestmentSubtext.classList.add('hidden');
-        }
-        updatePieChart(scenario.emi, scenario.monthlyInvestment || 0);
-        
-        const investmentTenureForCalc = scenario.investmentTenure || scenario.tenure;
-        const totalInvested = scenario.postLoanMonthlyInvestment 
-            ? 0
-            : (scenario.monthlyInvestment || 0) * Math.round(investmentTenureForCalc * 12);
-            
-        const totalGains = scenario.futureValue - (scenario.postLoanMonthlyInvestment ? (scenario.postLoanMonthlyInvestment * scenario.investmentTenure * 12) : totalInvested);
-        const totalPaid = scenario.principal + scenario.totalInterestPaid;
-        
-        mainResultsContainer.innerHTML = `
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                ${createWidgetCard('Loan Details', scenario, 'primary', displayTenure)}
-                ${createWidgetCard('Investment Details', scenario, 'success', formatYearsAndMonths(scenario.investmentTenure), totalInvested, totalGains)}
-                ${createResultCard('Net Money Input', scenario, 'warning', totalInvested, totalPaid)}
-                ${createResultCard('Net Money Output', scenario, 'success', totalInvested, totalGains)}
-            </div>
-        `;
-
-        renderWidgetCharts(scenario, totalInvested, totalGains);
-        const chartData = generateComparisonData(scenario);
-        renderComparisonChart(chartData);
-
-        const crossoverYearText = chartData.crossoverYear ? `The key moment is in <strong>Year ${chartData.crossoverYear}</strong>, where your investment value is projected to surpass your outstanding loan balance.` : '';
-
-        chartExplanation.innerHTML = `
-            <h4 class="text-lg font-bold text-textdark mb-2 pt-4">${title}</h4>
-            <p>This chart visualizes the power of your strategy. Your loan balance will be <strong>₹0</strong> after ${displayTenure}, while your total wealth is projected to grow to <strong>₹${scenario.futureValue.toLocaleString('en-IN')}</strong> by the end of your planning horizon.</p>
-            <p class="mt-2">${crossoverYearText}</p>
-        `;
-
-        const amortizationData = generateAmortizationSchedule(scenario);
-        renderAmortizationTable(amortizationData);
-        amortizationExplanation.innerHTML = `
-            <h4 class="text-lg font-bold text-textdark mb-2 pt-4">Loan Amortization Schedule</h4>
-            <p>This schedule shows how your accelerated payments quickly pay down your loan. You can see how much of your annual payments go towards the principal versus the interest until the loan is fully paid off.</p>
-        `;
-
-        if (title !== 'Your Strategy Visualised') {
-            paiVsTraditionalContainer.classList.remove('hidden');
-            const paiVsTraditionalData = generatePaiVsTraditionalData(scenario);
-            renderPaiVsTraditionalChart(paiVsTraditionalData);
-            paiVsTraditionalExplanation.innerHTML = `
-                <h4 class="text-lg font-bold text-textdark mb-2 pt-4">PaiFinance vs. Traditional Loans</h4>
-                <p>The <span class="font-semibold text-danger">red line</span> shows your net position with a traditional loan, ending at <strong class="text-danger">-₹${scenario.totalInterestPaid.toLocaleString('en-IN')}</strong>.</p>
-                <p class="mt-2">The <span class="font-semibold text-investment_green">green line</span> shows how this strategy helps you build positive net wealth, ending at <strong class="text-investment_green">₹${scenario.netWealth.toLocaleString('en-IN')}</strong>.</p>
-            `;
-        } else {
-             paiVsTraditionalContainer.classList.add('hidden');
-        }
-        
-        updateSummaryBox(scenario, title, displayTenure, chartData.crossoverYear);
+    const displayTenure = tenureString || formatYearsAndMonths(scenario.tenure);
+    
+    emiResultElement.textContent = `₹ ${scenario.emi.toLocaleString('en-IN')}`;
+    
+    if (title === 'Min Time To Repay') {
+        monthlyInvestmentResult.textContent = `₹ ${scenario.postLoanMonthlyInvestment.toLocaleString('en-IN')}`;
+        monthlyInvestmentSubtext.textContent = '(after loan)';
+        monthlyInvestmentSubtext.classList.remove('hidden');
+    } else {
+        const investmentAmount = scenario.monthlyInvestment || 0;
+        monthlyInvestmentResult.textContent = `₹ ${investmentAmount.toLocaleString('en-IN')}`;
+        monthlyInvestmentSubtext.classList.add('hidden');
     }
+    updatePieChart(scenario.emi, scenario.monthlyInvestment || 0);
+    
+    const investmentTenureForCalc = scenario.investmentTenure || scenario.tenure;
+    const totalInvested = scenario.postLoanMonthlyInvestment 
+        ? 0
+        : (scenario.monthlyInvestment || 0) * Math.round(investmentTenureForCalc * 12);
+        
+    const totalGains = scenario.futureValue - (scenario.postLoanMonthlyInvestment ? (scenario.postLoanMonthlyInvestment * scenario.investmentTenure * 12) : totalInvested);
+    const totalPaid = scenario.principal + scenario.totalInterestPaid;
+    
+    mainResultsContainer.innerHTML = `
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            ${createWidgetCard('Loan Details', scenario, 'primary', displayTenure)}
+            ${createWidgetCard('Investment Details', scenario, 'success', formatYearsAndMonths(scenario.investmentTenure), totalInvested, totalGains)}
+            ${createResultCard('Net Money Input', scenario, 'warning', totalInvested, totalPaid)}
+            ${createResultCard('Net Money Output', scenario, 'success', totalInvested, totalGains)}
+        </div>
+    `;
+
+    renderWidgetCharts(scenario, totalInvested, totalGains);
+    const chartData = generateComparisonData(scenario);
+    renderComparisonChart(chartData);
+
+    const crossoverYearText = chartData.crossoverYear ? `The key moment is in <strong>Year ${chartData.crossoverYear}</strong>, where your investment value is projected to surpass your outstanding loan balance.` : '';
+
+    chartExplanation.innerHTML = `
+        <h4 class="text-lg font-bold text-textdark mb-2 pt-4">${title}</h4>
+        <p>This chart visualizes the power of your strategy. Your loan balance will be <strong>₹0</strong> after ${displayTenure}, while your total wealth is projected to grow to <strong>₹${scenario.futureValue.toLocaleString('en-IN')}</strong> by the end of your planning horizon.</p>
+        <p class="mt-2">${crossoverYearText}</p>
+    `;
+
+    const amortizationData = generateAmortizationSchedule(scenario);
+    renderAmortizationTable(amortizationData);
+    amortizationExplanation.innerHTML = `
+        <h4 class="text-lg font-bold text-textdark mb-2 pt-4">Loan Amortization Schedule</h4>
+        <p>This schedule shows how your accelerated payments quickly pay down your loan. You can see how much of your annual payments go towards the principal versus the interest until the loan is fully paid off.</p>
+    `;
+    
+    // --- UPDATED LOGIC TO CHOOSE THE CORRECT CHART ---
+    if (title === 'Min Time To Repay') {
+        paiVsTraditionalContainer.classList.remove('hidden');
+        const netWealthData = generateNetWealthData(scenario);
+        renderPaiVsTraditionalChart(netWealthData);
+        paiVsTraditionalExplanation.innerHTML = `
+            <h4 class="text-lg font-bold text-textdark mb-2 pt-4">Your Net Wealth Journey</h4>
+            <p>This chart shows your financial journey. Your net wealth initially decreases as you pay interest. After the loan is paid off in <strong class="text-investment_green">${displayTenure}</strong>, your wealth grows rapidly as the entire budget is invested.</p>
+        `;
+    } else if (title !== 'Your Strategy Visualised') {
+        paiVsTraditionalContainer.classList.remove('hidden');
+        const paiVsTraditionalData = generatePaiVsTraditionalData(scenario);
+        renderPaiVsTraditionalChart(paiVsTraditionalData);
+        paiVsTraditionalExplanation.innerHTML = `
+            <h4 class="text-lg font-bold text-textdark mb-2 pt-4">PaiFinance vs. Traditional Loans</h4>
+            <p>The <span class="font-semibold text-danger">red line</span> shows your net position with a traditional loan, ending at <strong class="text-danger">-₹${scenario.totalInterestPaid.toLocaleString('en-IN')}</strong>.</p>
+            <p class="mt-2">The <span class="font-semibold text-investment_green">green line</span> shows how this strategy helps you build positive net wealth, ending at <strong class="text-investment_green">₹${scenario.netWealth.toLocaleString('en-IN')}</strong>.</p>
+        `;
+    } else {
+         paiVsTraditionalContainer.classList.add('hidden');
+    }
+    
+    updateSummaryBox(scenario, title, displayTenure, crossoverYear);
+}
 
     function createResultCard(title, scenario, color, totalInvested, totalPaidOrGains) {
         let content;
@@ -636,6 +645,38 @@ document.addEventListener('DOMContentLoaded', () => {
         return schedule;
     }
 
+    function generateNetWealthData(scenario) {
+    const labels = [];
+    const netWealthData = [];
+    let cumulativeInterest = 0;
+    let investmentValue = 0;
+    const monthlyLoanRate = scenario.loanAnnualRate / 100 / 12;
+    const monthlyInvestmentRate = scenario.investmentAnnualRate / 100 / 12;
+    let remainingLoan = scenario.principal;
+    const totalHorizonMonths = (scenario.tenure + scenario.investmentTenure) * 12;
+
+    for (let year = 0; year <= Math.ceil(totalHorizonMonths / 12); year++) {
+        labels.push(`Yr ${year}`);
+        netWealthData.push(investmentValue - cumulativeInterest);
+
+        for (let month = 1; month <= 12; month++) {
+            const currentMonth = (year * 12) + month;
+            if (currentMonth <= scenario.tenure * 12) {
+                // Loan Payoff Phase
+                if (remainingLoan > 0) {
+                    const interest = remainingLoan * monthlyLoanRate;
+                    cumulativeInterest += interest;
+                    const principalPaid = scenario.emi - interest;
+                    remainingLoan -= principalPaid;
+                }
+            } else {
+                // Investment Phase
+                investmentValue = (investmentValue + scenario.postLoanMonthlyInvestment) * (1 + monthlyInvestmentRate);
+            }
+        }
+    }
+    return { labels, netWealthData };
+}
     function renderAmortizationTable(data) {
         let tableHTML = `<table class="w-full text-sm text-left"><thead class="text-xs text-textdark uppercase bg-gray-50 sticky top-0"><tr><th scope="col" class="px-6 py-3">Year</th><th scope="col" class="px-6 py-3">Principal Paid</th><th scope="col" class="px-6 py-3">Interest Paid</th><th scope="col" class="px-6 py-3">Ending Balance</th></tr></thead><tbody>`;
         data.forEach(row => {
@@ -683,19 +724,32 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderPaiVsTraditionalChart(data) {
-        if (paiVsTraditionalChart) paiVsTraditionalChart.destroy();
-        paiVsTraditionalChart = new Chart(paiVsTraditionalChartCanvas, {
-            type: 'line',
-            data: {
-                labels: data.labels,
-                datasets: [
-                    { label: 'PaiFinance Net Wealth', data: data.paiData, borderColor: '#1B9272', backgroundColor: 'rgba(27, 146, 114, 0.1)', fill: true, tension: 0.3 },
-                    { label: 'Traditional Net Wealth', data: data.traditionalData, borderColor: '#EF4444', backgroundColor: 'rgba(239, 68, 68, 0.1)', fill: true, tension: 0.3 }
-                ]
-            },
-            options: { responsive: true, maintainAspectRatio: false, scales: { y: { ticks: { callback: function(value) { return `₹${(value / 100000).toFixed(0)}L`; } } } } }
+    if (paiVsTraditionalChart) paiVsTraditionalChart.destroy();
+    
+    let datasets = [];
+    // Check if the data is for the single-line net wealth chart
+    if (data.netWealthData) {
+        datasets.push({
+            label: 'Net Wealth',
+            data: data.netWealthData,
+            borderColor: '#1B9272',
+            backgroundColor: 'rgba(27, 146, 114, 0.1)',
+            fill: true,
+            tension: 0.3,
         });
+    } else { // Otherwise, render the two-line comparison chart
+        datasets.push(
+            { label: 'PaiFinance Net Wealth', data: data.paiData, borderColor: '#1B9272', backgroundColor: 'rgba(27, 146, 114, 0.1)', fill: true, tension: 0.3 },
+            { label: 'Traditional Net Wealth', data: data.traditionalData, borderColor: '#EF4444', backgroundColor: 'rgba(239, 68, 68, 0.1)', fill: true, tension: 0.3 }
+        );
     }
+
+    paiVsTraditionalChart = new Chart(paiVsTraditionalChartCanvas, {
+        type: 'line',
+        data: { labels: data.labels, datasets: datasets },
+        options: { responsive: true, maintainAspectRatio: false, scales: { y: { ticks: { callback: function(value) { return `₹${(value / 100000).toFixed(0)}L`; } } } } }
+    });
+}
 
     function updateSummaryBox(scenario, title, displayTenure, crossoverYear) {
     summaryResultsContainer.classList.remove('hidden');
