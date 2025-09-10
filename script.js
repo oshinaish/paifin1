@@ -333,8 +333,8 @@ document.addEventListener('DOMContentLoaded', () => {
         
         mainResultsContainer.innerHTML = `
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                ${createWidgetCard('Loan Details', scenario, 'primary', displayTenure)}
-                ${createWidgetCard('Investment Details', scenario, 'success', formatYearsAndMonths(scenario.investmentTenure), totalInvested, totalGains)}
+                ${('Loan Details', scenario, 'primary', displayTenure)}
+                ${('Investment Details', scenario, 'success', formatYearsAndMonths(scenario.investmentTenure), totalInvested, totalGains)}
                 ${createResultCard('Net Money Input', scenario, 'warning', totalInvested, totalPaid)}
                 ${createResultCard('Net Money Output', scenario, 'success', totalInvested, totalGains)}
             </div>
@@ -422,8 +422,21 @@ document.addEventListener('DOMContentLoaded', () => {
             percentage = Math.round((scenario.totalInterestPaid / (scenario.principal + scenario.totalInterestPaid)) * 100);
             percentageColor = 'text-textdark';
         } else {
-             const totalInvestmentAmount = scenario.postLoanMonthlyInvestment ? (scenario.postLoanMonthlyInvestment * scenario.investmentTenure * 12) : totalInvested;
-            const investmentHorizonDisplay = formatYearsAndMonths(scenario.investmentTenure);
+        let investmentHorizonDisplay;
+        if (title === 'Min Time To Repay') {
+            // For this goal, investment tenure is different from loan tenure
+            investmentHorizonDisplay = formatYearsAndMonths(scenario.investmentTenure);
+        } else {
+            // For all other goals (Optimal, Min Time to Offset, Planner), investment tenure is the same as loan tenure
+            investmentHorizonDisplay = formatYearsAndMonths(scenario.tenure);
+        }
+
+        const totalInvestmentAmount = scenario.postLoanMonthlyInvestment 
+            ? (scenario.postLoanMonthlyInvestment * scenario.investmentTenure * 12) 
+            : totalInvested;
+        const finalGains = scenario.futureValue - totalInvestmentAmount;
+
+        
             content = `
                 <table class="w-full text-xs">
                     <tbody>
