@@ -656,7 +656,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let paiRemainingLoan = scenario.principal;
 
     // --- TRADITIONAL (SEQUENTIAL) METHOD VARIABLES ---
-    const traditionalLoanPayoffMonths = calculateTenureMonths(scenario.principal, scenario.loanAnnualRate, scenario.emi + (scenario.monthlyInvestment || 0));
+    const totalBudget = scenario.emi + (scenario.monthlyInvestment || 0); // Define the total budget once
+    const traditionalLoanPayoffMonths = calculateTenureMonths(scenario.principal, scenario.loanAnnualRate, totalBudget);
     let traditionalInvestmentValue = 0;
     let traditionalCumulativeInterest = 0;
     let traditionalRemainingLoan = scenario.principal;
@@ -674,7 +675,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const currentMonth = (year * 12) + month;
 
             // --- PAI (PARALLEL) METHOD CALCULATION ---
-            if (paiRemainingLoan > 0) {
+            if (currentMonth <= scenario.tenure * 12 && paiRemainingLoan > 0) {
                 const interest = paiRemainingLoan * monthlyLoanRate;
                 paiCumulativeInterest += interest;
                 const principalPaid = scenario.emi - interest;
@@ -688,12 +689,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (traditionalRemainingLoan > 0) {
                     const interest = traditionalRemainingLoan * monthlyLoanRate;
                     traditionalCumulativeInterest += interest;
-                    const principalPaid = (scenario.emi + (scenario.monthlyInvestment || 0)) - interest;
+                    const principalPaid = totalBudget - interest;
                     traditionalRemainingLoan -= principalPaid;
                 }
             } else {
                 // Phase 2: Investment
-                const totalBudget = scenario.emi + (scenario.monthlyInvestment || 0);
                 traditionalInvestmentValue = (traditionalInvestmentValue + totalBudget) * (1 + monthlyInvestmentRate);
             }
         }
