@@ -1,11 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- Google Tag Manager -->
     <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
     new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
     j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
     })(window,document,'script','dataLayer','GTM-MXDD3M82');</script>
+    <!-- End Google Tag Manager -->
+    
+    <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-LRCM7PW2Y0"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -17,8 +21,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PaiFinance - Smart Strategy Tool</title>
+        <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
+        // Tailwind CSS configuration
         tailwind.config = {
             theme: {
                 extend: {
@@ -50,10 +56,13 @@
             }
         }
     </script>
+        <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Albert+Sans:wght@400;800&display=swap" rel="stylesheet">
+         <!-- Chart.js CDN -->   
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
     <style>
+                /* Custom styles */
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #EDF0EF; border-radius: 10px; }
         ::-webkit-scrollbar-thumb { background: #888; border-radius: 10px; }
@@ -91,10 +100,13 @@
             border: 2px solid;
             animation: gradient-border 3s linear infinite;
         }
+        
+                /* --- STYLES FOR ONBOARDING --- */
         .onboarding-step { display: none; }
         .onboarding-step.active { display: block; }
         .progress-bar-fill { transition: width 0.3s ease-in-out; }
 
+                /* --- STYLES FOR CHATBOT --- */
         #chatbot-icon-button {
             transition: transform 0.5s ease-out, opacity 0.5s ease-out;
             transform: translateX(120%);
@@ -112,8 +124,11 @@
 </head>
 <body class="font-albert_sans bg-white text-textdark min-h-screen flex flex-col">
 
+    
+    <!-- Google Tag Manager (noscript) -->
     <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MXDD3M82"
     height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
     
     <div id="welcomeScreen" class="hidden fixed inset-0 bg-background z-50 flex flex-col items-center justify-center p-8 text-center">
         <img src="loogo.svg" alt="Pai Logo" class="h-16 w-auto mb-4">
@@ -187,6 +202,7 @@
             </div>
         </div>
 
+            <!-- NEW: Post-Onboarding Summary Modal -->
         <div id="postOnboardingSummaryModal" class="hidden fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center p-4 z-50">
             <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg text-left p-8 transform transition-all relative">
                 <button id="closeSummaryModal" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors z-10">
@@ -226,8 +242,10 @@
             </div>
         </div>
 
+        <!-- NEW: Connect to Expert Modal -->
         <div id="expertModal" class="hidden fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center p-4 z-50">
             <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-8 transform transition-all relative">
+             <!-- Close button -->
                 <button id="closeExpertModal" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors z-10">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
