@@ -727,9 +727,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // *** NEW: Add the CTA button to the summary box HTML ***
     summaryHTML += `
-        <button id="connectExpertBtn" class="w-full mt-4 bg-investment_green text-white font-semibold py-2 px-4 rounded-lg hover:bg-opacity-90 transition-colors duration-300">
-            Connect to an Expert
-        </button>
+        <button id="connectExpertBtn" class="w-full mt-4 bg-transparent border-2 border-investment_green text-investment_green font-semibold py-2 px-4 rounded-lg hover:bg-investment_green hover:text-white transition-colors duration-300">
+        Connect to an Expert
+    </button>
     `;
     
     summaryResultsContainer.innerHTML = summaryHTML;
