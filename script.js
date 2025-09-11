@@ -336,7 +336,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 ${createWidgetCard('Loan Details', scenario, 'primary', displayTenure)}
                 ${createWidgetCard('Investment Details', scenario, 'success', formatYearsAndMonths(scenario.investmentTenure), totalInvested, totalGains)}
                 ${createResultCard('Net Money Input', scenario, 'warning', totalInvested, totalPaid)}
-                ${createResultCard('Net Money Output', scenario, 'success', totalInvested, totalGains)}
+                ${createResultCard('Net Wealth', scenario, 'success', totalInvested, totalGains)}
             </div>
         `;
 
@@ -390,20 +390,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 </table>
             `;
         } else {
-            const totalGains = totalPaidOrGains;
-             const totalReturn = scenario.principal + totalGains;
-            content = `
-                <table class="w-full text-xs">
-                    <tbody>
-                        <tr><td class="text-left py-1">Principal Received</td><td class="text-right font-normal">₹${scenario.principal.toLocaleString('en-IN')}</td></tr>
-                        <tr><td class="text-left py-1">Gains Made</td><td class="text-right font-normal">₹${totalGains.toLocaleString('en-IN')}</td></tr>
-                        <tr class="bg-gray-100 rounded"><td class="text-left font-bold p-1">Total Return</td><td class="text-right font-bold p-1">₹${totalReturn.toLocaleString('en-IN')}</td></tr>
-                    </tbody>
-                </table>
-            `;
-        }
-        return `<div class="bg-card p-4 rounded-lg shadow-default"><h3 class="text-sm font-bold text-textdark mb-2 text-center">${title}</h3><div class="text-textlight leading-relaxed text-xs">${content}</div></div>`;
+            if (title === 'Net Wealth') 
+            { 
+        const netWealth = scenario.futureValue - scenario.totalInterestPaid;
+        content = `
+            <table class="w-full text-xs">
+                <tbody>
+                    <tr><td class="text-left py-1">Total Wealth</td><td class="text-right font-semibold">₹${scenario.futureValue.toLocaleString('en-IN')}</td></tr>
+                    <tr><td class="text-left py-1">(-) Total Interest Paid</td><td class="text-right font-semibold text-danger">- ₹${scenario.totalInterestPaid.toLocaleString('en-IN')}</td></tr>
+                    <tr class="bg-green-50 rounded"><td class="text-left font-bold p-1">Net Wealth</td><td class="text-right font-bold p-1 text-investment_green">₹${netWealth.toLocaleString('en-IN')}</td></tr>
+                </tbody>
+            </table>
+        `;
     }
+    return `<div class="bg-card p-4 rounded-lg shadow-default"><h3 class="text-sm font-bold text-textdark mb-2 text-center">${title}</h3><div class="text-textlight leading-relaxed text-xs">${content}</div></div>`;
+}
+           
     
     function createWidgetCard(title, scenario, color, displayTenure, totalInvested, totalGains) {
         let content, canvasId, percentage, percentageColor;
