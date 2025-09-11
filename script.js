@@ -383,8 +383,8 @@ document.addEventListener('DOMContentLoaded', () => {
             content = `
                 <table class="w-full text-xs">
                     <tbody>
-                        <tr><td class="text-left py-1">Total EMIs</td><td class="text-right font-semibold">₹${totalPaid.toLocaleString('en-IN')}</td></tr>
-                        <tr><td class="text-left py-1">Total Investments</td><td class="text-right font-semibold">₹${((scenario.postLoanMonthlyInvestment * scenario.investmentTenure * 12) || totalInvested).toLocaleString('en-IN')}</td></tr>
+                        <tr><td class="text-left py-1">Total EMIs</td><td class="text-right font-normal">₹${totalPaid.toLocaleString('en-IN')}</td></tr>
+                        <tr><td class="text-left py-1">Total Investments</td><td class="text-right font-normal">₹${((scenario.postLoanMonthlyInvestment * scenario.investmentTenure * 12) || totalInvested).toLocaleString('en-IN')}</td></tr>
                         <tr class="bg-gray-100 rounded"><td class="text-left font-bold p-1">Total Outflow</td><td class="text-right font-bold p-1">₹${totalOutflow.toLocaleString('en-IN')}</td></tr>
                     </tbody>
                 </table>
@@ -395,8 +395,8 @@ document.addEventListener('DOMContentLoaded', () => {
             content = `
                 <table class="w-full text-xs">
                     <tbody>
-                        <tr><td class="text-left py-1">Principal Received</td><td class="text-right font-semibold">₹${scenario.principal.toLocaleString('en-IN')}</td></tr>
-                        <tr><td class="text-left py-1">Gains Made</td><td class="text-right font-semibold">₹${totalGains.toLocaleString('en-IN')}</td></tr>
+                        <tr><td class="text-left py-1">Principal Received</td><td class="text-right font-normal">₹${scenario.principal.toLocaleString('en-IN')}</td></tr>
+                        <tr><td class="text-left py-1">Gains Made</td><td class="text-right font-normal">₹${totalGains.toLocaleString('en-IN')}</td></tr>
                         <tr class="bg-gray-100 rounded"><td class="text-left font-bold p-1">Total Return</td><td class="text-right font-bold p-1">₹${totalReturn.toLocaleString('en-IN')}</td></tr>
                     </tbody>
                 </table>
