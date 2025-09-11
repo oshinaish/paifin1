@@ -402,8 +402,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!decimalYears || decimalYears < 0) return "0 M";
         const years = Math.floor(decimalYears);
         const months = Math.round((decimalYears - years) * 12);
-        if (years > 0 && months > 0) return `${years} Y, ${months} M`;
-        if (years > 0) return `${years} Y`;
+        if (years > 0 && months > 0) return `${years} Yr, ${months} M`;
+        if (years > 0) return `${years} Yr`;
         if (months > 0) return `${months} M`;
         return "0 M";
     }
