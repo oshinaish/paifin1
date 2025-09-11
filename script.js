@@ -173,6 +173,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 500);
     }
 
+    
     function findOptimalStrategy() {
         finalResultsSection.classList.remove('hidden');
         comparisonChartContainer.classList.remove('hidden');
@@ -259,6 +260,104 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- 4. UI INTERACTIVITY & DISPLAY FUNCTIONS ---
+   function renderResultWidgets(scenario, displayTenure) {
+    // --- 1. Determine Conditional Values Based on the Selected Goal ---
+    const selectedGoal = document.querySelector('.goal-button.selected').dataset.goal;
+    let investmentHorizonDisplay;
+
+    if (selectedGoal === 'min-time-repay') {
+        // This is the only goal where loan tenure and investment horizon are different
+        investmentHorizonDisplay = formatYearsAndMonths(scenario.investmentTenure);
+    } else {
+        // For all other goals, the horizon is the same as the loan tenure
+        investmentHorizonDisplay = formatYearsAndMonths(scenario.tenure);
+    }
+
+    // --- 2. Define data for each of the four widgets ---
+    const totalPaid = scenario.principal + scenario.totalInterestPaid;
+    const totalInvested = scenario.postLoanMonthlyInvestment 
+        ? (scenario.postLoanMonthlyInvestment * scenario.investmentTenure * 12) 
+        : (scenario.monthlyInvestment || 0) * Math.round(scenario.tenure * 12);
+    const totalGains = scenario.futureValue - totalInvested;
+    const netWealth = scenario.futureValue - scenario.totalInterestPaid;
+
+    // --- 3. Build the HTML for all four widgets ---
+    mainResultsContainer.innerHTML = `
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="bg-card p-4 rounded-lg shadow-default">
+                <h3 class="text-sm font-bold text-textdark mb-2 text-center">Loan Details</h3>
+                <div class="flex items-center gap-4">
+                    <div class="w-20 h-20 relative flex-shrink-0">
+                        <canvas id="loanWidgetChart"></canvas>
+                        <div class="absolute inset-0 flex items-center justify-center text-base font-bold text-textdark">
+                            <span>${Math.round((scenario.totalInterestPaid / totalPaid) * 100)}%</span>
+                        </div>
+                    </div>
+                    <div class="text-textlight leading-relaxed w-full">
+                        <table class="w-full text-xs">
+                            <tbody>
+                                <tr><td class="flex items-center py-1"><span class="w-2 h-2 rounded-full bg-emi_purple mr-2"></span>Principal</td><td class="text-right font-semibold text-textdark">₹${scenario.principal.toLocaleString('en-IN')}</td></tr>
+                                <tr><td class="flex items-center py-1"><span class="w-2 h-2 rounded-full bg-gray-300 mr-2"></span>Interest</td><td class="text-right font-semibold text-emi_purple">₹${scenario.totalInterestPaid.toLocaleString('en-IN')}</td></tr>
+                                <tr class="border-t"><td class="text-left font-bold py-1">Paid Off In</td><td class="text-right font-bold text-textdark">${displayTenure}</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-card p-4 rounded-lg shadow-default">
+                <h3 class="text-sm font-bold text-textdark mb-2 text-center">Investment Details</h3>
+                <div class="flex items-center gap-4">
+                    <div class="w-20 h-20 relative flex-shrink-0">
+                        <canvas id="investmentWidgetChart"></canvas>
+                        <div class="absolute inset-0 flex items-center justify-center text-base font-bold text-textdark">
+                            <span>${scenario.futureValue > 0 ? Math.round((totalGains / scenario.futureValue) * 100) : 0}%</span>
+                        </div>
+                    </div>
+                    <div class="text-textlight leading-relaxed w-full">
+                        <table class="w-full text-xs">
+                            <tbody>
+                                <tr><td class="flex items-center py-1"><span class="w-2 h-2 rounded-full bg-investment_green mr-2"></span>Invested</td><td class="text-right font-semibold text-textdark">₹${totalInvested.toLocaleString('en-IN')}</td></tr>
+                                <tr><td class="flex items-center py-1"><span class="w-2 h-2 rounded-full bg-gray-300 mr-2"></span>Gains</td><td class="text-right font-semibold text-investment_green">₹${totalGains.toLocaleString('en-IN')}</td></tr>
+                                <tr class="border-t"><td class="text-left font-bold py-1">Horizon</td><td class="text-right font-bold text-textdark">${investmentHorizonDisplay}</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-card p-4 rounded-lg shadow-default">
+                <h3 class="text-sm font-bold text-textdark mb-2 text-center">Net Money Input</h3>
+                <div class="text-textlight leading-relaxed text-xs">
+                    <table class="w-full text-xs">
+                        <tbody>
+                            <tr><td class="text-left py-1">Total EMIs</td><td class="text-right font-semibold">₹${totalPaid.toLocaleString('en-IN')}</td></tr>
+                            <tr><td class="text-left py-1">Total Investments</td><td class="text-right font-semibold">₹${totalInvested.toLocaleString('en-IN')}</td></tr>
+                            <tr class="bg-gray-100 rounded"><td class="text-left font-bold p-1">Total Outflow</td><td class="text-right font-bold p-1">₹${(totalPaid + totalInvested).toLocaleString('en-IN')}</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="bg-card p-4 rounded-lg shadow-default">
+                <h3 class="text-sm font-bold text-textdark mb-2 text-center">Net Wealth</h3>
+                <div class="text-textlight leading-relaxed text-xs">
+                    <table class="w-full text-xs">
+                        <tbody>
+                            <tr><td class="text-left py-1">Total Wealth</td><td class="text-right font-semibold">₹${scenario.futureValue.toLocaleString('en-IN')}</td></tr>
+                            <tr><td class="text-left py-1">(-) Total Interest Paid</td><td class="text-right font-semibold text-danger">- ₹${scenario.totalInterestPaid.toLocaleString('en-IN')}</td></tr>
+                            <tr class="bg-green-50 rounded"><td class="text-left font-bold p-1">Net Wealth</td><td class="text-right font-bold p-1 text-investment_green">₹${netWealth.toLocaleString('en-IN')}</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    `;
+
+    // --- 4. Render the Mini Doughnut Charts ---
+    renderWidgetCharts(scenario, totalInvested, totalGains);
+}
+    
     function updatePlannerResults() {
         const principal = parseFloat(loanAmountInput.value);
         const annualRate = parseFloat(loanInterestRateInput.value);
@@ -308,73 +407,52 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function displayResults(scenario, title, tenureString = null) {
-        const displayTenure = tenureString || formatYearsAndMonths(scenario.tenure);
-        
-        emiResultElement.textContent = `₹ ${scenario.emi.toLocaleString('en-IN')}`;
-        
-        if (title === 'Min Time To Repay') {
-            monthlyInvestmentResult.textContent = `₹ ${scenario.postLoanMonthlyInvestment.toLocaleString('en-IN')}`;
-            monthlyInvestmentSubtext.textContent = '(after loan)';
-            monthlyInvestmentSubtext.classList.remove('hidden');
-        } else {
-            const investmentAmount = scenario.monthlyInvestment || 0;
-            monthlyInvestmentResult.textContent = `₹ ${investmentAmount.toLocaleString('en-IN')}`;
-            monthlyInvestmentSubtext.classList.add('hidden');
-        }
-        updatePieChart(scenario.emi, scenario.monthlyInvestment || 0);
-        
-        const investmentTenureForCalc = scenario.investmentTenure || scenario.tenure;
-        const totalInvested = scenario.postLoanMonthlyInvestment 
-            ? 0
-            : (scenario.monthlyInvestment || 0) * Math.round(investmentTenureForCalc * 12);
-            
-        const totalGains = scenario.futureValue - (scenario.postLoanMonthlyInvestment ? (scenario.postLoanMonthlyInvestment * scenario.investmentTenure * 12) : totalInvested);
-        const totalPaid = scenario.principal + scenario.totalInterestPaid;
-        
-        mainResultsContainer.innerHTML = `
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                ${createWidgetCard('Loan Details', scenario, 'primary', displayTenure)}
-                ${createWidgetCard('Investment Details', scenario, 'success', formatYearsAndMonths(scenario.investmentTenure), totalInvested, totalGains)}
-                ${createResultCard('Net Money Input', scenario, 'warning', totalInvested, totalPaid)}
-                ${createResultCard('Net Wealth', scenario, 'success', totalInvested, totalGains)}
-            </div>
-        `;
-
-        renderWidgetCharts(scenario, totalInvested, totalGains);
-        const chartData = generateComparisonData(scenario);
-        renderComparisonChart(chartData);
-
-        const crossoverYearText = chartData.crossoverYear ? `The key moment is in <strong>Year ${chartData.crossoverYear}</strong>, where your investment value is projected to surpass your outstanding loan balance.` : '';
-
-        chartExplanation.innerHTML = `
-            <h4 class="text-lg font-bold text-textdark mb-2 pt-4">${title}</h4>
-            <p>This chart visualizes the power of your strategy. Your loan balance will be <strong>₹0</strong> after ${displayTenure}, while your total wealth is projected to grow to <strong>₹${scenario.futureValue.toLocaleString('en-IN')}</strong> by the end of your planning horizon.</p>
-            <p class="mt-2">${crossoverYearText}</p>
-        `;
-
-        const amortizationData = generateAmortizationSchedule(scenario);
-        renderAmortizationTable(amortizationData);
-        amortizationExplanation.innerHTML = `
-            <h4 class="text-lg font-bold text-textdark mb-2 pt-4">Loan Amortization Schedule</h4>
-            <p>This schedule shows how your accelerated payments quickly pay down your loan. You can see how much of your annual payments go towards the principal versus the interest until the loan is fully paid off.</p>
-        `;
-
-        if (title !== 'Your Strategy Visualised') {
-            paiVsTraditionalContainer.classList.remove('hidden');
-            const paiVsTraditionalData = generatePaiVsTraditionalData(scenario);
-            renderPaiVsTraditionalChart(paiVsTraditionalData);
-            paiVsTraditionalExplanation.innerHTML = `
-                <h4 class="text-lg font-bold text-textdark mb-2 pt-4">PaiFinance vs. Traditional Loans</h4>
-                <p>The <span class="font-semibold text-danger">red line</span> shows your net position with a traditional loan, ending at <strong class="text-danger">-₹${scenario.totalInterestPaid.toLocaleString('en-IN')}</strong>.</p>
-                <p class="mt-2">The <span class="font-semibold text-investment_green">green line</span> shows how this strategy helps you build positive net wealth, ending at <strong class="text-investment_green">₹${scenario.netWealth.toLocaleString('en-IN')}</strong>.</p>
-            `;
-        } else {
-             paiVsTraditionalContainer.classList.add('hidden');
-        }
-        
-        updateSummaryBox(scenario, title, displayTenure, chartData.crossoverYear);
+    const displayTenure = tenureString || formatYearsAndMonths(scenario.tenure);
+    
+    // Update top-level UI elements
+    emiResultElement.textContent = `₹ ${scenario.emi.toLocaleString('en-IN')}`;
+    if (title === 'Min Time To Repay') {
+        monthlyInvestmentResult.textContent = `₹ ${scenario.postLoanMonthlyInvestment.toLocaleString('en-IN')}`;
+        monthlyInvestmentSubtext.textContent = '(after loan)';
+        monthlyInvestmentSubtext.classList.remove('hidden');
+    } else {
+        const investmentAmount = scenario.monthlyInvestment || 0;
+        monthlyInvestmentResult.textContent = `₹ ${investmentAmount.toLocaleString('en-IN')}`;
+        monthlyInvestmentSubtext.classList.add('hidden');
     }
+    updatePieChart(scenario.emi, scenario.monthlyInvestment || 0);
+    
+    // *** NEW: Call the single master function to create all widgets ***
+    renderResultWidgets(scenario, displayTenure);
+    
+    // Render all the main charts and tables below the widgets
+    const chartData = generateComparisonData(scenario);
+    renderComparisonChart(chartData);
+    const amortizationData = generateAmortizationSchedule(scenario);
+    renderAmortizationTable(amortizationData);
 
+    // Update the explanation texts for the charts
+    const crossoverYearText = chartData.crossoverYear ? `The key moment is in <strong>Year ${chartData.crossoverYear}</strong>, where your investment value is projected to surpass your outstanding loan balance.` : '';
+    chartExplanation.innerHTML = `<h4 class="text-lg font-bold text-textdark mb-2 pt-4">${title}</h4><p>This chart visualizes the power of your strategy...</p><p class="mt-2">${crossoverYearText}</p>`;
+    amortizationExplanation.innerHTML = `<h4 class="text-lg font-bold text-textdark mb-2 pt-4">Loan Amortization Schedule</h4><p>This schedule shows how your accelerated payments quickly pay down your loan...</p>`;
+    
+    if (title === 'Min Time To Repay') {
+        paiVsTraditionalContainer.classList.remove('hidden');
+        const netWealthData = generateNetWealthData(scenario);
+        renderPaiVsTraditionalChart(netWealthData);
+        paiVsTraditionalExplanation.innerHTML = `<h4 class="text-lg font-bold text-textdark mb-2 pt-4">Your Net Wealth Journey</h4><p>This chart shows your financial journey...</p>`;
+    } else if (title !== 'Your Strategy Visualised') {
+        paiVsTraditionalContainer.classList.remove('hidden');
+        const paiVsTraditionalData = generatePaiVsTraditionalData(scenario);
+        renderPaiVsTraditionalChart(paiVsTraditionalData);
+        paiVsTraditionalExplanation.innerHTML = `<h4 class="text-lg font-bold text-textdark mb-2 pt-4">PaiFinance vs. Traditional Loans</h4><p>The <span class="font-semibold text-danger">red line</span> shows... <strong class="text-danger">-₹${scenario.totalInterestPaid.toLocaleString('en-IN')}</strong>.</p><p class="mt-2">The <span class="font-semibold text-investment_green">green line</span> shows... <strong class="text-investment_green">₹${scenario.netWealth.toLocaleString('en-IN')}</strong>.</p>`;
+    } else {
+         paiVsTraditionalContainer.classList.add('hidden');
+    }
+    
+    updateSummaryBox(scenario, title, displayTenure, chartData.crossoverYear);
+} 
+    
     function createResultCard(title, scenario, color, totalInvested, totalPaidOrGains) {
         let content;
         if (title === 'Net Money Input') {
