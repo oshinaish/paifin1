@@ -395,8 +395,8 @@ document.addEventListener('DOMContentLoaded', () => {
         content = `
             <table class="w-full text-xs">
                 <tbody>
-                    <tr><td class="text-left py-1">Total Wealth</td><td class="text-right font-semibold">₹${scenario.futureValue.toLocaleString('en-IN')}</td></tr>
-                    <tr><td class="text-left py-1">(-) Total Interest Paid</td><td class="text-right font-semibold text-danger">- ₹${scenario.totalInterestPaid.toLocaleString('en-IN')}</td></tr>
+                    <tr><td class="text-left py-1">Total Wealth</td><td class="text-right font-normal">₹${scenario.futureValue.toLocaleString('en-IN')}</td></tr>
+                    <tr><td class="text-left py-1">Total Interest Paid</td><td class="text-right font-normal text-danger">- ₹${scenario.totalInterestPaid.toLocaleString('en-IN')}</td></tr>
                     <tr class="bg-green-50 rounded"><td class="text-left font-bold p-1">Net Wealth</td><td class="text-right font-bold p-1 text-investment_green">₹${netWealth.toLocaleString('en-IN')}</td></tr>
                 </tbody>
             </table>
