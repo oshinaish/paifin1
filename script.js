@@ -296,9 +296,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="text-textlight leading-relaxed w-full">
                         <table class="w-full text-xs">
                             <tbody>
-                                <tr><td class="flex items-center py-1"><span class="w-2 h-2 rounded-full bg-emi_purple mr-2"></span>Principal</td><td class="text-right font-semibold text-textdark">₹${scenario.principal.toLocaleString('en-IN')}</td></tr>
-                                <tr><td class="flex items-center py-1"><span class="w-2 h-2 rounded-full bg-gray-300 mr-2"></span>Interest</td><td class="text-right font-semibold text-emi_purple">₹${scenario.totalInterestPaid.toLocaleString('en-IN')}</td></tr>
-                                <tr class="border-t"><td class="text-left font-bold py-1">Paid Off In</td><td class="text-right font-bold text-textdark">${displayTenure}</td></tr>
+                                <tr><td class="flex items-center py-1"><span class="w-2 h-2 rounded-full bg-gray-300 mr-2"></span>Principal</td><td class="text-right font-normal text-textdark">₹${scenario.principal.toLocaleString('en-IN')}</td></tr>
+                                <tr><td class="flex items-center py-1"><span class="w-2 h-2 rounded-full bg-emi_purple mr-2"></span>Interest</td><td class="text-right font-normal text-emi_purple">₹${scenario.totalInterestPaid.toLocaleString('en-IN')}</td></tr>
+                                <tr class="border-t"><td class="text-left font-semibold py-1">Total Paid</td><td class="text-right font-semibold text-textdark">₹${(scenario.principal + scenario.totalInterestPaid).toLocaleString('en-IN')}</td></tr>
+                                <tr class="border-t"><td class="text-left font-normal py-1">Paid Off In</td><td class="text-right font-normal text-textdark">${displayTenure}</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -317,9 +318,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="text-textlight leading-relaxed w-full">
                         <table class="w-full text-xs">
                             <tbody>
-                                <tr><td class="flex items-center py-1"><span class="w-2 h-2 rounded-full bg-investment_green mr-2"></span>Invested</td><td class="text-right font-semibold text-textdark">₹${totalInvested.toLocaleString('en-IN')}</td></tr>
-                                <tr><td class="flex items-center py-1"><span class="w-2 h-2 rounded-full bg-gray-300 mr-2"></span>Gains</td><td class="text-right font-semibold text-investment_green">₹${totalGains.toLocaleString('en-IN')}</td></tr>
-                                <tr class="border-t"><td class="text-left font-bold py-1">Horizon</td><td class="text-right font-bold text-textdark">${investmentHorizonDisplay}</td></tr>
+                                <tr><td class="flex items-center py-1"><span class="w-2 h-2 rounded-full bg-gray-300 mr-2"></span>Invested</td><td class="text-right font-normal text-textdark">₹${totalInvested.toLocaleString('en-IN')}</td></tr>
+                                <tr><td class="flex items-center py-1"><span class="w-2 h-2 rounded-full bg-investment_green mr-2"></span>Gains</td><td class="text-right font-normal text-investment_green">₹${totalGains.toLocaleString('en-IN')}</td></tr>
+                                <tr class="border-t"><td class="text-left font-semibold py-1">Total Wealth</td><td class="text-right font-semibold text-textdark">₹${scenario.futureValue.toLocaleString('en-IN')}</td></tr>
+                                <tr class="border-t"><td class="text-left font-normal py-1">Horizon</td><td class="text-right font-normal text-textdark">${investmentHorizonDisplay}</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -331,9 +333,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="text-textlight leading-relaxed text-xs">
                     <table class="w-full text-xs">
                         <tbody>
-                            <tr><td class="text-left py-1">Total EMIs</td><td class="text-right font-semibold">₹${totalPaid.toLocaleString('en-IN')}</td></tr>
-                            <tr><td class="text-left py-1">Total Investments</td><td class="text-right font-semibold">₹${totalInvested.toLocaleString('en-IN')}</td></tr>
-                            <tr class="bg-gray-100 rounded"><td class="text-left font-bold p-1">Total Outflow</td><td class="text-right font-bold p-1">₹${(totalPaid + totalInvested).toLocaleString('en-IN')}</td></tr>
+                            <tr><td class="text-left py-1">Total EMIs</td><td class="text-right font-normal">₹${totalPaid.toLocaleString('en-IN')}</td></tr>
+                            <tr><td class="text-left py-1">Total Investments</td><td class="text-right font-normal">₹${totalInvested.toLocaleString('en-IN')}</td></tr>
+                            <tr class="bg-gray-100 rounded"><td class="text-left font-semibold p-1">Total Outflow</td><td class="text-right font-bold p-1">₹${(totalPaid + totalInvested).toLocaleString('en-IN')}</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -344,9 +346,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="text-textlight leading-relaxed text-xs">
                     <table class="w-full text-xs">
                         <tbody>
-                            <tr><td class="text-left py-1">Total Wealth</td><td class="text-right font-semibold">₹${scenario.futureValue.toLocaleString('en-IN')}</td></tr>
-                            <tr><td class="text-left py-1">(-) Total Interest Paid</td><td class="text-right font-semibold text-danger">- ₹${scenario.totalInterestPaid.toLocaleString('en-IN')}</td></tr>
-                            <tr class="bg-green-50 rounded"><td class="text-left font-bold p-1">Net Wealth</td><td class="text-right font-bold p-1 text-investment_green">₹${netWealth.toLocaleString('en-IN')}</td></tr>
+                            <tr><td class="text-left py-1">Total Wealth</td><td class="text-right font-normal">₹${scenario.futureValue.toLocaleString('en-IN')}</td></tr>
+                            <tr><td class="text-left py-1">Total Interest Paid</td><td class="text-right font-normal text-danger">- ₹${scenario.totalInterestPaid.toLocaleString('en-IN')}</td></tr>
+                            <tr class="bg-green-50 rounded"><td class="text-left font-semibold p-1">Net Wealth</td><td class="text-right font-bold p-1 text-investment_green">₹${netWealth.toLocaleString('en-IN')}</td></tr>
                         </tbody>
                     </table>
                 </div>
