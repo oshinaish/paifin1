@@ -389,8 +389,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     </tbody>
                 </table>
             `;
-        } else {
-            if (title === 'Net Wealth') 
+        } else if (title === 'Net Wealth') 
             { 
         const netWealth = scenario.futureValue - scenario.totalInterestPaid;
         content = `
