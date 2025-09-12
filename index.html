@@ -724,7 +724,7 @@
         </div>
 
     <script>
- document.addEventListener('DOMContentLoaded', () => {
+     document.addEventListener('DOMContentLoaded', () => {
             const faqItems = document.querySelectorAll('.faq-item');
             faqItems.forEach(item => {
                 const question = item.querySelector('.faq-question');
@@ -934,7 +934,7 @@
             // Show chatbot icon after a delay
             setTimeout(() => {
                 chatbotIcon.classList.add('visible');
-            }, 3000);
+            }, 2000);
 
             // Open/Close chat window
             chatbotIcon.addEventListener('click', () => {
@@ -975,7 +975,6 @@
                 expertModal.classList.remove('flex');
             });
 
-
             expertForm.addEventListener('submit', (e) => { e.preventDefault(); // Stop the form from reloading the page
            // 1. Capture the contact details from the form fields
            const nameInput = expertForm.querySelector('input[type="text"]');
@@ -991,7 +990,6 @@
              };
     
           // 3. Send the data to your Google Apps Script endpoint
-          // IMPORTANT: Replace the placeholder URL with your actual Web App URL
            const endpoint = 'https://script.google.com/macros/s/AKfycbzBh4JEOaaHUz1aAwVcGQqOZc6N3O0PIijHa8QSVTukMQHB-4jrnndo333djHz5je04/exec';
 
            // Temporarily show a "Submitting..." message
