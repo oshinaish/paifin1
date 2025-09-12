@@ -258,19 +258,15 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <h2 class="text-2xl font-bold text-center mb-4 text-textdark">Connect with an Expert</h2>
 <p class="text-center text-textlight mb-6">Please provide your details, and a financial advisor will reach out to you shortly.</p>
 <form id="expertForm">
-    <input type="text" name="name" placeholder="Full Name" required>
-    <input type="email" name="email" placeholder="Email Address" required>
-    <input type="tel" name="phone" placeholder="Phone Number" required>
+    <div class="space-y-4">
+    <input type="text" placeholder="Your Name" placeholder="Full Name" required class="w-full p-3 border border-gray-300 rounded-md focus:ring-investment_green focus:border-investment_green" required>
+    <input type="email" name="email" placeholder="Email Address" >
+    <input type="tel" name="phone" placeholder="Your Phone Number" required class="w-full p-3 border border-gray-300 rounded-md focus:ring-investment_green focus:border-investment_green">
     <input type="number" name="loanAmount" placeholder="Desired Loan Amount" required>
-    <button type="submit">Connect to Expert</button>
-</form>
-<div id="form-status"></div>  
-<div class="space-y-4">
-<input type="text" placeholder="Your Name" required class="w-full p-3 border border-gray-300 rounded-md focus:ring-investment_green focus:border-investment_green">
-<input type="tel" placeholder="Your Phone Number" required class="w-full p-3 border border-gray-300 rounded-md focus:ring-investment_green focus:border-investment_green">
-<button type="submit" class="w-full bg-investment_green text-white font-semibold py-3 rounded-lg hover:bg-opacity-90 transition">Submit Request</button>
+    <button type="submit" class="w-full bg-investment_green text-white font-semibold py-3 rounded-lg hover:bg-opacity-90 transition">Submit Request</button>
 </div>
 </form>
+<div id="form-status"></div>     
 </div>
 </div>
 </div>
