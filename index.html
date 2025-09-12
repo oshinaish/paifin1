@@ -258,6 +258,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <h2 class="text-2xl font-bold text-center mb-4 text-textdark">Connect with an Expert</h2>
 <p class="text-center text-textlight mb-6">Please provide your details, and a financial advisor will reach out to you shortly.</p>
 <form id="expertForm">
+    <input type="text" name="name" placeholder="Full Name" required>
+    <input type="email" name="email" placeholder="Email Address" required>
+    <input type="tel" name="phone" placeholder="Phone Number" required>
+    <input type="number" name="loanAmount" placeholder="Desired Loan Amount" required>
+    <button type="submit">Connect to Expert</button>
+</form>
+<div id="form-status"></div>  
 <div class="space-y-4">
 <input type="text" placeholder="Your Name" required class="w-full p-3 border border-gray-300 rounded-md focus:ring-investment_green focus:border-investment_green">
 <input type="tel" placeholder="Your Phone Number" required class="w-full p-3 border border-gray-300 rounded-md focus:ring-investment_green focus:border-investment_green">
@@ -984,7 +991,35 @@ expertModalContent.innerHTML = `<h2 class="text-2xl font-bold text-center mb-4 t
 
 
 });
+const form = document.getElementById('expertForm');
+const statusDiv = document.getElementById('form-status');
 
+  form.addEventListener('submit', function(e) {
+    // Prevent the default form submission behavior
+    e.preventDefault();
+
+    // The URL you copied from the Google Apps Script deployment
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbzBh4JEOaaHUz1aAwVcGQqOZc6N3O0PIijHa8QSVTukMQHB-4jrnndo333djHz5je04/exec';
+
+    // Display a "sending" message
+    statusDiv.innerHTML = "Submitting...";
+
+    fetch(scriptURL, { method: 'POST', body: new FormData(form) })
+      .then(response => response.json()) // Expect a JSON response from the script
+      .then(data => {
+        if (data.result === 'success') {
+          statusDiv.innerHTML = "Success! An expert will contact you shortly.";
+          form.reset(); // Clear the form fields
+        } else {
+          throw new Error(data.message || 'An unknown error occurred.');
+        }
+      })
+      .catch(error => {
+        console.error('Error!', error.message);
+        statusDiv.innerHTML = "Oops! There was a problem. Please try again.";
+      });
+  });
+  
 
 </script>
 <script src="script.js"></script>
