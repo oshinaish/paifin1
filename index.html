@@ -975,31 +975,27 @@
                 expertModal.classList.remove('flex');
             });
 
-            const expertForm = document.getElementById('expertForm');
-const expertModalContent = document.getElementById('expertModalContent');
 
-expertForm.addEventListener('submit', (e) => {
-    e.preventDefault(); // Stop the form from reloading the page
+            expertForm.addEventListener('submit', (e) => { e.preventDefault(); // Stop the form from reloading the page
+           // 1. Capture the contact details from the form fields
+           const nameInput = expertForm.querySelector('input[type="text"]');
+           const phoneInput = expertForm.querySelector('input[type="tel"]');
 
-    // 1. Capture the contact details from the form fields
-    const nameInput = expertForm.querySelector('input[type="text"]');
-    const phoneInput = expertForm.querySelector('input[type="tel"]');
-
-    // 2. Combine contact info with the last calculated financial scenario
-    const dataToSend = {
+         // 2. Combine contact info with the last calculated financial scenario
+           const dataToSend = {
         contact: {
             name: nameInput.value,
             phone: phoneInput.value
         },
         financials: lastCalculatedScenario // This global variable holds all the calculator data
-    };
+             };
     
-    // 3. Send the data to your Google Apps Script endpoint
-    // IMPORTANT: Replace the placeholder URL with your actual Web App URL
-    const endpoint = 'https://script.google.com/macros/s/AKfycbzBh4JEOaaHUz1aAwVcGQqOZc6N3O0PIijHa8QSVTukMQHB-4jrnndo333djHz5je04/exec';
+          // 3. Send the data to your Google Apps Script endpoint
+          // IMPORTANT: Replace the placeholder URL with your actual Web App URL
+           const endpoint = 'https://script.google.com/macros/s/AKfycbzBh4JEOaaHUz1aAwVcGQqOZc6N3O0PIijHa8QSVTukMQHB-4jrnndo333djHz5je04/exec';
 
-    // Temporarily show a "Submitting..." message
-    expertModalContent.innerHTML = `<p class="text-center text-textlight">Submitting your request...</p>`;
+           // Temporarily show a "Submitting..." message
+        expertModalContent.innerHTML = `<p class="text-center text-textlight">Submitting your request...</p>`;
 
     fetch(endpoint, {
         method: 'POST',
@@ -1017,11 +1013,6 @@ expertForm.addEventListener('submit', (e) => {
         expertModalContent.innerHTML = `<h2 class="text-2xl font-bold text-center mb-4 text-danger">Error</h2><p class="text-center text-textlight">Could not submit your request. Please try again later.</p>`;
     });
 });
-
-
-            
-        });
-
    
     </script>
     <script src="script.js"></script>
