@@ -55,6 +55,10 @@ document.addEventListener('DOMContentLoaded', () => {
     let paiVsTraditionalChart = null;
     let calculationTimeout;
 
+    // for the Gsheet
+let lastCalculatedScenario = null;
+
+    
     // --- 2. CORE FINANCIAL ENGINE ---
     function calculateEMI(principal, annualRate, tenureYears) {
         if (principal <= 0 || annualRate <= 0 || tenureYears <= 0) return 0;
@@ -409,7 +413,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function displayResults(scenario, title, tenureString = null) {
-    const displayTenure = tenureString || formatYearsAndMonths(scenario.tenure);
+    lastCalculatedScenario = scenario; 
+        const displayTenure = tenureString || formatYearsAndMonths(scenario.tenure);
     
     // Update top-level UI elements
     emiResultElement.textContent = `₹ ${scenario.emi.toLocaleString('en-IN')}`;
