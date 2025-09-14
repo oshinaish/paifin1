@@ -442,8 +442,8 @@ amortizationExplanation.innerHTML = `<h4 class="text-lg font-bold text-textdark 
 
 if (title === 'Min Time To Repay') {
 paiVsTraditionalContainer.classList.remove('hidden');
-const netWealthData = generateNetWealthData(scenario);
-renderPaiVsTraditionalChart(netWealthData);
+const paiVsTraditionalData = generatePaiVsTraditionalData(scenario);
+renderPaiVsTraditionalChart(paiVsTraditionalData);
 paiVsTraditionalExplanation.innerHTML = `<h4 class="text-lg font-bold text-textdark mb-2 pt-4">Your Net Wealth Journey</h4><p>This chart shows your financial journey...</p>`;
 } else if (title !== 'Your Strategy Visualised') {
 paiVsTraditionalContainer.classList.remove('hidden');
