@@ -453,7 +453,7 @@ function displayResults(scenario, tenureString = null) {
             break;
 
         case 'min-time':
-            displayTitle = 'The Race to Zero Debt';
+            displayTitle = 'The Race to Zero Effective Rate of Interest';
             paiVsTraditionalContainer.classList.remove('hidden');
             summaryHTML = `
                 <h4 class="text-sm font-bold text-center mb-2">Result Summary</h4>
@@ -472,8 +472,13 @@ function displayResults(scenario, tenureString = null) {
             break;
 
         case 'min-time-repay':
-            displayTitle = 'Min Time To Repay';
-            paiVsTraditionalContainer.classList.remove('hidden');
+            displayTitle = 'Race to Zero Debt: The Traditional Approach';
+            paiVsTraditionalContainer.classList.add('hidden');
+            chartExplanation.innerHTML = `
+                <h4 class="text-lg font-bold text-textdark mb-2 pt-4">${displayTitle}</h4>
+                <p>This chart visualizes the traditional strategy of eliminating debt as quickly as possible. By dedicating your entire monthly budget towards the loan, you can become debt-free in just <strong>${displayTenure}</strong>.</p>
+                <p class="mt-2">After the loan is repaid, investing that same monthly amount for the remainder of your planning horizon could generate a final wealth of <strong class="text-investment_green">₹${scenario.futureValue.toLocaleString('en-IN')}</strong>.</p>
+            `;
             summaryHTML = `
                 <h4 class="text-sm font-bold text-center mb-2">Result Summary</h4>
                 <p class="text-xs text-center">Loan will be paid off in <strong class="text-investment_green">${displayTenure}</strong>.</p>
