@@ -153,8 +153,8 @@ loanTenureInput.value = formatYearsAndMonths(loanTenureYears);
 investmentTenureInput.value = formatYearsAndMonths(remainingHorizon);
 loanTenureSlider.value = loanTenureYears;
 investmentTenureSlider.value = remainingHorizon;
-updateSliderProgress(loanTenureSlider);
-updateSliderProgress(investmentTenureSlider);
+updateSliderProgress(loanTenureYears);
+updateSliderProgress(remainingHorizon);
 
 const scenario = {
 tenure: loanTenureYears,
