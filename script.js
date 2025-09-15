@@ -153,8 +153,8 @@ loanTenureInput.value = formatYearsAndMonths(loanTenureYears);
 investmentTenureInput.value = formatYearsAndMonths(remainingHorizon);
 loanTenureSlider.value = loanTenureYears;
 investmentTenureSlider.value = remainingHorizon;
-updateSliderProgress(loanTenureSlider);
-updateSliderProgress(investmentTenureSlider);
+updateSliderProgress(loanTenureSlider,loanTenureYears);
+updateSliderProgress(investmentTenureSlider,remainingHorizon);
 
 const scenario = {
 tenure: loanTenureYears,
@@ -207,8 +207,8 @@ loanTenureInput.value = formatYearsAndMonths(bestScenario.tenure);
 investmentTenureInput.value = formatYearsAndMonths(bestScenario.tenure);
 loanTenureSlider.value = bestScenario.tenure;
 investmentTenureSlider.value = bestScenario.tenure;
-updateSliderProgress(loanTenureSlider);
-updateSliderProgress(investmentTenureSlider);
+updateSliderProgress(loanTenureSlider,bestScenario.tenure);
+updateSliderProgress(investmentTenureSlider,bestScenario.tenure);
 displayResults(bestScenario, 'Winning the Financial Race');
 } else {
 mainResultsContainer.innerHTML = `<div class="text-center p-4 text-danger">No viable strategy found. Your budget may be too low for this loan amount and interest rate.</div>`;
@@ -250,8 +250,8 @@ loanTenureInput.value = formatYearsAndMonths(foundScenario.tenure);
 investmentTenureInput.value = formatYearsAndMonths(foundScenario.tenure);
 loanTenureSlider.value = foundScenario.tenure;
 investmentTenureSlider.value = foundScenario.tenure;
-updateSliderProgress(loanTenureSlider);
-updateSliderProgress(investmentTenureSlider);
+updateSliderProgress(loanTenureSlider,foundScenario.tenure);
+updateSliderProgress(investmentTenureSlider,foundScenario.tenure);
 displayResults(foundScenario, 'The Race to Zero Debt', formatYearsAndMonths(foundScenario.tenure));
 } else {
 mainResultsContainer.innerHTML = `<div class="text-center p-4 text-danger">Cannot offset interest within 30 years. Try increasing your budget or the investment return rate.</div>`;
@@ -531,7 +531,7 @@ findOptimalStrategy();
 }
 }
 
-function updateSliderProgress(slider) {
+function updateSliderProgress(slider,value) {
 if (!slider) return;
 const min = parseFloat(slider.min);
 const max = parseFloat(slider.max);
@@ -797,7 +797,7 @@ const correspondingSlider = input.id === 'loanTenureDisplay' ? loanTenureSlider 
 const val = parseFloat(input.value);
 if (!isNaN(val) && val >= parseFloat(correspondingSlider.min) && val <= parseFloat(correspondingSlider.max)) {
 correspondingSlider.value = val;
-updateSliderProgress(correspondingSlider);
+updateSliderProgress(correspondingSlider, val);
 triggerCalculation();
 }
 }
@@ -805,12 +805,25 @@ triggerCalculation();
 });
 
 document.addEventListener('onboardingComplete', (e) => {
-const { budget, tenure } = e.detail;
-monthlyBudgetInput.value = budget;
-planningHorizon = tenure;
-updateSliderProgress(monthlyBudgetSlider);
-triggerCalculation();
-});
+        const { budget, tenure, loanAmount } = e.detail;
+        monthlyBudgetInput.value = budget;
+        monthlyBudgetSlider.value = budget;
+        updateSliderProgress(monthlyBudgetSlider, budget);
+        loanTenureInput.value = tenure;
+        loanTenureSlider.value = tenure;
+        updateSliderProgress(loanTenureSlider, tenure);
+        investmentTenureInput.value = tenure;
+        investmentTenureSlider.value = tenure;
+        updateSliderProgress(investmentTenureSlider, tenure);
+        planningHorizonInput.value = tenure;
+        planningHorizonSlider.value = tenure;
+        updateSliderProgress(planningHorizonSlider, tenure);
+        loanAmountInput.value = loanAmount;
+        loanAmountSlider.value = loanAmount;
+        updateSliderProgress(loanAmountSlider, loanAmount);
+        triggerCalculation();
+    });
+
 
 goalButtons.forEach(button => { button.addEventListener('click', () => handleGoalSelection(button)); });
 finalResultsSection.classList.add('hidden');
