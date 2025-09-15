@@ -265,7 +265,7 @@ function renderResultWidgets(scenario, displayTenure) {
 const selectedGoal = document.querySelector('.goal-button.selected').dataset.goal;
 let investmentHorizonDisplay;
 
-if (selectedGoal === 'min-time-repay') {
+if (selectedGoal === 'min-time-repay' && selectedGoal === 'planner') {
 // This is the only goal where loan tenure and investment horizon are different
 investmentHorizonDisplay = formatYearsAndMonths(scenario.investmentTenure);
 } else {
