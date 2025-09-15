@@ -439,7 +439,7 @@ function displayResults(scenario, tenureString = null) {
     // --- 3. PREPARE GOAL-SPECIFIC CONTENT ---
     let displayTitle = '';
     let summaryHTML = '';
-    const crossoverYearText = chartData.crossoverYear ? `The key moment is in <strong>Year ${chartData.crossoverYear}</strong>, where your investment value surpasses your outstanding loan balance.` : '';
+    const crossoverYearText = chartData.crossoverYear ? `The key moment is in <strong>Year ${chartData.crossoverYear}</strong>, where your investment value surpasses your outstanding loan balance.This means that if you were to liquidate your investment at this point to pay off the remaining loan, you could potentially become completely debt-free in just ${chartData.crossoverYear} years, significantly ahead of schedule.` : '';
 
     // Use a switch statement for clean, readable logic
     switch (selectedGoal) {
@@ -496,8 +496,8 @@ function displayResults(scenario, tenureString = null) {
     if (selectedGoal !== 'planner') {
         const paiVsTraditionalData = generatePaiVsTraditionalData(scenario);
         renderPaiVsTraditionalChart(paiVsTraditionalData);
-        paiVsTraditionalExplanation.innerHTML = `<h4 class="text-lg font-bold text-textdark mb-2 pt-4">PaiFinance vs. Traditional Strategy</h4>
-        <p>This chart shows the power of the PaiFinance approach. The same monthly budget, when properly allocated across the right investing channels, can produce a more fruitful result shown by the <span class="font-semibold text-investment_green">green line</span> where the PaiFinance strategy helps you build positive net wealth of <strong class="text-investment_green">₹${scenario.netWealth.toLocaleString('en-IN')}</strong> by the end of the planning horizon.<p class="mt-2"> The <span class="font-semibold text-danger">red line</span> shows how your net financial position gets worse over time with a traditional loan repayment strategy of repaynig the loan fast, ending witha netwealth of <strong class="text-danger">-₹${scenario.totalInterestPaid.toLocaleString('en-IN')}</strong> by the end of planning horizon.</p>
+        paiVsTraditionalExplanation.innerHTML = `<h4 class="text-lg font-bold text-textdark mb-2 pt-4">PaiFinance vs. Traditional Loan Repayment Strategy</h4>
+        <p>This chart shows the power of the PaiFinance approach. The same monthly budget, when properly allocated across the right investing channels, can produce a more fruitful result shown by the <span class="font-semibold text-investment_green">green line</span> where the PaiFinance strategy helps you build positive net wealth of <strong class="text-investment_green">₹${scenario.netWealth.toLocaleString('en-IN')}</strong> by the end of the planning horizon.<p class="mt-2"> The <span class="font-semibold text-danger">red line</span> shows how your net financial position gets worse over time with a traditional loan repayment strategy of repaying the loan fast, ending with a netwealth of <strong class="text-danger">-₹${scenario.totalInterestPaid.toLocaleString('en-IN')}</strong> by the end of the planning horizon.</p>
        `;
     }
 
