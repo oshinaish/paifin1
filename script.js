@@ -737,38 +737,47 @@ const monthlyLoanRate = scenario.loanAnnualRate / 100 / 12;
 const monthlyInvestmentRate = scenario.investmentAnnualRate / 100 / 12;
 const totalHorizonMonths = planningHorizon * 12;
 
-for (let year = 0; year <= planningHorizon; year++) {
-labels.push(`Yr ${year}`);
-paiData.push(paiInvestmentValue - paiCumulativeInterest);
-traditionalData.push(traditionalInvestmentValue - traditionalCumulativeInterest);
+/ Start by pushing the initial state at Year 0
+    labels.push('Yr 0');
+    paiData.push(0);
+    traditionalData.push(0);
+      
 
-for (let month = 1; month <= 12; month++) {
-const currentMonth = (year * 12) + month;
+    for (let year = 1; year <= planningHorizon; year++) {
+        for (let month = 1; month <= 12; month++) {
+            const currentMonth = ((year - 1) * 12) + month;
 
-// --- PAI (PARALLEL) METHOD CALCULATION ---
-if (currentMonth <= scenario.tenure * 12 && paiRemainingLoan > 0) {
-const interest = paiRemainingLoan * monthlyLoanRate;
-paiCumulativeInterest += interest;
-const principalPaid = scenario.emi - interest;
-paiRemainingLoan -= principalPaid;
-}
-paiInvestmentValue = (paiInvestmentValue + (scenario.monthlyInvestment || 0)) * (1 + monthlyInvestmentRate);
+            // --- PAI (PARALLEL) METHOD CALCULATION ---
+            if (currentMonth <= scenario.tenure * 12 && paiRemainingLoan > 0) {
+                const interest = paiRemainingLoan * monthlyLoanRate;
+                paiCumulativeInterest += interest;
+                const principalPaid = scenario.emi - interest;
+                paiRemainingLoan -= principalPaid;
+            }
+            if(currentMonth <= scenario.tenure * 12) {
+                paiInvestmentValue = (paiInvestmentValue + (scenario.monthlyInvestment || 0)) * (1 + monthlyInvestmentRate);
+            }
 
-// --- TRADITIONAL (SEQUENTIAL) METHOD CALCULATION ---
-if (currentMonth <= traditionalLoanPayoffMonths) {
-// Phase 1: Loan Payoff
-if (traditionalRemainingLoan > 0) {
-const interest = traditionalRemainingLoan * monthlyLoanRate;
-traditionalCumulativeInterest += interest;
-const principalPaid = totalBudget - interest;
-traditionalRemainingLoan -= principalPaid;
-}
-} else {
-// Phase 2: Investment
-traditionalInvestmentValue = (traditionalInvestmentValue + totalBudget) * (1 + monthlyInvestmentRate);
-}
-}
-}
+            // --- TRADITIONAL (SEQUENTIAL) METHOD CALCULATION ---
+            if (currentMonth <= traditionalLoanPayoffMonths && traditionalRemainingLoan > 0) {
+                // Phase 1: Loan Payoff
+                const interest = traditionalRemainingLoan * monthlyLoanRate;
+                traditionalCumulativeInterest += interest;
+                const emiForThisMonth = Math.min(totalBudget, traditionalRemainingLoan + interest);
+                const principalPaid = emiForThisMonth - interest;
+                traditionalRemainingLoan -= principalPaid;
+            } else {
+                // Phase 2: Investment
+                traditionalInvestmentValue = (traditionalInvestmentValue + totalBudget) * (1 + monthlyInvestmentRate);
+            }
+        }
+        
+        // ✅ FIX: Data is pushed AFTER all 12 months of the year have been calculated.
+        labels.push(`Yr ${year}`);
+        paiData.push(paiInvestmentValue - paiCumulativeInterest);
+        traditionalData.push(traditionalInvestmentValue - traditionalCumulativeInterest);
+    }
+
 return { labels, paiData, traditionalData };
 }
 
