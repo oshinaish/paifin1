@@ -169,7 +169,7 @@ principal,
 loanAnnualRate,
 investmentAnnualRate
 };
-displayResults(scenario, 'Min Time To Repay');
+displayResults(scenario);
 }, 500);
 }
 
@@ -209,7 +209,7 @@ loanTenureSlider.value = bestScenario.tenure;
 investmentTenureSlider.value = bestScenario.tenure;
 updateSliderProgress(loanTenureSlider);
 updateSliderProgress(investmentTenureSlider);
-displayResults(bestScenario, 'Winning the Financial Race');
+displayResults(bestScenario);
 } else {
 mainResultsContainer.innerHTML = `<div class="text-center p-4 text-danger">No viable strategy found. Your budget may be too low for this loan amount and interest rate.</div>`;
 }
@@ -252,7 +252,7 @@ loanTenureSlider.value = foundScenario.tenure;
 investmentTenureSlider.value = foundScenario.tenure;
 updateSliderProgress(loanTenureSlider);
 updateSliderProgress(investmentTenureSlider);
-displayResults(foundScenario, 'The Race to Zero Debt', formatYearsAndMonths(foundScenario.tenure));
+displayResults(foundScenario, formatYearsAndMonths(foundScenario.tenure));
 } else {
 mainResultsContainer.innerHTML = `<div class="text-center p-4 text-danger">Cannot offset interest within 30 years. Try increasing your budget or the investment return rate.</div>`;
 }
@@ -395,7 +395,7 @@ const netWealth = futureValue - totalInterestPaid;
 const scenario = { tenure: tenureYears, investmentTenure: investmentTenureYears, emi, monthlyInvestment: investment, totalInterestPaid, futureValue, netWealth, principal, loanAnnualRate: annualRate, investmentAnnualRate: investmentRate };
 
 finalResultsSection.classList.remove('hidden');
-displayResults(scenario, 'Your Strategy Visualised');
+displayResults(scenario);
 }
 
 function formatYearsAndMonths(decimalYears) {
@@ -410,59 +410,107 @@ if (months > 0) return `${months} M`;
 return "0 M";
 }
 
-function displayResults(scenario, title, tenureString = null) {
-const displayTenure = tenureString || formatYearsAndMonths(scenario.tenure);
+function displayResults(scenario, tenureString = null) {
+    // --- 1. GET STATE & COMMON VALUES ---
+    // Get the currently selected goal directly from the DOM. This is our source of truth.
+    const selectedGoal = document.querySelector('.goal-button.selected').dataset.goal;
+    const displayTenure = tenureString || formatYearsAndMonths(scenario.tenure);
 
-// Update top-level UI elements
-emiResultElement.textContent = `₹ ${scenario.emi.toLocaleString('en-IN')}`;
-if (title === 'Min Time To Repay') {
-monthlyInvestmentResult.textContent = `₹ ${scenario.postLoanMonthlyInvestment.toLocaleString('en-IN')}`;
-monthlyInvestmentSubtext.textContent = '(after loan)';
-monthlyInvestmentSubtext.classList.remove('hidden');
-} else {
-const investmentAmount = scenario.monthlyInvestment || 0;
-monthlyInvestmentResult.textContent = `₹ ${investmentAmount.toLocaleString('en-IN')}`;
-monthlyInvestmentSubtext.classList.add('hidden');
+    // --- 2. RENDER COMMON UI & CHARTS (for all goals) ---
+    // Update top-level UI elements
+    if (selectedGoal === 'min-time-repay') {
+        monthlyInvestmentResult.textContent = `₹ ${scenario.postLoanMonthlyInvestment.toLocaleString('en-IN')}`;
+        monthlyInvestmentSubtext.textContent = '(after loan)';
+        monthlyInvestmentSubtext.classList.remove('hidden');
+    } else {
+        const investmentAmount = scenario.monthlyInvestment || 0;
+        monthlyInvestmentResult.textContent = `₹ ${investmentAmount.toLocaleString('en-IN')}`;
+        monthlyInvestmentSubtext.classList.add('hidden');
+    }
+    updatePieChart(scenario.emi, scenario.monthlyInvestment || 0);
+
+    // Render the main result widgets and common charts
+    renderResultWidgets(scenario, displayTenure);
+    const chartData = generateComparisonData(scenario);
+    renderComparisonChart(chartData);
+    const amortizationData = generateAmortizationSchedule(scenario);
+    renderAmortizationTable(amortizationData);
+
+    // --- 3. PREPARE GOAL-SPECIFIC CONTENT ---
+    let displayTitle = '';
+    let summaryHTML = '';
+    const crossoverYearText = chartData.crossoverYear ? `The key moment is in <strong>Year ${chartData.crossoverYear}</strong>, where your investment value surpasses your outstanding loan balance.` : '';
+
+    // Use a switch statement for clean, readable logic
+    switch (selectedGoal) {
+        case 'planner':
+            displayTitle = 'Your Strategy Visualised';
+            paiVsTraditionalContainer.classList.add('hidden'); // Hide this chart for planner mode
+            summaryHTML = `
+                <h4 class="text-sm font-bold text-center mb-2">Result Summary</h4>
+                <p class="text-xs text-center">Net Wealth after ${displayTenure}: <strong class="text-investment_green">₹${scenario.netWealth.toLocaleString('en-IN')}</strong></p>
+            `;
+            break;
+
+        case 'min-time':
+            displayTitle = 'The Race to Zero Debt';
+            paiVsTraditionalContainer.classList.remove('hidden');
+            summaryHTML = `
+                <h4 class="text-sm font-bold text-center mb-2">Result Summary</h4>
+                <p class="text-xs text-center">You can offset your loan interest in just <strong class="text-investment_green">${displayTenure}</strong>.</p>
+                <p class="text-xs text-center mt-1">You can become debt-free in <strong>Year ${chartData.crossoverYear}</strong>.</p>
+            `;
+            break;
+
+        case 'optimal-strategy':
+            displayTitle = 'Winning the Financial Race';
+            paiVsTraditionalContainer.classList.remove('hidden');
+            summaryHTML = `
+                <h4 class="text-sm font-bold text-center mb-2">Result Summary</h4>
+                <p class="text-xs text-center">This optimal strategy generates a net wealth of <strong class="text-investment_green">₹${scenario.netWealth.toLocaleString('en-IN')}</strong>.</p>
+            `;
+            break;
+
+        case 'min-time-repay':
+            displayTitle = 'Min Time To Repay';
+            paiVsTraditionalContainer.classList.remove('hidden');
+            summaryHTML = `
+                <h4 class="text-sm font-bold text-center mb-2">Result Summary</h4>
+                <p class="text-xs text-center">Loan will be paid off in <strong class="text-investment_green">${displayTenure}</strong>.</p>
+                <p class="text-xs text-center mt-1">Total wealth after horizon: <strong class="text-investment_green">₹${scenario.futureValue.toLocaleString('en-IN')}</strong>.</p>
+            `;
+            break;
+    }
+
+    // --- 4. RENDER GOAL-SPECIFIC CONTENT ---
+    // Update main chart explanation
+    chartExplanation.innerHTML = `<h4 class="text-lg font-bold text-textdark mb-2 pt-4">${displayTitle}</h4><p>This chart visualizes the power of your strategy. At the end of the term, your loan balance will be <strong>₹0</strong>, while your investment is projected to grow to <strong>₹${scenario.futureValue.toLocaleString('en-IN')}</strong>.</p><p class="mt-2">${crossoverYearText}</p>`;
+    amortizationExplanation.innerHTML = `<h4 class="text-lg font-bold text-textdark mb-2 pt-4">Loan Amortization Schedule</h4><p>This schedule shows how your EMI payments are allocated between principal and interest each year, reducing your loan balance over time.</p>`;
+
+    // Render the Pai vs. Traditional chart and its explanation if it's not planner mode
+    if (selectedGoal !== 'planner') {
+        const paiVsTraditionalData = generatePaiVsTraditionalData(scenario);
+        renderPaiVsTraditionalChart(paiVsTraditionalData);
+        paiVsTraditionalExplanation.innerHTML = `<h4 class="text-lg font-bold text-textdark mb-2 pt-4">PaiFinance vs. Traditional Strategy</h4><p>The <span class="font-semibold text-investment_green">green line</span> shows how the PaiFinance strategy helps you build positive net wealth, ending at <strong class="text-investment_green">₹${scenario.netWealth.toLocaleString('en-IN')}</strong>. The <span class="font-semibold text-danger">red line</span> shows the outcome of a traditional "repay-first" strategy, ending at <strong class="text-danger">-₹${scenario.totalInterestPaid.toLocaleString('en-IN')}</strong>.</p>`;
+    }
+
+    // Update the final summary box (logic from the old updateSummaryBox is now here)
+    summaryResultsContainer.classList.remove('hidden');
+    summaryResultsContainer.innerHTML = summaryHTML + `
+        <button id="connectExpertBtn" class="w-full mt-4 bg-transparent border-2 border-investment_green text-investment_green font-semibold py-2 px-4 rounded-lg hover:bg-investment_green hover:text-white transition-colors duration-300">
+        Connect to an Expert
+        </button>
+    `;
+
+    // Re-attach event listener for the modal button
+    const connectExpertBtn = document.getElementById('connectExpertBtn');
+    if(connectExpertBtn) {
+        connectExpertBtn.addEventListener('click', () => {
+            document.getElementById('expertModal').classList.remove('hidden', 'flex');
+            document.getElementById('expertModal').classList.add('flex');
+        });
+    }
 }
-updatePieChart(scenario.emi, scenario.monthlyInvestment || 0);
-
-// *** NEW: Call the single master function to create all widgets ***
-renderResultWidgets(scenario, displayTenure);
-
-// Render all the main charts and tables below the widgets
-const chartData = generateComparisonData(scenario);
-renderComparisonChart(chartData);
-const amortizationData = generateAmortizationSchedule(scenario);
-renderAmortizationTable(amortizationData);
-
-// Update the explanation texts for the charts
-const crossoverYearText = chartData.crossoverYear ? `The key moment is in <strong>Year ${chartData.crossoverYear}</strong>, where your investment value is projected to surpass your outstanding loan balance.` : '';
-chartExplanation.innerHTML = `<h4 class="text-lg font-bold text-textdark mb-2 pt-4">${title}</h4><p>This chart visualizes the power of your strategy...</p><p class="mt-2">${crossoverYearText}</p>`;
-chartExplanation.innerHTML = `<h4 class="text-lg font-bold text-textdark mb-2 pt-4">${title}</h4><p>This chart visualizes the power of your strategy. At the end of the term, your loan balance will be <strong>₹0</strong>, while your investment is projected to grow to <strong>₹${scenario.futureValue.toLocaleString('en-IN')}</strong>.</p><p class="mt-2">${crossoverYearText}</p>`;
-amortizationExplanation.innerHTML = `<h4 class="text-lg font-bold text-textdark mb-2 pt-4">Loan Amortization Schedule</h4><p>This schedule shows how your accelerated payments quickly pay down your loan...</p>`;
-
-if (title === 'Min Time To Repay') {
-paiVsTraditionalContainer.classList.remove('hidden');
-const paiVsTraditionalData = generatePaiVsTraditionalData(scenario);
-renderPaiVsTraditionalChart(paiVsTraditionalData);
-paiVsTraditionalExplanation.innerHTML = `<h4 class="text-lg font-bold text-textdark mb-2 pt-4">Your Net Wealth Journey</h4><p>This chart shows your financial journey...</p>`;
-} else if (title !== 'Your Strategy Visualised') {
-paiVsTraditionalContainer.classList.remove('hidden');
-const paiVsTraditionalData = generatePaiVsTraditionalData(scenario);
-renderPaiVsTraditionalChart(paiVsTraditionalData);
-paiVsTraditionalExplanation.innerHTML = `<h4 class="text-lg font-bold text-textdark mb-2 pt-4">PaiFinance vs. Traditional Loans</h4><p>The <span class="font-semibold text-danger">red line</span> shows... <strong class="text-danger">-₹${scenario.totalInterestPaid.toLocaleString('en-IN')}</strong>.</p><p class="mt-2">The <span class="font-semibold text-investment_green">green line</span> shows... <strong class="text-investment_green">₹${scenario.netWealth.toLocaleString('en-IN')}</strong>.</p>`;
-paiVsTraditionalExplanation.innerHTML = `<h4 class="text-lg font-bold text-textdark mb-2 pt-4">PaiFinance vs. Traditional Loan Repayment Strategy</h4>
-<p>This chart shows the power of the PaiFinance approach. The same monthly budget, when properly allocated across the right investing channels, can produce a more fruitful result. The <span class="font-semibold text-danger">red line</span> shows how your net financial position gets worse over time with a traditional loan repayment strategy of repaying the loan fast, ending at <strong class="text-danger">-₹${scenario.totalInterestPaid.toLocaleString('en-IN')}</strong>.</p>
-<p class="mt-2">The <span class="font-semibold text-investment_green">green line</span> shows how the PaiFinance strategy helps you build positive net wealth, ending at <strong class="text-investment_green">₹${scenario.netWealth.toLocaleString('en-IN')}</strong>. This is the financial advantage of using PaiFinance.</p>
- `;
-} else {
-paiVsTraditionalContainer.classList.add('hidden');
-}
-
-updateSummaryBox(scenario, title, displayTenure, chartData.crossoverYear);
-} 
-
-
 
 function renderWidgetCharts(scenario, totalInvested, totalGains) {
 const loanCtx = document.getElementById('loanWidgetChart').getContext('2d');
@@ -726,53 +774,6 @@ options: { responsive: true, maintainAspectRatio: false, scales: { y: { ticks: {
 });
 }
 
-function updateSummaryBox(scenario, title, displayTenure, crossoverYear) {
-summaryResultsContainer.classList.remove('hidden');
-let summaryHTML = '';
-
-if (title === 'Your Strategy Visualised') {
-summaryHTML = `
-          <h4 class="text-sm font-bold text-center mb-2">Result Summary</h4>
-          <p class="text-xs text-center">Net Wealth after ${displayTenure}: <strong class="text-investment_green">₹${scenario.netWealth.toLocaleString('en-IN')}</strong></p>
-      `;
-} else if (title === 'The Race to Zero Debt') {
-summaryHTML = `
-          <h4 class="text-sm font-bold text-center mb-2">Result Summary</h4>
-          <p class="text-xs text-center">You can offset your loan interest in just <strong class="text-investment_green">${displayTenure}</strong>.</p>
-          <p class="text-xs text-center mt-1">You can become debt-free in <strong>Year ${crossoverYear}</strong>.</p>
-      `;
-} else if (title === 'Winning the Financial Race') {
-summaryHTML = `
-          <h4 class="text-sm font-bold text-center mb-2">Result Summary</h4>
-          <p class="text-xs text-center">This optimal strategy generates a net wealth of <strong class="text-investment_green">₹${scenario.netWealth.toLocaleString('en-IN')}</strong>.</p>
-      `;
-} else if (title === 'Min Time To Repay') {
-summaryHTML = `
-          <h4 class="text-sm font-bold text-center mb-2">Result Summary</h4>
-          <p class="text-xs text-center">Loan will be paid off in <strong class="text-investment_green">${displayTenure}</strong>.</p>
-          <p class="text-xs text-center mt-1">Total wealth after horizon: <strong class="text-investment_green">₹${scenario.futureValue.toLocaleString('en-IN')}</strong>.</p>
-      `;
-}
-
-// *** NEW: Add the CTA button to the summary box HTML ***
-summaryHTML += `
-      <button id="connectExpertBtn" class="w-full mt-4 bg-transparent border-2 border-investment_green text-investment_green font-semibold py-2 px-4 rounded-lg hover:bg-investment_green hover:text-white transition-colors duration-300">
-      Connect to an Expert
-  </button>
-  `;
-
-summaryResultsContainer.innerHTML = summaryHTML;
-
-// Re-attach the event listener since we are recreating the button
-const connectExpertBtn = document.getElementById('connectExpertBtn');
-const expertModal = document.getElementById('expertModal');
-if(connectExpertBtn) {
-connectExpertBtn.addEventListener('click', () => {
-expertModal.classList.remove('hidden');
-expertModal.classList.add('flex');
-});
-}
-}
 
 // --- 5. INITIALIZATION ---
 function initializeApp() {
