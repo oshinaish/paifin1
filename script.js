@@ -451,7 +451,7 @@ function displayResults(scenario, tenureString = null) {
             break;
 
         case 'min-time':
-            displayTitle = 'The Race to Zero Debt';
+            displayTitle = 'The Race to Zero Effective Rate of Interest';
             paiVsTraditionalContainer.classList.remove('hidden');
              summaryHTML = `
                 <h4 class="text-sm font-bold text-center mb-2">Result Summary</h4>
