@@ -114,9 +114,8 @@ updatePlannerResults();
 
 function findMinTimeToRepay() {
 finalResultsSection.classList.remove('hidden');
-comparisonChartContainer.classList.add('hidden');
+comparisonChartContainer.classList.remove('hidden');
 amortizationContainer.classList.remove('hidden');
-paiVsTraditionalContainer.classList.remove('hidden');
 mainResultsContainer.innerHTML = `<div class="text-center p-4">Calculating...</div>`;
 
 clearTimeout(calculationTimeout);
