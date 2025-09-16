@@ -282,78 +282,78 @@ const netWealth = scenario.futureValue - scenario.totalInterestPaid;
 
 // --- 3. Build the HTML for all four widgets ---
 mainResultsContainer.innerHTML = `
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div class="bg-card p-4 rounded-lg shadow-default">
-            <h3 class="text-sm font-bold text-textdark mb-2 text-center">Loan Details</h3>
-            <div class="flex items-center gap-4">
-                <div class="w-20 h-20 relative flex-shrink-0">
-                    <canvas id="loanWidgetChart"></canvas>
-                    <div class="absolute inset-0 flex items-center justify-center text-base font-bold text-textdark">
-                        <span>${Math.round((scenario.totalInterestPaid / totalPaid) * 100)}%</span>
-                    </div>
-                </div>
-                <div class="text-textlight leading-relaxed w-full">
-                    <table class="w-full text-xs">
-                        <tbody>
-                            <tr><td class="flex items-center py-1"><span class="w-2 h-2 rounded-full bg-gray-300 mr-2"></span>Principal</td><td class="text-right font-normal text-textdark">₹${scenario.principal.toLocaleString('en-IN')}</td></tr>
-                            <tr><td class="flex items-center py-1"><span class="w-2 h-2 rounded-full bg-emi_purple mr-2"></span>Interest</td><td class="text-right font-normal text-emi_purple">₹${scenario.totalInterestPaid.toLocaleString('en-IN')}</td></tr>
-                            <tr class="border-t"><td class="text-left font-semibold py-1">Total Paid</td><td class="text-right font-semibold text-textdark">₹${(scenario.principal + scenario.totalInterestPaid).toLocaleString('en-IN')}</td></tr>
-                            <tr class="border-t"><td class="text-left font-normal py-1">Paid Off In</td><td class="text-right font-normal text-textdark">${displayTenure}</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
+     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+         <div class="bg-card p-4 rounded-lg shadow-default">
+             <h3 class="text-sm font-bold text-textdark mb-2 text-center">Loan Details</h3>
+             <div class="flex items-center gap-4">
+                 <div class="w-20 h-20 relative flex-shrink-0">
+                     <canvas id="loanWidgetChart"></canvas>
+                     <div class="absolute inset-0 flex items-center justify-center text-base font-bold text-textdark">
+                         <span>${Math.round((scenario.totalInterestPaid / totalPaid) * 100)}%</span>
+                     </div>
+                 </div>
+                 <div class="text-textlight leading-relaxed w-full">
+                     <table class="w-full text-xs">
+                         <tbody>
+                             <tr><td class="flex items-center py-1"><span class="w-2 h-2 rounded-full bg-gray-300 mr-2"></span>Principal</td><td class="text-right font-normal text-textdark">₹${scenario.principal.toLocaleString('en-IN')}</td></tr>
+                             <tr><td class="flex items-center py-1"><span class="w-2 h-2 rounded-full bg-emi_purple mr-2"></span>Interest</td><td class="text-right font-normal text-emi_purple">₹${scenario.totalInterestPaid.toLocaleString('en-IN')}</td></tr>
+                             <tr class="border-t"><td class="text-left font-semibold py-1">Total Paid</td><td class="text-right font-semibold text-textdark">₹${(scenario.principal + scenario.totalInterestPaid).toLocaleString('en-IN')}</td></tr>
+                             <tr class="border-t"><td class="text-left font-normal py-1">Paid Off In</td><td class="text-right font-normal text-textdark">${displayTenure}</td></tr>
+                         </tbody>
+                     </table>
+                 </div>
+             </div>
+         </div>
 
-        <div class="bg-card p-4 rounded-lg shadow-default">
-            <h3 class="text-sm font-bold text-textdark mb-2 text-center">Investment Details</h3>
-            <div class="flex items-center gap-4">
-                <div class="w-20 h-20 relative flex-shrink-0">
-                    <canvas id="investmentWidgetChart"></canvas>
-                    <div class="absolute inset-0 flex items-center justify-center text-base font-bold text-textdark">
-                        <span>${scenario.futureValue > 0 ? Math.round((totalGains / scenario.futureValue) * 100) : 0}%</span>
-                    </div>
-                </div>
-                <div class="text-textlight leading-relaxed w-full">
-                    <table class="w-full text-xs">
-                        <tbody>
-                            <tr><td class="flex items-center py-1"><span class="w-2 h-2 rounded-full bg-gray-300 mr-2"></span>Invested</td><td class="text-right font-normal text-textdark">₹${totalInvested.toLocaleString('en-IN')}</td></tr>
-                            <tr><td class="flex items-center py-1"><span class="w-2 h-2 rounded-full bg-investment_green mr-2"></span>Gains</td><td class="text-right font-normal text-investment_green">₹${totalGains.toLocaleString('en-IN')}</td></tr>
-                            <tr class="border-t"><td class="text-left font-semibold py-1">Total Wealth</td><td class="text-right font-semibold text-textdark">₹${scenario.futureValue.toLocaleString('en-IN')}</td></tr>
-                            <tr class="border-t"><td class="text-left font-normal py-1">Horizon</td><td class="text-right font-normal text-textdark">${investmentHorizonDisplay}</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
+         <div class="bg-card p-4 rounded-lg shadow-default">
+             <h3 class="text-sm font-bold text-textdark mb-2 text-center">Investment Details</h3>
+             <div class="flex items-center gap-4">
+                 <div class="w-20 h-20 relative flex-shrink-0">
+                     <canvas id="investmentWidgetChart"></canvas>
+                     <div class="absolute inset-0 flex items-center justify-center text-base font-bold text-textdark">
+                         <span>${scenario.futureValue > 0 ? Math.round((totalGains / scenario.futureValue) * 100) : 0}%</span>
+                     </div>
+                 </div>
+                 <div class="text-textlight leading-relaxed w-full">
+                     <table class="w-full text-xs">
+                         <tbody>
+                             <tr><td class="flex items-center py-1"><span class="w-2 h-2 rounded-full bg-gray-300 mr-2"></span>Invested</td><td class="text-right font-normal text-textdark">₹${totalInvested.toLocaleString('en-IN')}</td></tr>
+                             <tr><td class="flex items-center py-1"><span class="w-2 h-2 rounded-full bg-investment_green mr-2"></span>Gains</td><td class="text-right font-normal text-investment_green">₹${totalGains.toLocaleString('en-IN')}</td></tr>
+                             <tr class="border-t"><td class="text-left font-semibold py-1">Total Wealth</td><td class="text-right font-semibold text-textdark">₹${scenario.futureValue.toLocaleString('en-IN')}</td></tr>
+                             <tr class="border-t"><td class="text-left font-normal py-1">Horizon</td><td class="text-right font-normal text-textdark">${investmentHorizonDisplay}</td></tr>
+                         </tbody>
+                     </table>
+                 </div>
+             </div>
+         </div>
 
-        <div class="bg-card p-4 rounded-lg shadow-default">
-            <h3 class="text-sm font-bold text-textdark mb-2 text-center">Net Money Input</h3>
-            <div class="text-textlight leading-relaxed text-xs">
-                <table class="w-full text-xs">
-                    <tbody>
-                        <tr><td class="text-left py-1">Total EMIs</td><td class="text-right font-normal">₹${totalPaid.toLocaleString('en-IN')}</td></tr>
-                        <tr><td class="text-left py-1">Total Investments</td><td class="text-right font-normal">₹${totalInvested.toLocaleString('en-IN')}</td></tr>
-                        <tr class="bg-gray-100 rounded"><td class="text-left font-semibold p-1">Total Outflow</td><td class="text-right font-bold p-1">₹${(totalPaid + totalInvested).toLocaleString('en-IN')}</td></tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
+         <div class="bg-card p-4 rounded-lg shadow-default">
+             <h3 class="text-sm font-bold text-textdark mb-2 text-center">Net Money Input</h3>
+             <div class="text-textlight leading-relaxed text-xs">
+                 <table class="w-full text-xs">
+                     <tbody>
+                         <tr><td class="text-left py-1">Total EMIs</td><td class="text-right font-normal">₹${totalPaid.toLocaleString('en-IN')}</td></tr>
+                         <tr><td class="text-left py-1">Total Investments</td><td class="text-right font-normal">₹${totalInvested.toLocaleString('en-IN')}</td></tr>
+                         <tr class="bg-gray-100 rounded"><td class="text-left font-semibold p-1">Total Outflow</td><td class="text-right font-bold p-1">₹${(totalPaid + totalInvested).toLocaleString('en-IN')}</td></tr>
+                     </tbody>
+                 </table>
+             </div>
+         </div>
 
-        <div class="bg-card p-4 rounded-lg shadow-default">
-            <h3 class="text-sm font-bold text-textdark mb-2 text-center">Net Wealth</h3>
-            <div class="text-textlight leading-relaxed text-xs">
-                <table class="w-full text-xs">
-                    <tbody>
-                        <tr><td class="text-left py-1">Total Wealth</td><td class="text-right font-normal">₹${scenario.futureValue.toLocaleString('en-IN')}</td></tr>
-                        <tr><td class="text-left py-1">Total Interest Paid</td><td class="text-right font-normal text-danger">- ₹${scenario.totalInterestPaid.toLocaleString('en-IN')}</td></tr>
-                        <tr class="bg-green-50 rounded"><td class="text-left font-semibold p-1">Net Wealth</td><td class="text-right font-bold p-1 text-investment_green">₹${netWealth.toLocaleString('en-IN')}</td></tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-`;
+         <div class="bg-card p-4 rounded-lg shadow-default">
+             <h3 class="text-sm font-bold text-textdark mb-2 text-center">Net Wealth</h3>
+             <div class="text-textlight leading-relaxed text-xs">
+                 <table class="w-full text-xs">
+                     <tbody>
+                         <tr><td class="text-left py-1">Total Wealth</td><td class="text-right font-normal">₹${scenario.futureValue.toLocaleString('en-IN')}</td></tr>
+                         <tr><td class="text-left py-1">Total Interest Paid</td><td class="text-right font-normal text-danger">- ₹${scenario.totalInterestPaid.toLocaleString('en-IN')}</td></tr>
+                         <tr class="bg-green-50 rounded"><td class="text-left font-semibold p-1">Net Wealth</td><td class="text-right font-bold p-1 text-investment_green">₹${netWealth.toLocaleString('en-IN')}</td></tr>
+                     </tbody>
+                 </table>
+             </div>
+         </div>
+     </div>
+ `;
 
 // --- 4. Render the Mini Doughnut Charts ---
 renderWidgetCharts(scenario, totalInvested, totalGains);
@@ -403,7 +403,6 @@ const years = Math.floor(decimalYears);
 const months = Math.round((decimalYears - years) * 12);
 if (years > 0 && months > 0) return `${years} Yr, ${months} Mon`;
 if (years > 0) return `${years} Y`;
-if (years > 0) return `${years} Yr`;
 if (years > 0 && months > 0) return `${years} Yr, ${months} Mon`;
 if (years > 0) return `${years} Yr`;
 if (months > 0) return `${months} M`;
@@ -446,28 +445,29 @@ case 'planner':
 displayTitle = 'Your Strategy Visualised';
 paiVsTraditionalContainer.classList.add('hidden');
 summaryHTML = `
-              <h4 class="text-sm font-bold text-center mb-2">Result Summary</h4>
-              <p class="text-xs text-center">Net Wealth after ${displayTenure}: <strong class="text-investment_green">₹${scenario.netWealth.toLocaleString('en-IN')}</strong></p>
-          `; 
+               <h4 class="text-sm font-bold text-center mb-2">Result Summary</h4>
+               <p class="text-xs text-center">Net Wealth after ${displayTenure}: <strong class="text-investment_green">₹${scenario.netWealth.toLocaleString('en-IN')}</strong></p>
+           `; 
 break;
 
 case 'min-time':
-displayTitle = 'The Race to Zero Effective Rate of Interest';
+            displayTitle = 'The Race to Zero Debt';
+            displayTitle = 'The Race to Zero Effective Rate of Interest';
 paiVsTraditionalContainer.classList.remove('hidden');
 summaryHTML = `
-              <h4 class="text-sm font-bold text-center mb-2">Result Summary</h4>
-              <p class="text-xs text-center">You can offset your loan interest in just <strong class="text-investment_green">${displayTenure}</strong>.</p>
-              <p class="text-xs text-center mt-1">You can become debt-free in <strong>Year ${chartData.crossoverYear}</strong>.</p>
-          `; 
+               <h4 class="text-sm font-bold text-center mb-2">Result Summary</h4>
+               <p class="text-xs text-center">You can offset your loan interest in just <strong class="text-investment_green">${displayTenure}</strong>.</p>
+               <p class="text-xs text-center mt-1">You can become debt-free in <strong>Year ${chartData.crossoverYear}</strong>.</p>
+           `; 
 break;
 
 case 'optimal-strategy':
 displayTitle = 'Winning the Financial Race';
 paiVsTraditionalContainer.classList.remove('hidden');
 summaryHTML = `
-              <h4 class="text-sm font-bold text-center mb-2">Result Summary</h4>
-              <p class="text-xs text-center">This optimal strategy generates a net wealth of <strong class="text-investment_green">₹${scenario.netWealth.toLocaleString('en-IN')}</strong>.</p>
-          `;
+               <h4 class="text-sm font-bold text-center mb-2">Result Summary</h4>
+               <p class="text-xs text-center">This optimal strategy generates a net wealth of <strong class="text-investment_green">₹${scenario.netWealth.toLocaleString('en-IN')}</strong>.</p>
+           `;
 break;
 
 case 'min-time-repay':
@@ -476,16 +476,16 @@ paiVsTraditionalContainer.classList.add('hidden');
 
 //  2. Assign the custom HTML to our new variable.
 explanationHTML = `
-              <h4 class="text-lg font-bold text-textdark mb-2 pt-4">${displayTitle}</h4>
-              <p>This chart visualizes the traditional strategy of eliminating debt as quickly as possible. By dedicating your entire monthly budget towards the loan, you can become debt-free in just <strong>${displayTenure}</strong>.</p>
-               <p class="mt-2">After the loan is repaid, investing that same monthly amount for the remainder of your planning horizon could generate a total wealth of <strong class="text-investment_green">₹${scenario.futureValue.toLocaleString('en-IN')}</strong>.</p>
-          `;
+               <h4 class="text-lg font-bold text-textdark mb-2 pt-4">${displayTitle}</h4>
+               <p>This chart visualizes the traditional strategy of eliminating debt as quickly as possible. By dedicating your entire monthly budget towards the loan, you can become debt-free in just <strong>${displayTenure}</strong>.</p>
+               <p class="mt-2">After the loan is repaid, investing that same monthly amount for the remainder of your planning horizon could generate a final wealth of <strong class="text-investment_green">₹${scenario.futureValue.toLocaleString('en-IN')}</strong>.</p>
+           `;
 
 summaryHTML = `
-              <h4 class="text-sm font-bold text-center mb-2">Result Summary</h4>
-              <p class="text-xs text-center">Loan will be paid off in <strong class="text-investment_green">${displayTenure}</strong>.</p>
-              <p class="text-xs text-center mt-1">Total wealth after horizon: <strong class="text-investment_green">₹${scenario.futureValue.toLocaleString('en-IN')}</strong>.</p>
-          `;
+               <h4 class="text-sm font-bold text-center mb-2">Result Summary</h4>
+               <p class="text-xs text-center">Loan will be paid off in <strong class="text-investment_green">${displayTenure}</strong>.</p>
+               <p class="text-xs text-center mt-1">Total wealth after horizon: <strong class="text-investment_green">₹${scenario.futureValue.toLocaleString('en-IN')}</strong>.</p>
+           `;
 break;
 }
 
@@ -494,10 +494,10 @@ break;
 // 3. Set the innerHTML only once, using our variable.
 // If the variable is empty (for other goals), it creates the default explanation.
 chartExplanation.innerHTML = explanationHTML || `
-      <h4 class="text-lg font-bold text-textdark mb-2 pt-4">${displayTitle}</h4>
-      <p>This chart visualizes the power of your strategy. At the end of the term, your loan balance will be <strong>₹0</strong>, while your investment is projected to grow to <strong>₹${scenario.futureValue.toLocaleString('en-IN')}</strong>.</p>
-      <p class="mt-2">${crossoverYearText}</p>
-  `;
+       <h4 class="text-lg font-bold text-textdark mb-2 pt-4">${displayTitle}</h4>
+       <p>This chart visualizes the power of your strategy. At the end of the term, your loan balance will be <strong>₹0</strong>, while your investment is projected to grow to <strong>₹${scenario.futureValue.toLocaleString('en-IN')}</strong>.</p>
+       <p class="mt-2">${crossoverYearText}</p>
+   `;
 
 amortizationExplanation.innerHTML = `<h4...>Loan Amortization Schedule</h4>...`;
 
@@ -505,16 +505,16 @@ if (selectedGoal !== 'planner' && selectedGoal !== 'min-time-repay') {
 const paiVsTraditionalData = generatePaiVsTraditionalData(scenario);
 renderPaiVsTraditionalChart(paiVsTraditionalData);
 paiVsTraditionalExplanation.innerHTML = `<h4 class="text-lg font-bold text-textdark mb-2 pt-4">PaiFinance vs. Traditional Loan Repayment Strategy</h4>
-      <p>This chart shows the power of the PaiFinance approach. The same monthly budget, when properly allocated across the right investing channels, can produce a more fruitful result shown by the <span class="font-semibold text-investment_green">green line</span> where the PaiFinance strategy helps you build positive net wealth of <strong class="text-investment_green">₹${scenario.netWealth.toLocaleString('en-IN')}</strong> by the end of the planning horizon.<p class="mt-2"> The <span class="font-semibold text-danger">red line</span> shows how your net financial position gets worse over time with a traditional loan repayment strategy of repaying the loan fast, ending with a netwealth of <strong class="text-danger">-₹${scenario.totalInterestPaid.toLocaleString('en-IN')}</strong> by the end of the planning horizon.</p>
-     `;
+       <p>This chart shows the power of the PaiFinance approach. The same monthly budget, when properly allocated across the right investing channels, can produce a more fruitful result shown by the <span class="font-semibold text-investment_green">green line</span> where the PaiFinance strategy helps you build positive net wealth of <strong class="text-investment_green">₹${scenario.netWealth.toLocaleString('en-IN')}</strong> by the end of the planning horizon.<p class="mt-2"> The <span class="font-semibold text-danger">red line</span> shows how your net financial position gets worse over time with a traditional loan repayment strategy of repaying the loan fast, ending with a netwealth of <strong class="text-danger">-₹${scenario.totalInterestPaid.toLocaleString('en-IN')}</strong> by the end of the planning horizon.</p>
+      `;
 }
 
 summaryResultsContainer.classList.remove('hidden');
 summaryResultsContainer.innerHTML = summaryHTML + `
-      <button id="connectExpertBtn" class="w-full mt-4 bg-transparent border-2 border-investment_green text-investment_green font-semibold py-2 px-4 rounded-lg hover:bg-investment_green hover:text-white transition-colors duration-300">
-      Connect to an Expert
-      </button>
-  `;
+       <button id="connectExpertBtn" class="w-full mt-4 bg-transparent border-2 border-investment_green text-investment_green font-semibold py-2 px-4 rounded-lg hover:bg-investment_green hover:text-white transition-colors duration-300">
+       Connect to an Expert
+       </button>
+   `;
 
 const connectExpertBtn = document.getElementById('connectExpertBtn');
 if(connectExpertBtn) {
@@ -623,8 +623,6 @@ investmentTenureLabel.textContent = (goal === 'min-time-repay') ? 'Remaining Pla
 if(isPlannerMode) {
 loanTenureInput.value = `${loanTenureSlider.value} Y`;
 investmentTenureInput.value = `${investmentTenureSlider.value} Y`;
-loanTenureInput.value = `${loanTenureSlider.value} Yr`;
-investmentTenureInput.value = `${investmentTenureSlider.value} Yr`;
 }
 
 triggerCalculation();
@@ -804,7 +802,6 @@ slider.addEventListener('input', () => {
 if (!slider.disabled) {
 const correspondingInput = slider.id === 'loanTenureSlider' ? loanTenureInput : investmentTenureInput;
 correspondingInput.value = `${slider.value} Y`;
-correspondingInput.value = `${slider.value} Yr`;
 triggerCalculation();
 }
 });
