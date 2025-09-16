@@ -28,7 +28,7 @@ const monthlyInvestmentResult = document.getElementById('monthlyInvestmentResult
 const monthlyInvestmentSubtext = document.getElementById('monthlyInvestmentSubtext');
 
 // Global state
-let planningHorizon = 20; // Default value, will be updated from onboarding
+let planningHorizon = 30; // Default value, will be updated from onboarding
 
 // Result Containers
 const finalResultsSection = document.getElementById('finalResultsSection');
@@ -402,7 +402,7 @@ if (!decimalYears || decimalYears < 0) return "0 M";
 const years = Math.floor(decimalYears);
 const months = Math.round((decimalYears - years) * 12);
 if (years > 0 && months > 0) return `${years} Yr, ${months} Mon`;
-if (years > 0) return `${years} Y`;
+if (years > 0) return `${years} Yr`;
 if (years > 0 && months > 0) return `${years} Yr, ${months} Mon`;
 if (years > 0) return `${years} Yr`;
 if (months > 0) return `${months} M`;
@@ -627,8 +627,8 @@ investmentTenureContainer.style.opacity = isPlannerMode ? '1' : '0.5';
 investmentTenureLabel.textContent = (goal === 'min-time-repay') ? 'Remaining Planning Horizon' : 'Investment Tenure';
 
 if(isPlannerMode) {
-loanTenureInput.value = `${loanTenureSlider.value} Y`;
-investmentTenureInput.value = `${investmentTenureSlider.value} Y`;
+loanTenureInput.value = `${loanTenureSlider.value} Yr`;
+investmentTenureInput.value = `${investmentTenureSlider.value} Yr`;
 }
 
 triggerCalculation();
