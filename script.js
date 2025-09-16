@@ -477,7 +477,6 @@ paiVsTraditionalContainer.classList.add('hidden');
 explanationHTML = `
                <h4 class="text-lg font-bold text-textdark mb-2 pt-4">${displayTitle}</h4>
                <p>This chart visualizes the traditional strategy of eliminating debt as quickly as possible. By dedicating your entire monthly budget towards the loan, you can become debt-free in just <strong>${displayTenure}</strong>.</p>
-                <p class="mt-2">After the loan is repaid, investing that same monthly amount for the remainder of your planning horizon could generate a final wealth of <strong class="text-investment_green">₹${scenario.futureValue.toLocaleString('en-IN')}</strong>.</p>
                 <p class="mt-2">After the loan is repaid, investing that same monthly amount for the remainder of your planning horizon could generate a total wealth of <strong class="text-investment_green">₹${scenario.futureValue.toLocaleString('en-IN')}</strong>.</p>
            `;
 
