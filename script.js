@@ -28,7 +28,7 @@ const monthlyInvestmentResult = document.getElementById('monthlyInvestmentResult
 const monthlyInvestmentSubtext = document.getElementById('monthlyInvestmentSubtext');
 
 // Global state
-let planningHorizon = 30; // Default value, will be updated from onboarding
+let planningHorizon = 20; // Default value, will be updated from onboarding
 
 // Result Containers
 const finalResultsSection = document.getElementById('finalResultsSection');
