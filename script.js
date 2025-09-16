@@ -747,7 +747,7 @@ const horizonYears = (selectedGoal === 'min-time') ? scenario.tenure : planningH
 const totalHorizonMonths = Math.ceil(horizonYears * 12);
     
 
-for (let year = 0; year <= planningHorizon; year++) {
+for (let year = 0; year <= Math.ceil(horizonYears); year++) {
 labels.push(`Yr ${year}`);
 paiData.push(paiInvestmentValue - paiCumulativeInterest);
 traditionalData.push(traditionalInvestmentValue - traditionalCumulativeInterest);
@@ -762,7 +762,9 @@ paiCumulativeInterest += interest;
 const principalPaid = scenario.emi - interest;
 paiRemainingLoan -= principalPaid;
 }
-paiInvestmentValue = (paiInvestmentValue + (scenario.monthlyInvestment || 0)) * (1 + monthlyInvestmentRate);
+if(currentMonth <= totalHorizonMonths) {
+                    paiInvestmentValue = (paiInvestmentValue + (scenario.monthlyInvestment || 0)) * (1 + monthlyInvestmentRate);
+                 }     
 
 // --- TRADITIONAL (SEQUENTIAL) METHOD CALCULATION ---
 if (currentMonth <= traditionalLoanPayoffMonths) {
@@ -773,7 +775,7 @@ traditionalCumulativeInterest += interest;
 const principalPaid = totalBudget - interest;
 traditionalRemainingLoan -= principalPaid;
 }
-} else {
+} else if(currentMonth <= totalHorizonMonths)  {
 // Phase 2: Investment
 traditionalInvestmentValue = (traditionalInvestmentValue + totalBudget) * (1 + monthlyInvestmentRate);
 }
