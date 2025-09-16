@@ -193,8 +193,12 @@ const emi = calculateEMI(principal, loanAnnualRate, tenure);
 if (emi > budget) continue;
 const monthlyInvestment = budget - emi;
 const totalInterestPaid = (emi * tenure * 12) - principal;
-const futureValue = calculateFutureValue(monthlyInvestment, investmentAnnualRate, tenure);
+
+const fvFromInvestmentPortion = calculateFutureValue(monthlyInvestment, investmentAnnualRate, planningHorizon);
+const fvFromFreedUpEMI = calculateFutureValue(emi, investmentAnnualRate, planningHorizon - tenure);
+const futureValue = fvFromInvestmentPortion + fvFromFreedUpEMI;
 const netWealth = futureValue - totalInterestPaid;
+     
 if (netWealth > maxNetWealth) {
 maxNetWealth = netWealth;
 bestScenario = { tenure, emi, monthlyInvestment, totalInterestPaid, futureValue, netWealth, principal, loanAnnualRate, investmentAnnualRate };
@@ -203,9 +207,9 @@ bestScenario = { tenure, emi, monthlyInvestment, totalInterestPaid, futureValue,
 
 if (bestScenario) {
 loanTenureInput.value = formatYearsAndMonths(bestScenario.tenure);
-investmentTenureInput.value = formatYearsAndMonths(bestScenario.tenure);
+investmentTenureInput.value = formatYearsAndMonths(planningHorizon);
 loanTenureSlider.value = bestScenario.tenure;
-investmentTenureSlider.value = bestScenario.tenure;
+investmentTenureSlider.value = planningHorizon;
 updateSliderProgress(loanTenureSlider);
 updateSliderProgress(investmentTenureSlider);
 displayResults(bestScenario);
