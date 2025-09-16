@@ -743,7 +743,9 @@ let traditionalRemainingLoan = scenario.principal;
 
 const monthlyLoanRate = scenario.loanAnnualRate / 100 / 12;
 const monthlyInvestmentRate = scenario.investmentAnnualRate / 100 / 12;
-const totalHorizonMonths = planningHorizon * 12;
+const horizonYears = (selectedGoal === 'min-time') ? scenario.tenure : planningHorizon;
+const totalHorizonMonths = Math.ceil(horizonYears * 12);
+    
 
 for (let year = 0; year <= planningHorizon; year++) {
 labels.push(`Yr ${year}`);
