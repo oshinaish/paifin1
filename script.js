@@ -503,9 +503,15 @@ amortizationExplanation.innerHTML = `<h4...>Loan Amortization Schedule</h4>...`;
 
 if (selectedGoal !== 'planner' && selectedGoal !== 'min-time-repay') {
 const paiVsTraditionalData = generatePaiVsTraditionalData(scenario);
+
+
+// FIX: Get final values directly from the chart's data source
+const traditionalNetWealth = paiVsTraditionalData.traditionalData[paiVsTraditionalData.traditionalData.length - 1];
+
+     
 renderPaiVsTraditionalChart(paiVsTraditionalData);
 paiVsTraditionalExplanation.innerHTML = `<h4 class="text-lg font-bold text-textdark mb-2 pt-4">PaiFinance vs. Traditional Loan Repayment Strategy</h4>
-       <p>This chart shows the power of the PaiFinance approach. The same monthly budget, when properly allocated across the right investing channels, can produce a more fruitful result shown by the <span class="font-semibold text-investment_green">green line</span> where the PaiFinance strategy helps you build positive net wealth of <strong class="text-investment_green">₹${scenario.netWealth.toLocaleString('en-IN')}</strong> by the end of the planning horizon.<p class="mt-2"> The <span class="font-semibold text-danger">red line</span> shows how your net financial position gets worse over time with a traditional loan repayment strategy of repaying the loan fast, ending with a netwealth of <strong class="text-danger">-₹${scenario.totalInterestPaid.toLocaleString('en-IN')}</strong> by the end of the planning horizon.</p>
+       <p>This chart shows the power of the PaiFinance approach. The same monthly budget, when properly allocated across the right investing channels, can produce a more fruitful result shown by the <span class="font-semibold text-investment_green">green line</span> where the PaiFinance strategy helps you build positive net wealth of <strong class="text-investment_green">₹${scenario.netWealth.toLocaleString('en-IN')}</strong> by the end of the planning horizon.<p class="mt-2"> The <span class="font-semibold text-danger">red line</span> shows how your net financial position gets worse over time with a traditional loan repayment strategy of repaying the loan fast, ending with a netwealth of <strong class="text-danger">-₹${Math.round(traditionalNetWealth).toLocaleString('en-IN')}</strong> by the end of the planning horizon.</p>
       `;
 }
 
