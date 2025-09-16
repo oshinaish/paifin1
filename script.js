@@ -415,6 +415,7 @@ const selectedGoal = document.querySelector('.goal-button.selected').dataset.goa
 const displayTenure = tenureString || formatYearsAndMonths(scenario.tenure);
 
 // --- 2. RENDER COMMON UI & CHARTS (for all goals) ---
+emiResultElement.textContent = `₹ ${scenario.emi.toLocaleString('en-IN')}`;
 if (selectedGoal === 'min-time-repay') {
 monthlyInvestmentResult.textContent = `₹ ${scenario.postLoanMonthlyInvestment.toLocaleString('en-IN')}`;
 monthlyInvestmentSubtext.textContent = '(after loan)';
