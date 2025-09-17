@@ -439,7 +439,7 @@ monthlyInvestmentSubtext.classList.add('hidden');
 updatePieChart(scenario.emi, scenario.monthlyInvestment || 0);
 
 renderResultWidgets(scenario, displayTenure);
-const chartData = generateComparisonData(scenario);
+const chartData = generateComparisonData(scenario, selectedGoal);
 renderComparisonChart(chartData);
 const amortizationData = generateAmortizationSchedule(scenario);
 renderAmortizationTable(amortizationData);
@@ -646,7 +646,7 @@ investmentTenureInput.value = `${investmentTenureSlider.value} Yr`;
 triggerCalculation();
 }
 
-function generateComparisonData(scenario) {
+function generateComparisonData(scenario,selectedGoal) {
 const labels = [];
 const loanData = [];
 const investmentData = [];
