@@ -274,9 +274,18 @@ investmentHorizonDisplay = formatYearsAndMonths(scenario.tenure);
 
 // --- 2. Define data for each of the four widgets ---
 const totalPaid = scenario.principal + scenario.totalInterestPaid;
-const totalInvested = scenario.postLoanMonthlyInvestment 
-? (scenario.postLoanMonthlyInvestment * scenario.investmentTenure * 12) 
-: (scenario.monthlyInvestment || 0) * Math.round(scenario.tenure * 12);
+let totalInvested;
+     if(scenario.postLoanMonthlyInvestment) {
+             totalInvested = scenario.postLoanMonthlyInvestment * scenario.investmentTenure * 12;
+        } else if (selectedGoal === 'optimal-strategy') {
+            const emiForInvestment = scenario.emi || 0;
+            const invForInvestment = scenario.monthlyInvestment || 0;
+            totalInvested = (invForInvestment * planningHorizon * 12) + (emiForInvestment * (planningHorizon - scenario.tenure) * 12);
+        } else {
+             const investmentDuration = scenario.investmentTenure || scenario.tenure;
+             totalInvested = (scenario.monthlyInvestment || 0) * Math.round(investmentDuration * 12);
+        }
+
 const totalGains = scenario.futureValue - totalInvested;
 const netWealth = scenario.futureValue - scenario.totalInterestPaid;
 
