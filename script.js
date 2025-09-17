@@ -503,7 +503,7 @@ chartExplanation.innerHTML = explanationHTML || `
 amortizationExplanation.innerHTML = `<h4...>Loan Amortization Schedule</h4>...`;
 
 if (selectedGoal !== 'planner' && selectedGoal !== 'min-time-repay') {
-const paiVsTraditionalData = generatePaiVsTraditionalData(scenario);
+const paiVsTraditionalData = generatePaiVsTraditionalData(scenario, selectedGoal);
 
 
 // FIX: Get final values directly from the chart's data source
@@ -724,7 +724,7 @@ tableHTML += `</tbody></table>`;
 amortizationTableContainer.innerHTML = tableHTML;
 }
 
-function generatePaiVsTraditionalData(scenario) {
+function generatePaiVsTraditionalData(scenario, selectedGoal) {
 const labels = [];
 const paiData = [];
 const traditionalData = [];
