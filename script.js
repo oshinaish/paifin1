@@ -655,14 +655,19 @@ let investmentValue = 0;
 let crossoverYear = null;
 const monthlyLoanRate = scenario.loanAnnualRate / 100 / 12;
 const monthlyInvestmentRate = scenario.investmentAnnualRate / 100 / 12;
-let totalHorizonMonths=0;
-     if (selectedGoal === 'planner') {
+let horizonMonths = 0;
+if (selectedGoal === 'planner') {
     // For manual mode, the horizon is the LONGER of the two tenures
-    totalHorizonMonths = Math.ceil(Math.max(scenario.tenure, scenario.investmentTenure) * 12);
-} else { totalHorizonMonths = (scenario.tenure + (scenario.investmentTenure || 0)) * 12;
+    horizonMonths = Math.ceil(Math.max(scenario.tenure, scenario.investmentTenure) * 12);
+} else if (selectedGoal === 'min-time-repay' || selectedGoal === 'optimal-strategy') {
+    // For these goals, the horizon is the overall planning period
+    horizonMonths = planningHorizon * 12;
+} else {
+    // For 'min-time-offset', the horizon is the calculated tenure to break even
+    horizonMonths = Math.ceil(scenario.tenure * 12);
 }
      
-for (let year = 0; year <= Math.ceil(totalHorizonMonths/12); year++) {
+for (let year = 0; year <= Math.ceil(horizonMonths / 12); year++) {
 labels.push(`Yr ${year}`);
 loanData.push(remainingLoan > 0 ? remainingLoan : 0);
 investmentData.push(investmentValue);
