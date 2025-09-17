@@ -655,8 +655,13 @@ let investmentValue = 0;
 let crossoverYear = null;
 const monthlyLoanRate = scenario.loanAnnualRate / 100 / 12;
 const monthlyInvestmentRate = scenario.investmentAnnualRate / 100 / 12;
-const totalHorizonMonths = (scenario.tenure + (scenario.investmentTenure || 0)) * 12;
-
+let totalhorizonMonths=0;
+     if (selectedGoal === 'planner') {
+    // For manual mode, the horizon is the LONGER of the two tenures
+    totalhorizonMonths = Math.ceil(Math.max(scenario.tenure, scenario.investmentTenure) * 12);
+} else { totalHorizonMonths = (scenario.tenure + (scenario.investmentTenure || 0)) * 12;
+}
+     
 for (let year = 0; year <= Math.ceil(totalHorizonMonths/12); year++) {
 labels.push(`Yr ${year}`);
 loanData.push(remainingLoan > 0 ? remainingLoan : 0);
