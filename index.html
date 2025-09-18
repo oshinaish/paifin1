@@ -158,21 +158,21 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 </div>
 </div>
 <div class="p-8">
-<!-- Step 0: Loan -->
-<div id="step0" class="onboarding-step active">
+<!-- Step 1: Loan -->
+<div id="step1" class="onboarding-step active">
 <h3 class="text-2xl font-semibold text-textdark mb-2">Desired Loan Amount</h3>
 <p class="text-textlight mb-6">Let's start with the desired loan amount.</p>
 <div class="space-y-4">
 <div>
-<label for="ob_loanamt" class="block text-sm font-medium text-textlight">Loan Amount (₹)</label>
+<label for="ob_loanAmount" class="block text-sm font-medium text-textlight">Loan Amount (₹)</label>
 <input type="number" id="ob_loanAmount" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-investment_green focus:border-investment_green" placeholder="e.g., 100000">
 </div>
 </div>
-<button onclick="nextStep(1)" class="w-full mt-8 bg-investment_green text-white font-semibold py-3 px-4 rounded-lg hover:bg-opacity-90 transition">Next: Monthly Income</button>
+<button onclick="nextStep(2)" class="w-full mt-8 bg-investment_green text-white font-semibold py-3 px-4 rounded-lg hover:bg-opacity-90 transition">Next: Monthly Income</button>
 </div>
 
-<!-- Step 1: Income -->
-<div id="step1" class="onboarding-step">
+<!-- Step 2: Income -->
+<div id="step2" class="onboarding-step">
 <h3 class="text-2xl font-semibold text-textdark mb-2">Your Monthly Income</h3>
 <p class="text-textlight mb-6">Please provide information about your earnings to understand your cash flow.</p>
 <div class="space-y-4">
@@ -186,12 +186,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 </div>
 </div>
 <div class="flex justify-between mt-8 space-x-4">
-<button onclick="prevStep(0)" class="w-1/3 bg-gray-200 text-gray-700 font-semibold py-3 px-4 rounded-lg hover:bg-gray-300 transition">Back</button>
-<button onclick="nextStep(2)" class="w-full mt-8 bg-investment_green text-white font-semibold py-3 px-4 rounded-lg hover:bg-opacity-90 transition">Next: Expenses</button>
+<button onclick="prevStep(1)" class="w-1/3 bg-gray-200 text-gray-700 font-semibold py-3 px-4 rounded-lg hover:bg-gray-300 transition">Back</button>
+<button onclick="nextStep(3)" class="w-full mt-8 bg-investment_green text-white font-semibold py-3 px-4 rounded-lg hover:bg-opacity-90 transition">Next: Expenses</button>
 </div>
 </div>
-<!-- Step 2: Expenses -->
-<div id="step2" class="onboarding-step">
+<!-- Step 3: Expenses -->
+<div id="step3" class="onboarding-step">
 <h3 class="text-2xl font-semibold text-textdark mb-2">Your Lifestyle</h3>
 <p class="text-textlight mb-6">Understanding your expenses helps determine what's left for your goals.</p>
 <div class="space-y-4">
@@ -201,11 +201,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 </div>
 </div>
 <div class="flex justify-between mt-8 space-x-4">
-<button onclick="prevStep(1)" class="w-1/3 bg-gray-200 text-gray-700 font-semibold py-3 px-4 rounded-lg hover:bg-gray-300 transition">Back</button>
-<button onclick="nextStep(3)" class="w-2/3 bg-investment_green text-white font-semibold py-3 px-4 rounded-lg hover:bg-opacity-90 transition">Next: Your Goal</button>
+<button onclick="prevStep(2)" class="w-1/3 bg-gray-200 text-gray-700 font-semibold py-3 px-4 rounded-lg hover:bg-gray-300 transition">Back</button>
+<button onclick="nextStep(4)" class="w-2/3 bg-investment_green text-white font-semibold py-3 px-4 rounded-lg hover:bg-opacity-90 transition">Next: Your Goal</button>
 </div>
 </div>
-<div id="step3" class="onboarding-step">
+<!-- Step 4: Horizon -->
+<div id="step4" class="onboarding-step">
 <h3 class="text-2xl font-semibold text-textdark mb-2">Your Financial Horizon</h3>
 <p class="text-textlight mb-6">How many years are you planning for? This helps in projecting long-term growth.</p>
 <div class="space-y-4">
@@ -215,7 +216,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 </div>
 </div>
 <div class="flex justify-between mt-8 space-x-4">
-<button onclick="prevStep(2)" class="w-1/3 bg-gray-200 text-gray-700 font-semibold py-3 px-4 rounded-lg hover:bg-gray-300 transition">Back</button>
+<button onclick="prevStep(3)" class="w-1/3 bg-gray-200 text-gray-700 font-semibold py-3 px-4 rounded-lg hover:bg-gray-300 transition">Back</button>
 <button onclick="finishOnboarding()" class="w-2/3 bg-success text-white font-semibold py-3 px-4 rounded-lg hover:bg-opacity-90 transition">Calculate My Plan</button>
 </div>
 </div>
@@ -753,12 +754,12 @@ question.classList.toggle('open');
 });
 
 // --- ONBOARDING SCRIPT ---
-const steps = [document.getElementById('step1'), document.getElementById('step2'), document.getElementById('step3')];
+const steps = [document.getElementById('step0'), document.getElementById('step1'), document.getElementById('step2'), document.getElementById('step3')];
 const progressBar = document.getElementById('progressBar');
 const stepCounter = document.getElementById('stepCounter');
 const onboardingTitle = document.getElementById('onboardingTitle');
-const titles = ["Your Monthly Income", "Your Lifestyle", "Your Financial Horizon"];
-let currentStep = 1;
+const titles = ["Desired Loan Amount","Your Monthly Income", "Your Lifestyle", "Your Financial Horizon"];
+let currentStep = 0;
 let globalOnboardingData = {}; // To store data temporarily
 
 function showStep(stepNumber) {
@@ -787,7 +788,7 @@ showStep(stepNumber);
 }
 
 function prevStep(stepNumber) {
-if (stepNumber < 1) return;
+if (stepNumber < 0) return;
 showStep(stepNumber);
 }
 
@@ -803,6 +804,7 @@ return;
 
 // Store data globally to be used by the summary modal's button
 globalOnboardingData = {
+LoanAmount: parseFloat(document.getElementById('ob_loanAmount').value),
 monthlyIncome: parseFloat(document.getElementById('ob_monthlyIncome').value),
 epfVpf: parseFloat(document.getElementById('ob_epfVpf').value),
 monthlyExpenses: parseFloat(document.getElementById('ob_monthlyExpenses').value),
