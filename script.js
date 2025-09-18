@@ -511,7 +511,11 @@ chartExplanation.innerHTML = explanationHTML || `
        <p class="mt-2">${crossoverYearText}</p>
    `;
 
-amortizationExplanation.innerHTML = `<h4...>Loan Amortization Schedule</h4>...`;
+amortizationExplanation.innerHTML = `
+            <h4 class="text-lg font-bold text-textdark mb-2 pt-4">Loan Amortization Schedule</h4>
+            <p>An amortization schedule shows how your loan payments are broken down over time. You can see how much of your annual payments go towards the principal versus the interest, and how your loan balance decreases each year until it reaches zero.</p>
+            <p class="mt-2">Please note that this schedule is based on your regular EMI payments. If you make any part payments towards your loan, the schedule will change, and you will pay off your loan even faster.</p>
+        `;
 
 if (selectedGoal !== 'planner' && selectedGoal !== 'min-time-repay') {
 const paiVsTraditionalData = generatePaiVsTraditionalData(scenario, selectedGoal);
