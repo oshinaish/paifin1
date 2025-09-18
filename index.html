@@ -804,7 +804,7 @@ return;
 
 // Store data globally to be used by the summary modal's button
 globalOnboardingData = {
-LoanAmount: parseFloat(document.getElementById('ob_loanAmount').value),
+loanAmount: parseFloat(document.getElementById('ob_loanAmount').value),
 monthlyIncome: parseFloat(document.getElementById('ob_monthlyIncome').value),
 epfVpf: parseFloat(document.getElementById('ob_epfVpf').value),
 monthlyExpenses: parseFloat(document.getElementById('ob_monthlyExpenses').value),
@@ -928,6 +928,7 @@ function populateCalculatorAndRun(data) {
 // Create and dispatch a custom event with the calculated budget and tenure
 const event = new CustomEvent('onboardingComplete', { 
 detail: {
+loanAmount: data.loanAmount,    
 budget: calculateInHandBudget(data).finalBudget,
 tenure: data.planningYears
 }
