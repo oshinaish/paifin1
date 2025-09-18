@@ -754,12 +754,12 @@ question.classList.toggle('open');
 });
 
 // --- ONBOARDING SCRIPT ---
-const steps = [document.getElementById('step0'), document.getElementById('step1'), document.getElementById('step2'), document.getElementById('step3')];
+const steps = [document.getElementById('step1'), document.getElementById('step2'), document.getElementById('step3'), document.getElementById('step4')];
 const progressBar = document.getElementById('progressBar');
 const stepCounter = document.getElementById('stepCounter');
 const onboardingTitle = document.getElementById('onboardingTitle');
 const titles = ["Desired Loan Amount","Your Monthly Income", "Your Lifestyle", "Your Financial Horizon"];
-let currentStep = 0;
+let currentStep = 1;
 let globalOnboardingData = {}; // To store data temporarily
 
 function showStep(stepNumber) {
@@ -788,7 +788,7 @@ showStep(stepNumber);
 }
 
 function prevStep(stepNumber) {
-if (stepNumber < 0) return;
+if (stepNumber < 1) return;
 showStep(stepNumber);
 }
 
