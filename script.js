@@ -858,10 +858,14 @@ triggerCalculation();
 });
 
 document.addEventListener('onboardingComplete', (e) => {
-const { budget, tenure } = e.detail;
+const { loanAmount, budget, tenure } = e.detail; 
+loanAmountInput.value = loanAmount;
+loanAmountSlider.value = loanAmount;
+updateSliderProgress(loanAmountSlider);
 monthlyBudgetInput.value = budget;
-planningHorizon = tenure;
+monthlyBudgetSlider.value = budget;
 updateSliderProgress(monthlyBudgetSlider);
+planningHorizon = tenure;
 triggerCalculation();
 });
 
