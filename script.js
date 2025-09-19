@@ -873,22 +873,6 @@ goalButtons.forEach(button => { button.addEventListener('click', () => handleGoa
 finalResultsSection.classList.add('hidden');
 handleGoalSelection(document.querySelector('.goal-button.selected'));
 
-// --- Google Analytics Event Tracking for Goal Buttons ---
-goalButtons.forEach(button => {
-    button.addEventListener('click', () => {
-        // Get the specific goal name from the button's data attribute
-        const goalName = button.dataset.goal; 
-        
-        // Use the button's text content for a clear label
-        const buttonLabel = button.innerText.replace('\n', ' '); 
-
-        gtag('event', 'select_goal', {
-            'event_category': 'Strategy Goals',
-            'event_label': buttonLabel,
-            'goal_selected': goalName // A custom parameter to easily filter by goal
-        });
-    });
-});
 }
 
 initializeApp();
